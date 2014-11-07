@@ -341,13 +341,13 @@ try:
     defaultConfig['xbmc']['host']                = 'localhost:' + xbmcPort
     defaultConfig['xbmc']['username']            = xbmcUser
     defaultConfig['xbmc']['password']            = xbmcPwd
-    defaultConfig['Sabnzbd'] = {}
+    defaultConfig['sabnzbd'] = {}
 
     if sabnzbd_launch:
-        defaultConfig['Sabnzbd']['username']     = user
-        defaultConfig['Sabnzbd']['password']     = pwd
-        defaultConfig['Sabnzbd']['api_key']      = sabNzbdApiKey
-        defaultConfig['Sabnzbd']['host']         = sabNzbdHost
+        defaultConfig['sabnzbd']['username']     = user
+        defaultConfig['sabnzbd']['password']     = pwd
+        defaultConfig['sabnzbd']['api_key']      = sabNzbdApiKey
+        defaultConfig['sabnzbd']['host']         = sabNzbdHost
 
     if transauth:
         defaultConfig['transmission'] = {}
@@ -365,8 +365,8 @@ try:
         defaultConfig['blackhole']['directory']           = pSabNzbdWatchDir
         defaultConfig['blackhole']['use_for']             = 'both'
         defaultConfig['blackhole']['enabled']             = '0'
-        defaultConfig['Sabnzbd']['category']              = 'movies'
-        defaultConfig['Sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
+        defaultConfig['sabnzbd']['category']              = 'movies'
+        defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
         defaultConfig['renamer'] = {}
         defaultConfig['renamer']['enabled']               = '1'
         defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
