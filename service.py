@@ -26,7 +26,9 @@ idleTimer        = 0
 # detect machine arch and setup binaries on first run
 parch = os.uname()[4]
 
-if parch.startswith('arm'):
+if parch.startswith('armv7l'):
+    parch = 'armv7l'
+elif parch.startswith('arm'):
     parch = 'arm'
 
 if not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
@@ -52,7 +54,7 @@ socket.setdefaulttimeout(timeout)
 # perform some initial checks and log essential settings
 shouldKeepAwake = 'false'
 wakePeriodically = 'false'
-if parch != 'arm':
+if (parch != 'arm') and (parch != 'armv7l'):
     shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
     wakePeriodically = (__addon__.getSetting('PERIODIC_WAKE').lower() == 'true')
     wakeHourIdx = int(__addon__.getSetting('WAKE_AT'))
@@ -88,7 +90,7 @@ while not xbmc.abortRequested:
             time.sleep(5)
 
     #RPI does not have a wakealarm
-    if parch != 'arm':
+    if (parch != 'arm') and (parch != 'armv7l'):
 
         # reread setting in case it has changed
         shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
