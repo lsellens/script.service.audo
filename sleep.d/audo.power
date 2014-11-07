@@ -1,0 +1,31 @@
+#!/bin/sh
+
+. /etc/profile
+
+ADDON_HOME="$HOME/.xbmc/userdata/addon_data/script.service.audo"
+ADDON_SETTINGS="$ADDON_HOME/settings.xml"
+RESTART_ON_RESUME=`grep RESTART_ON_RESUME $ADDON_SETTINGS | awk '{print $3}' | sed -e "s,value=,," -e "s,\",,g"`
+
+LOCKFILE="/var/lock/audo.sleep"
+
+if [ "$RESTART_ON_RESUME" == "true" ] ; then
+  case "$1" in
+    hibernate|suspend)
+      if [ ! -z "`ps | grep -E 'python.*script.*.audo' | awk '{print $1}'`" ] ; then
+        progress "Shutting down AUDO for suspending..."
+        kill `ps | grep -E 'python.*script.*.audo' | awk '{print $1}'` 2>/dev/null
+        touch $LOCKFILE
+      fi
+      ;;
+
+    thaw|resume)
+      progress "Restarting AUDO for wakeup..."
+      if [ -f "$LOCKFILE" ] ; then
+        rm -rf "$LOCKFILE"
+        python $HOME/.xbmc/addons/script.service.audo/service.py
+      fi
+      ;;
+    *) exit $NA
+      ;;
+  esac
+fi

@@ -1,0 +1,75 @@
+# XBMC Media Center language file
+# Translators:
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenELEC-addons\n"
+"Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
+"POT-Creation-Date: 2014-04-03 02:08+0000\n"
+"PO-Revision-Date: 2014-04-03 02:11+0000\n"
+"Last-Translator: lsellens <lsellens@gmail.com>\n"
+"Language-Team: LANGUAGE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: en_US\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "#32000"
+msgid "audo"
+msgstr "audo"
+
+msgctxt "#32001"
+msgid "User Settings"
+msgstr "User Settings"
+
+msgctxt "#32002"
+msgid "Username"
+msgstr "Username"
+
+msgctxt "#32003"
+msgid "Password"
+msgstr "Password"
+
+msgctxt "#32004"
+msgid "Enable SABnzbd"
+msgstr "Enable SABnzbd"
+
+msgctxt "#32005"
+msgid "Enable Sickbeard"
+msgstr "Enable Sickbeard"
+
+msgctxt "#32006"
+msgid "Enable Couchpotato"
+msgstr "Enable Couchpotato"
+
+msgctxt "#32007"
+msgid "Enable Headphones"
+msgstr "Enable Headphones"
+
+msgctxt "#32008"
+msgid "Network Settings"
+msgstr "Network Settings"
+
+msgctxt "#32009"
+msgid "Allowed IP addresses"
+msgstr "Allowed IP addresses"
+
+msgctxt "#32010"
+msgid "Sleep"
+msgstr "Sleep"
+
+msgctxt "#32011"
+msgid "Keep awake while downloading"
+msgstr "Keep awake while downloading"
+
+msgctxt "#32012"
+msgid "Wake up periodically"
+msgstr "Wake up periodically"
+
+msgctxt "#32013"
+msgid "Wake up at"
+msgstr "Wake up at"
+
+msgctxt "#32014"
+msgid "Restart on suspend / resume"
+msgstr "Restart on suspend / resume"

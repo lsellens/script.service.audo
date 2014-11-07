@@ -1,0 +1,76 @@
+# XBMC Media Center language file
+# Translators:
+# Frank Duque <mr_anderson@riseup.net>, 2014
+msgid ""
+msgstr ""
+"Project-Id-Version: OpenELEC-addons\n"
+"Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
+"POT-Creation-Date: 2014-04-03 02:08+0000\n"
+"PO-Revision-Date: 2014-10-01 09:55+0000\n"
+"Last-Translator: Frank Duque <mr_anderson@riseup.net>\n"
+"Language-Team: Spanish (http://www.transifex.com/projects/p/openelec-addons/language/es/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgctxt "#32000"
+msgid "audo"
+msgstr "audo"
+
+msgctxt "#32001"
+msgid "User Settings"
+msgstr "Configuración de usuario"
+
+msgctxt "#32002"
+msgid "Username"
+msgstr "Nombre de usuario"
+
+msgctxt "#32003"
+msgid "Password"
+msgstr "Contraseña"
+
+msgctxt "#32004"
+msgid "Enable SABnzbd"
+msgstr "Activar SABnzbd"
+
+msgctxt "#32005"
+msgid "Enable Sickbeard"
+msgstr "Activar Sickbeard"
+
+msgctxt "#32006"
+msgid "Enable Couchpotato"
+msgstr "Activar Couchpotato"
+
+msgctxt "#32007"
+msgid "Enable Headphones"
+msgstr "Activar Headphones"
+
+msgctxt "#32008"
+msgid "Network Settings"
+msgstr "Configuración de red"
+
+msgctxt "#32009"
+msgid "Allowed IP addresses"
+msgstr "Direcciones IP permitidas"
+
+msgctxt "#32010"
+msgid "Sleep"
+msgstr "Dormir"
+
+msgctxt "#32011"
+msgid "Keep awake while downloading"
+msgstr "Mantener despierto mientras descarga"
+
+msgctxt "#32012"
+msgid "Wake up periodically"
+msgstr "Despertar periódicamente"
+
+msgctxt "#32013"
+msgid "Wake up at"
+msgstr "Despertar a las"
+
+msgctxt "#32014"
+msgid "Restart on suspend / resume"
+msgstr "Reinicie la suspensión / reanudar"
