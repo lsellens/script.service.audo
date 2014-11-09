@@ -8,9 +8,36 @@ import xbmc
 import xbmcaddon
 import xbmcvfs
 
+import time
+import xbmcgui
+import sys
+import socket
+import fcntl
+import struct
+import os
+
 # helper functions
 # ----------------
 
+
+def check_connection():
+        ifaces = ['eth0','eth1','wlan0','wlan1','wlan2','wlan3']
+        connected = []
+        i = 0
+        for ifname in ifaces:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            try:
+                socket.inet_ntoa(fcntl.ioctl(
+                        s.fileno(),
+                        0x8915,  # SIOCGIFADDR
+                        struct.pack('256s', ifname[:15])
+                )[20:24])
+                connected.append(ifname)
+                print "%s is connected" % ifname
+            except:
+                print "%s is not connected" % ifname
+            i += 1
+        return connected
 
 def create_dir(dirname):
     if not xbmcvfs.exists(dirname):
@@ -20,10 +47,32 @@ def create_dir(dirname):
 # define some things that we're gonna need, mainly paths
 # ------------------------------------------------------
 
+#Get host IP:
+connected_ifaces = check_connection()
+if len(connected_ifaces) == 0:
+    print 'not connected to any network'
+    hostIP = "on Port"
+else:
+    GetIP = ([(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
+    hostIP = ' on '+GetIP
+    print hostIP
+
+#Create Strings for notifications:
+started   = 'Service started'+hostIP
+waiting   = 'Looking for Media download folders...'
+disabled  = 'Service disabled for this session'
+restarted = 'Service restarted'+hostIP
+SAport  = ':8081'
+SBport  = ':8082'
+CPport  = ':8083'
+HPport  = ':8084'
+
 # addon
 __addon__             = xbmcaddon.Addon(id='script.service.audo')
 __addonpath__         = xbmc.translatePath(__addon__.getAddonInfo('path'))
 __addonhome__         = xbmc.translatePath(__addon__.getAddonInfo('profile'))
+__addonname__         = __addon__.getAddonInfo('name')
+__icon__              = __addon__.getAddonInfo('icon')
 __programs__          = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
 __dependancies__      = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 
@@ -213,6 +262,7 @@ try:
         xbmc.log('AUDO: Launching SABnzbd...', level=xbmc.LOGDEBUG)
         subprocess.call(sabnzbd, close_fds=True)
         xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+        xbmc.executebuiltin('XBMC.Notification(SABnzbd,'+ started + SAport +',5000,'+ __icon__ +')')
 
         # SABnzbd will only complete the .ini file when we first access the web interface
         if firstLaunch:
@@ -307,6 +357,7 @@ try:
         xbmc.log('AUDO: Launching SickBeard...', level=xbmc.LOGDEBUG)
         subprocess.call(sickBeard, close_fds=True)
         xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+xbmc.executebuiltin('XBMC.Notification(SickBeard,'+ started + SBport +',5000,'+ __icon__ +')')
 except Exception, e:
     xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
     xbmc.log(str(e), level=xbmc.LOGERROR)
