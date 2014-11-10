@@ -30,19 +30,22 @@ __dependancies__      = xbmc.translatePath(xbmcaddon.Addon(id='script.module.aud
 # settings
 pDefaultSuiteSettings = xbmc.translatePath(__addonpath__ + '/settings-default.xml')
 pSuiteSettings        = xbmc.translatePath(__addonhome__ + 'settings.xml')
-pXbmcSettings         = '/storage/.xbmc/userdata/guisettings.xml'
+pXbmcSettings         = xbmc.translatePath('special://home/userdata/guisettings.xml')
 pSabNzbdSettings      = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
 pSickBeardSettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
 pCouchPotatoServerSettings  = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
 pHeadphonesSettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
 
+#Get Device Home DIR
+pHomeDIR = os.path.expanduser('~/')
+
 # directories
-pSabNzbdComplete      = '/storage/downloads'
-pSabNzbdWatchDir      = '/storage/downloads/watch'
-pSabNzbdCompleteTV    = '/storage/downloads/tvshows'
-pSabNzbdCompleteMov   = '/storage/downloads/movies'
-pSabNzbdCompleteMusic = '/storage/downloads/music'
-pSabNzbdIncomplete    = '/storage/downloads/incomplete'
+pSabNzbdComplete      = pHomeDIR+'downloads'
+pSabNzbdWatchDir      = pHomeDIR+'downloads/watch'
+pSabNzbdCompleteTV    = pHomeDIR+'downloads/tvshows'
+pSabNzbdCompleteMov   = pHomeDIR+'downloads/movies'
+pSabNzbdCompleteMusic = pHomeDIR+'downloads/music'
+pSabNzbdIncomplete    = pHomeDIR+'downloads/incomplete'
 pSickBeardTvScripts   = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
 pSabNzbdScripts       = xbmc.translatePath(__addonhome__ + 'scripts')
 
@@ -282,7 +285,7 @@ try:
         defaultConfig['General']['naming_use_periods']    = '1'
         defaultConfig['General']['naming_sep_type']       = '1'
         defaultConfig['General']['naming_ep_type']        = '1'
-        defaultConfig['General']['root_dirs']             = '0|/storage/tvshows'
+        defaultConfig['General']['root_dirs']             = '0|'+pHomeDIR+'tvshows'
         defaultConfig['General']['naming_custom_abd']     = '0'
         defaultConfig['General']['naming_abd_pattern']    = '%SN - %A-D - %EN'
         defaultConfig['Blackhole'] = {}
@@ -341,13 +344,13 @@ try:
     defaultConfig['xbmc']['host']                = 'localhost:' + xbmcPort
     defaultConfig['xbmc']['username']            = xbmcUser
     defaultConfig['xbmc']['password']            = xbmcPwd
-    defaultConfig['Sabnzbd'] = {}
+    defaultConfig['sabnzbd'] = {}
 
     if sabnzbd_launch:
-        defaultConfig['Sabnzbd']['username']     = user
-        defaultConfig['Sabnzbd']['password']     = pwd
-        defaultConfig['Sabnzbd']['api_key']      = sabNzbdApiKey
-        defaultConfig['Sabnzbd']['host']         = sabNzbdHost
+        defaultConfig['sabnzbd']['username']     = user
+        defaultConfig['sabnzbd']['password']     = pwd
+        defaultConfig['sabnzbd']['api_key']      = sabNzbdApiKey
+        defaultConfig['sabnzbd']['host']         = sabNzbdHost
 
     if transauth:
         defaultConfig['transmission'] = {}
@@ -365,12 +368,12 @@ try:
         defaultConfig['blackhole']['directory']           = pSabNzbdWatchDir
         defaultConfig['blackhole']['use_for']             = 'both'
         defaultConfig['blackhole']['enabled']             = '0'
-        defaultConfig['Sabnzbd']['category']              = 'movies'
-        defaultConfig['Sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
+        defaultConfig['sabnzbd']['category']              = 'movies'
+        defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
         defaultConfig['renamer'] = {}
         defaultConfig['renamer']['enabled']               = '1'
         defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
-        defaultConfig['renamer']['to']                    = '/storage/videos'
+        defaultConfig['renamer']['to']                    = pHomeDIR+'videos'
         defaultConfig['renamer']['separator']             = '.'
         defaultConfig['renamer']['cleanup']               = '0'
         defaultConfig['core']['permission_folder']        = '0644'
@@ -430,8 +433,8 @@ try:
         defaultConfig['SABnzbd']['sab_category']               = 'music'
         defaultConfig['XBMC']['xbmc_update']                   = '1'
         defaultConfig['XBMC']['xbmc_notify']                   = '1'
-        defaultConfig['General']['music_dir']                  = '/storage/music'
-        defaultConfig['General']['destination_dir']            = '/storage/music'
+        defaultConfig['General']['music_dir']                  = pHomeDIR+'music'
+        defaultConfig['General']['destination_dir']            = pHomeDIR+'music'
         defaultConfig['General']['torrentblackhole_dir']       = pSabNzbdWatchDir
         defaultConfig['General']['download_dir']               = pSabNzbdCompleteMusic
         defaultConfig['General']['move_files']                 = '1'
