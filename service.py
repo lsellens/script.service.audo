@@ -49,7 +49,7 @@ socket.setdefaulttimeout(timeout)
 # perform some initial checks and log essential settings
 shouldKeepAwake = 'false'
 wakePeriodically = 'false'
-if not parch.startswith 'arm':
+if not parch.startswith('arm'):
     shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
     wakePeriodically = (__addon__.getSetting('PERIODIC_WAKE').lower() == 'true')
     wakeHourIdx = int(__addon__.getSetting('WAKE_AT'))
@@ -85,7 +85,7 @@ while not xbmc.abortRequested:
             time.sleep(5)
 
     #RPI and other arm devices do not have a wakealarm
-    if not parch.startswith 'arm':
+    if not parch.startswith('arm'):
 
         # reread setting in case it has changed
         shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
