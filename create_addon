@@ -1,17 +1,17 @@
 #!/bin/sh
 
-. packages/audo/meta
+. packages/meta
 
 rm -rf target/$PKG_VERSION.$PKG_REV/
 
 mkdir build
 
-cp -rf script.service.audo build/script.service.audo
+cp -rf $PKG_NAME build/$PKG_NAME
 
 mkdir -p target/$PKG_VERSION.$PKG_REV/
 cd build
-zip -rq9 ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip script.service.audo
-cp script.service.audo/changelog.txt ../target/$PKG_VERSION.$PKG_REV/changelog-$PKG_VERSION.$PKG_REV.txt
-cp script.service.audo/addon.xml ../target/$PKG_VERSION.$PKG_REV/addon.xml
+zip -rq9 ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip $PKG_NAME
+cp $PKG_NAME/changelog.txt ../target/$PKG_VERSION.$PKG_REV/changelog-$PKG_VERSION.$PKG_REV.txt
+cp $PKG_NAME/addon.xml ../target/$PKG_VERSION.$PKG_REV/addon.xml
 cd ..
 rm -rf build
