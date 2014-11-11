@@ -8,6 +8,12 @@ mkdir build
 
 cp -rf $PKG_NAME build/$PKG_NAME
 
+rm -f build/$PKG_NAME/resources/.gitignore
+
+for i in $PKG_DEPENDS;do
+ mkpkg/mkpkg_$i
+done
+
 mkdir -p target/$PKG_VERSION.$PKG_REV/
 cd build
 zip -rq9 ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip $PKG_NAME
