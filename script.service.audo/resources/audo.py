@@ -160,16 +160,16 @@ try:
     defaultConfig['misc']['https_cert']        = 'server.cert'
     defaultConfig['misc']['https_key']         = 'server.key'
     defaultConfig['misc']['host']              = host
-    defaultConfig['misc']['web_dir']           = 'Plush'
-    defaultConfig['misc']['web_dir2']          = 'Plush'
-    defaultConfig['misc']['web_color']         = 'gold'
-    defaultConfig['misc']['web_color2']        = 'gold'
     defaultConfig['misc']['log_dir']           = 'logs'
     defaultConfig['misc']['admin_dir']         = 'admin'
     defaultConfig['misc']['nzb_backup_dir']    = 'backup'
     defaultConfig['misc']['script_dir']        = 'scripts'
 
     if firstLaunch:
+        defaultConfig['misc']['web_dir']       = 'Plush'
+        defaultConfig['misc']['web_dir2']      = 'Plush'
+        defaultConfig['misc']['web_color']     = 'gold'
+        defaultConfig['misc']['web_color2']    = 'gold'
         defaultConfig['misc']['download_dir']  = pSabNzbdIncomplete
         defaultConfig['misc']['complete_dir']  = pSabNzbdComplete
         servers = {}
