@@ -1,3 +1,7 @@
+1.1.4
+- added binaries for armv7l devices
+- removed openelec requirement should work on all linux xbmc installs
+
 1.1.3
 - Added spanish and german translations
 
