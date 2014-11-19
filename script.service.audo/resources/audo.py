@@ -343,13 +343,13 @@ try:
     defaultConfig['xbmc']['username']            = xbmcUser
     defaultConfig['xbmc']['password']            = xbmcPwd
     defaultConfig['sabnzbd'] = {}
+    defaultConfig['transmission'] = {}
 
     if sabnzbd_launch:
         defaultConfig['sabnzbd']['username']     = user
         defaultConfig['sabnzbd']['password']     = pwd
         defaultConfig['sabnzbd']['api_key']      = sabNzbdApiKey
         defaultConfig['sabnzbd']['host']         = sabNzbdHost
-        defaultConfig['transmission'] = {}
 
     if transauth:
         defaultConfig['transmission']['username']         = transuser
