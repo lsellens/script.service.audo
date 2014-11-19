@@ -42,7 +42,7 @@ if not xbmcvfs.exists(pSuiteSettings):
     xbmcvfs.copy(pDefaultSuiteSettings, pSuiteSettings)
 
 #Get Device Home DIR
-pHomeDIR = expanduser("~")
+pHomeDIR = expanduser('~/')
 
 # directories
 pSabNzbdComplete = pHomeDIR+'downloads'
