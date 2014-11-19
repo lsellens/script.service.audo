@@ -16,8 +16,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#32000"
-msgid "audo"
-msgstr "audo"
+msgid "General"
+msgstr ""
 
 msgctxt "#32001"
 msgid "User Settings"
@@ -32,19 +32,19 @@ msgid "Password"
 msgstr "Passwort"
 
 msgctxt "#32004"
-msgid "Enable SABnzbd"
+msgid "Enable SABnzbd on Port: 8081"
 msgstr "SABnzbd aktivieren"
 
 msgctxt "#32005"
-msgid "Enable Sickbeard"
+msgid "Enable Sickbeard on Port: 8082"
 msgstr "Sickbeard aktivieren"
 
 msgctxt "#32006"
-msgid "Enable Couchpotato"
+msgid "Enable Couchpotato on Port: 8083"
 msgstr "Couchpotato aktivieren"
 
 msgctxt "#32007"
-msgid "Enable Headphones"
+msgid "Enable Headphones on Port: 8084"
 msgstr "Headphones aktivieren"
 
 msgctxt "#32008"

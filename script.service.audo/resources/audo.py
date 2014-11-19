@@ -1,6 +1,7 @@
 # Initializes and launches SABnzbd, Couchpotato, Sickbeard and Headphones
 from xml.dom.minidom import parseString
 from configobj import ConfigObj
+from os.path import expanduser
 import subprocess
 import urllib2
 import hashlib
@@ -36,18 +37,22 @@ pSickBeardSettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
 pCouchPotatoServerSettings  = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
 pHeadphonesSettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
 
+# the settings file already exists if the user set settings before the first launch
+if not xbmcvfs.exists(pSuiteSettings):
+    xbmcvfs.copy(pDefaultSuiteSettings, pSuiteSettings)
+
 #Get Device Home DIR
-pHomeDIR = os.path.expanduser('~/')
+pHomeDIR = expanduser("~")
 
 # directories
-pSabNzbdComplete      = pHomeDIR+'downloads'
-pSabNzbdWatchDir      = pHomeDIR+'downloads/watch'
-pSabNzbdCompleteTV    = pHomeDIR+'downloads/tvshows'
-pSabNzbdCompleteMov   = pHomeDIR+'downloads/movies'
+pSabNzbdComplete = pHomeDIR+'downloads'
+pSabNzbdWatchDir = pHomeDIR+'downloads/watch'
+pSabNzbdCompleteTV = pHomeDIR+'downloads/tvshows'
+pSabNzbdCompleteMov = pHomeDIR+'downloads/movies'
 pSabNzbdCompleteMusic = pHomeDIR+'downloads/music'
-pSabNzbdIncomplete    = pHomeDIR+'downloads/incomplete'
-pSickBeardTvScripts   = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
-pSabNzbdScripts       = xbmc.translatePath(__addonhome__ + 'scripts')
+pSabNzbdIncomplete = pHomeDIR+'downloads/incomplete'
+pSickBeardTvScripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
+pSabNzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts')
 
 # service commands
 sabnzbd               = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
@@ -85,10 +90,6 @@ if not xbmcvfs.exists(xbmc.translatePath(pSabNzbdScripts + '/sabToSickBeard.py')
     xbmcvfs.copy(xbmc.translatePath(pSickBeardTvScripts + '/sabToSickBeard.py'), pSabNzbdScripts + '/sabToSickBeard.py')
 if not xbmcvfs.exists(xbmc.translatePath(pSabNzbdScripts + '/autoProcessTV.py')):
     xbmcvfs.copy(xbmc.translatePath(pSickBeardTvScripts + '/autoProcessTV.py'), pSabNzbdScripts + '/autoProcessTV.py')
-
-# the settings file already exists if the user set settings before the first launch
-if not xbmcvfs.exists(pSuiteSettings):
-    xbmcvfs.copy(pDefaultSuiteSettings, pSuiteSettings)
 
 # read addon and xbmc settings
 # ----------------------------
@@ -150,9 +151,9 @@ try:
     sabNzbdConfig = ConfigObj(pSabNzbdSettings, create_empty=True)
     defaultConfig = ConfigObj()
     defaultConfig['misc'] = {}
-    defaultConfig['misc']['disable_api_key']   = '0'
     defaultConfig['misc']['check_new_rel']     = '0'
     defaultConfig['misc']['auto_browser']      = '0'
+    defaultConfig['misc']['disable_api_key']   = '0'
     defaultConfig['misc']['username']          = user
     defaultConfig['misc']['password']          = pwd
     defaultConfig['misc']['port']              = '8081'
@@ -163,9 +164,9 @@ try:
     defaultConfig['misc']['log_dir']           = 'logs'
     defaultConfig['misc']['admin_dir']         = 'admin'
     defaultConfig['misc']['nzb_backup_dir']    = 'backup'
-    defaultConfig['misc']['script_dir']        = 'scripts'
 
     if firstLaunch:
+        defaultConfig['misc']['script_dir']    = 'scripts'
         defaultConfig['misc']['web_dir']       = 'Plush'
         defaultConfig['misc']['web_dir2']      = 'Plush'
         defaultConfig['misc']['web_color']     = 'gold'
@@ -247,7 +248,6 @@ try:
     defaultConfig['General'] = {}
     defaultConfig['General']['launch_browser'] = '0'
     defaultConfig['General']['version_notify'] = '0'
-    defaultConfig['General']['use_api']        = '1'
     defaultConfig['General']['web_port']       = '8082'
     defaultConfig['General']['web_host']       = host
     defaultConfig['General']['web_username']   = user
@@ -260,6 +260,7 @@ try:
     defaultConfig['XBMC']['xbmc_host']         = 'localhost:' + xbmcPort
     defaultConfig['XBMC']['xbmc_username']     = xbmcUser
     defaultConfig['XBMC']['xbmc_password']     = xbmcPwd
+    defaultConfig['TORRENT'] = {}
 
     if sabnzbd_launch:
         defaultConfig['SABnzbd']['sab_username']   = user
@@ -268,13 +269,13 @@ try:
         defaultConfig['SABnzbd']['sab_host']       = 'http://' + sabNzbdHost + '/'
 
     if transauth:
-        defaultConfig['TORRENT'] = {}
-        defaultConfig['TORRENT']['torrent_username']         = transuser
-        defaultConfig['TORRENT']['torrent_password']         = transpwd
-        defaultConfig['TORRENT']['torrent_path']             = pSabNzbdCompleteTV
-        defaultConfig['TORRENT']['torrent_host']             = 'http://localhost:9091/'
+        defaultConfig['TORRENT']['torrent_username']      = transuser
+        defaultConfig['TORRENT']['torrent_password']      = transpwd
+        defaultConfig['TORRENT']['torrent_host']          = 'http://localhost:9091/'
 
     if sbfirstLaunch:
+        defaultConfig['TORRENT']['torrent_path']          = pSabNzbdCompleteTV
+        defaultConfig['General']['use_api']               = '1'
         defaultConfig['General']['tv_download_dir']       = pSabNzbdComplete
         defaultConfig['General']['metadata_xbmc_12plus']  = '0|0|0|0|0|0|0|0|0|0'
         defaultConfig['General']['nzb_method']            = 'sabnzbd'
@@ -332,9 +333,6 @@ try:
     defaultConfig['core']['launch_browser']      = '0'
     defaultConfig['core']['host']                = host
     defaultConfig['core']['data_dir']            = __addonhome__
-    defaultConfig['core']['show_wizard']         = '0'
-    defaultConfig['core']['debug']               = '0'
-    defaultConfig['core']['development']         = '0'
     defaultConfig['updater'] = {}
     defaultConfig['updater']['enabled']          = '0'
     defaultConfig['updater']['notification']     = '0'
@@ -351,15 +349,15 @@ try:
         defaultConfig['sabnzbd']['password']     = pwd
         defaultConfig['sabnzbd']['api_key']      = sabNzbdApiKey
         defaultConfig['sabnzbd']['host']         = sabNzbdHost
+        defaultConfig['transmission'] = {}
 
     if transauth:
-        defaultConfig['transmission'] = {}
         defaultConfig['transmission']['username']         = transuser
         defaultConfig['transmission']['password']         = transpwd
-        defaultConfig['transmission']['directory']        = pSabNzbdCompleteMov
         defaultConfig['transmission']['host']             = 'localhost:9091'
 
     if cpfirstLaunch:
+        defaultConfig['transmission']['directory']        = pSabNzbdCompleteMov
         defaultConfig['xbmc']['xbmc_update_library']      = '1'
         defaultConfig['xbmc']['xbmc_update_full']         = '1'
         defaultConfig['xbmc']['xbmc_notify_onsnatch']     = '1'
@@ -378,6 +376,9 @@ try:
         defaultConfig['renamer']['cleanup']               = '0'
         defaultConfig['core']['permission_folder']        = '0644'
         defaultConfig['core']['permission_file']          = '0644'
+        defaultConfig['core']['show_wizard']              = '0'
+        defaultConfig['core']['debug']                    = '0'
+        defaultConfig['core']['development']              = '0'
 
     couchPotatoServerConfig.merge(defaultConfig)
     couchPotatoServerConfig.write()
@@ -401,7 +402,6 @@ try:
     defaultConfig = ConfigObj()
     defaultConfig['General'] = {}
     defaultConfig['General']['launch_browser']            = '0'
-    defaultConfig['General']['api_enabled']               = '1'
     defaultConfig['General']['http_port']                 = '8084'
     defaultConfig['General']['http_host']                 = host
     defaultConfig['General']['http_username']             = user
@@ -416,6 +416,7 @@ try:
     defaultConfig['XBMC']['xbmc_username']                = xbmcUser
     defaultConfig['XBMC']['xbmc_password']                = xbmcPwd
     defaultConfig['SABnzbd'] = {}
+    defaultConfig['Transmission'] = {}
 
     if sabnzbd_launch:
         defaultConfig['SABnzbd']['sab_apikey']         = sabNzbdApiKey
@@ -424,12 +425,13 @@ try:
         defaultConfig['SABnzbd']['sab_password']       = pwd
 
     if transauth:
-        defaultConfig['Transmission'] = {}
         defaultConfig['Transmission']['transmission_username'] = transuser
         defaultConfig['Transmission']['transmission_password'] = transpwd
         defaultConfig['Transmission']['transmission_host']     = 'http://localhost:9091'
 
     if hpfirstLaunch:
+        defaultConfig['Transmission']['download_torrent_dir']  = pSabNzbdCompleteMusic
+        defaultConfig['General']['api_enabled']                = '1'
         defaultConfig['SABnzbd']['sab_category']               = 'music'
         defaultConfig['XBMC']['xbmc_update']                   = '1'
         defaultConfig['XBMC']['xbmc_notify']                   = '1'
