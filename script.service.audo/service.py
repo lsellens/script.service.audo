@@ -60,13 +60,15 @@ if not parch.startswith('arm'):
 
 # SABnzbd addresses and api key
 sabNzbdConfigFile = (xbmc.translatePath(__addonhome__ + 'sabnzbd.ini'))
-while not xbmcvfs.exists(sabNzbdConfigFile):
-    time.sleep(5)
-else:
-    time.sleep(5)
-    sabConfiguration  = ConfigObj(sabNzbdConfigFile)
+while 'true':
+    try:
+        sabConfiguration = ConfigObj(sabNzbdConfigFile)
+        sabNzbdApiKey = sabConfiguration['misc']['api_key']
+        break
+    except:
+        pass
+
     sabNzbdAddress    = "localhost:8081"
-    sabNzbdApiKey     = sabConfiguration['misc']['api_key']
     sabNzbdQueue      = ('http://' + sabNzbdAddress + '/api?mode=queue&output=xml&apikey=' + sabNzbdApiKey)
     sabNzbdHistory    = ('http://' + sabNzbdAddress + '/api?mode=history&output=xml&apikey=' + sabNzbdApiKey)
     sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
