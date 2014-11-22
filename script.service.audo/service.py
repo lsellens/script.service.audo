@@ -59,12 +59,14 @@ if not parch.startswith('arm'):
         xbmc.log('AUDO: Will try to wake system daily at ' + wake_times[wakeHourIdx])
 
 # SABnzbd addresses and api key
-sabNzbdConfigFile = (xbmc.translatePath(__addonhome__ + 'sabnzbd.ini'))
-while not xbmcvfs.exists(sabNzbdConfigFile):
+sabNzbdConfigFileDone = (xbmc.translatePath(__addonhome__ + 'sabnzbd.done'))
+
+while not xbmcvfs.exists(sabNzbdConfigFileDone):
     time.sleep(5)
 else:
-    #stupid long wait for RPi's the script will fail on first install without this
-    time.sleep(60)
+    break
+
+sabNzbdConfigFile = (xbmc.translatePath(__addonhome__ + 'sabnzbd.ini'))
 sabConfiguration = ConfigObj(sabNzbdConfigFile)
 sabNzbdApiKey = sabConfiguration['misc']['api_key']
 sabNzbdAddress = "localhost:8081"

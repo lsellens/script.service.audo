@@ -239,6 +239,9 @@ except Exception, e:
     xbmc.log(str(e), level=xbmc.LOGERROR)
 # SABnzbd end
 
+if not xbmcvfs.exists(xbmc.translatePath(__addonhome__ + 'sabnzbd.done')):
+    xbmcvfs.File(xbmc.translatePath(__addonhome__ + 'sabnzbd.done'), 'w').close()
+
 # SickBeard start
 try:
     # write SickBeard settings
