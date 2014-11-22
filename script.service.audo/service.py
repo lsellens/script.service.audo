@@ -60,19 +60,18 @@ if not parch.startswith('arm'):
 
 # SABnzbd addresses and api key
 sabNzbdConfigFile = (xbmc.translatePath(__addonhome__ + 'sabnzbd.ini'))
-while 'true':
-    try:
-        sabConfiguration = ConfigObj(sabNzbdConfigFile)
-        sabNzbdApiKey = sabConfiguration['misc']['api_key']
-        break
-    except:
-        pass
-
-    sabNzbdAddress    = "localhost:8081"
-    sabNzbdQueue      = ('http://' + sabNzbdAddress + '/api?mode=queue&output=xml&apikey=' + sabNzbdApiKey)
-    sabNzbdHistory    = ('http://' + sabNzbdAddress + '/api?mode=history&output=xml&apikey=' + sabNzbdApiKey)
-    sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
-    sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
+while not xbmcvfs.exists(sabNzbdConfigFile):
+    time.sleep(5)
+else:
+    #stupid long wait for RPi's the script will fail on first install without this
+    time.sleep(60)
+sabConfiguration = ConfigObj(sabNzbdConfigFile)
+sabNzbdApiKey = sabConfiguration['misc']['api_key']
+sabNzbdAddress = "localhost:8081"
+sabNzbdQueue = ('http://' + sabNzbdAddress + '/api?mode=queue&output=xml&apikey=' + sabNzbdApiKey)
+sabNzbdHistory = ('http://' + sabNzbdAddress + '/api?mode=history&output=xml&apikey=' + sabNzbdApiKey)
+sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
+sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
 
 while not xbmc.abortRequested:
     # detect machine arch and setup binaries after an update
