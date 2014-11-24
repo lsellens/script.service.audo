@@ -61,10 +61,11 @@ if not parch.startswith('arm'):
 # SABnzbd addresses and api key
 sabNzbdConfigFileDone = (xbmc.translatePath(__addonhome__ + 'sabnzbd.done'))
 
-while not xbmcvfs.exists(sabNzbdConfigFileDone):
-    time.sleep(5)
-else:
-    break
+while True:
+    if not xbmcvfs.exists(sabNzbdConfigFileDone):
+        time.sleep(5)
+    else:
+        break
 
 sabNzbdConfigFile = (xbmc.translatePath(__addonhome__ + 'sabnzbd.ini'))
 sabConfiguration = ConfigObj(sabNzbdConfigFile)
