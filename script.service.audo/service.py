@@ -14,7 +14,7 @@ __url__          = "http://code.google.com/p/repository-lsellens/"
 __addon__        = xbmcaddon.Addon(id='script.service.audo')
 __addonpath__    = __addon__.getAddonInfo('path')
 __addonhome__    = __addon__.getAddonInfo('profile')
-__dependancies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
+__dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 __start__        = xbmc.translatePath(__addonpath__ + '/resources/audo.py')
 
 checkInterval    = 240
@@ -26,14 +26,14 @@ idleTimer        = 0
 # detect machine arch and setup binaries on first run
 parch = os.uname()[4]
 
-if not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
     xbmc.log('AUDO: Setting up binaries:', level=xbmc.LOGDEBUG)
     try:
-        xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependancies__ + '/default.py'), True)
+        xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependencies__ + '/default.py'), True)
     except Exception, e:
         xbmc.log('AUDO: Error setting up binaries:', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
-    while not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+    while not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         time.sleep(5)
 
 # Launch audo
@@ -78,14 +78,14 @@ sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</stat
 
 while not xbmc.abortRequested:
     # detect machine arch and setup binaries after an update
-    if not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+    if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)
         try:
-            xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependancies__ + '/default.py'), True)
+            xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependencies__ + '/default.py'), True)
         except Exception, e:
             xbmc.log('AUDO: Error setting up binaries:', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
-        while not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+        while not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
             time.sleep(5)
 
     #RPI and other arm devices do not have a wakealarm

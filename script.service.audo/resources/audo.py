@@ -26,7 +26,7 @@ __addon__             = xbmcaddon.Addon(id='script.service.audo')
 __addonpath__         = xbmc.translatePath(__addon__.getAddonInfo('path'))
 __addonhome__         = xbmc.translatePath(__addon__.getAddonInfo('profile'))
 __programs__          = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
-__dependancies__      = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
+__dependencies__      = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 
 # settings
 pDefaultSuiteSettings = xbmc.translatePath(__addonpath__ + '/settings-default.xml')
@@ -142,7 +142,7 @@ except StandardError:
     xbmcPwd = ''
 
 # prepare execution environment
-os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependancies__ + '/lib'
+os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
 
 # SABnzbd start
 try:
