@@ -56,14 +56,16 @@ pSabNzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts')
 
 # service commands
 sabnzbd               = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
-                         '-d', '-f', pSabNzbdSettings, '-l 0']
+                         '-d', '--pidfile', xbmc.translatePath(__addonhome__ + 'sabnzbd.pid'), '-f', pSabNzbdSettings, '-l 0']
 sickBeard             = ['python', xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'),
-                         '--daemon', '--datadir', __addonhome__,'--pidfile=/run/sickbeard.pid', '--config', pSickBeardSettings]
+                         '--daemon', '--datadir', __addonhome__, '--pidfile', xbmc.translatePath(__addonhome__ + 'sickbeard.pid'),
+                         '--config', pSickBeardSettings]
 couchPotatoServer     = ['python', xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'),
                          '--daemon', '--pid_file', xbmc.translatePath(__addonhome__ + 'couchpotato.pid'),
                          '--config_file', pCouchPotatoServerSettings]
 headphones            = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
-                         '-d', '--datadir', __addonhome__, '--config', pHeadphonesSettings]
+                         '-d', '--datadir', __addonhome__, '--pidfile', xbmc.translatePath(__addonhome__ + 'headphones.pid'),
+                         '--config', pHeadphonesSettings]
 
 # Other stuff
 sabNzbdHost           = 'localhost:8081'
