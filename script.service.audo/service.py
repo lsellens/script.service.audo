@@ -14,8 +14,7 @@ __url__          = "http://code.google.com/p/repository-lsellens/"
 __addon__        = xbmcaddon.Addon(id='script.service.audo')
 __addonpath__    = __addon__.getAddonInfo('path')
 __addonhome__    = __addon__.getAddonInfo('profile')
-__dependancies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
-__programs__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
+__dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 __start__        = xbmc.translatePath(__addonpath__ + '/resources/audo.py')
 
 checkInterval    = 240
@@ -27,19 +26,14 @@ idleTimer        = 0
 # detect machine arch and setup binaries on first run
 parch = os.uname()[4]
 
-if parch.startswith('armv7l'):
-    parch = 'armv7l'
-elif parch.startswith('arm'):
-    parch = 'arm'
-
-if not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
     xbmc.log('AUDO: Setting up binaries:', level=xbmc.LOGDEBUG)
     try:
-        xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependancies__ + '/default.py'), True)
+        xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependencies__ + '/default.py'), True)
     except Exception, e:
         xbmc.log('AUDO: Error setting up binaries:', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
-    while not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+    while not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         time.sleep(5)
 
 # Launch audo
@@ -55,7 +49,7 @@ socket.setdefaulttimeout(timeout)
 # perform some initial checks and log essential settings
 shouldKeepAwake = 'false'
 wakePeriodically = 'false'
-if (parch != 'arm') and (parch != 'armv7l'):
+if not parch.startswith('arm'):
     shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
     wakePeriodically = (__addon__.getSetting('PERIODIC_WAKE').lower() == 'true')
     wakeHourIdx = int(__addon__.getSetting('WAKE_AT'))
@@ -65,48 +59,37 @@ if (parch != 'arm') and (parch != 'armv7l'):
         xbmc.log('AUDO: Will try to wake system daily at ' + wake_times[wakeHourIdx])
 
 # SABnzbd addresses and api key
+sabNzbdConfigFileDone = (xbmc.translatePath(__addonhome__ + 'sabnzbd.done'))
+
+while True:
+    if not xbmcvfs.exists(sabNzbdConfigFileDone):
+        time.sleep(5)
+    else:
+        break
+
 sabNzbdConfigFile = (xbmc.translatePath(__addonhome__ + 'sabnzbd.ini'))
-while not xbmcvfs.exists(sabNzbdConfigFile):
-    time.sleep(5)
-else:
-    time.sleep(5)
-    sabConfiguration  = ConfigObj(sabNzbdConfigFile)
-    sabNzbdAddress    = "localhost:8081"
-    sabNzbdApiKey     = sabConfiguration['misc']['api_key']
-    sabNzbdQueue      = ('http://' + sabNzbdAddress + '/api?mode=queue&output=xml&apikey=' + sabNzbdApiKey)
-    sabNzbdHistory    = ('http://' + sabNzbdAddress + '/api?mode=history&output=xml&apikey=' + sabNzbdApiKey)
-    sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
-    sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
+sabConfiguration = ConfigObj(sabNzbdConfigFile)
+sabNzbdApiKey = sabConfiguration['misc']['api_key']
+sabNzbdAddress = "localhost:8081"
+sabNzbdQueue = ('http://' + sabNzbdAddress + '/api?mode=queue&output=xml&apikey=' + sabNzbdApiKey)
+sabNzbdHistory = ('http://' + sabNzbdAddress + '/api?mode=history&output=xml&apikey=' + sabNzbdApiKey)
+sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
+sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
 
 while not xbmc.abortRequested:
     # detect machine arch and setup binaries after an update
-    if not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+    if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)
         try:
-            xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependancies__ + '/default.py'), True)
+            xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependencies__ + '/default.py'), True)
         except Exception, e:
             xbmc.log('AUDO: Error setting up binaries:', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
-        while not xbmcvfs.exists(xbmc.translatePath(__dependancies__ + '/arch.' + parch)):
+        while not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
             time.sleep(5)
 
-    # detect update of audo-programs and restart services
-    if not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/.current')):
-        xbmc.log('AUDO: Update occurred. Attempting to restart Audo services:', level=xbmc.LOGDEBUG)
-        try:
-            os.system("kill `ps | grep -E 'python.*script.module.audo' | awk '{print $1}'`")
-            time.sleep(20)
-            if (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'))) and (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'))) and (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'))):
-                time.sleep(60)
-                xbmc.executebuiltin('XBMC.Notification('+__scriptname__+': Update detected,Restarting services now...,5000,)')
-                time.sleep(10)
-                xbmc.executebuiltin('XBMC.RunScript(%s)' % __start__, True)
-        except Exception, e:
-            xbmc.log('InternetPVR: Could not execute launch script:', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-
-    #RPI does not have a wakealarm
-    if (parch != 'arm') and (parch != 'armv7l'):
+    #RPI and other arm devices do not have a wakealarm
+    if not parch.startswith('arm'):
 
         # reread setting in case it has changed
         shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')

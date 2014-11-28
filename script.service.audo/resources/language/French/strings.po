@@ -1,76 +1,76 @@
 # XBMC Media Center language file
 # Translators:
-# Xhinde <Xhinde@gmail.com>, 2014
+# theolop, 2014
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenELEC-addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
 "POT-Creation-Date: 2014-04-03 02:08+0000\n"
-"PO-Revision-Date: 2014-09-01 07:11+0000\n"
+"PO-Revision-Date: 2014-05-12 00:56+0000\n"
 "Last-Translator: lsellens <lsellens@gmail.com>\n"
-"Language-Team: German (http://www.transifex.com/projects/p/openelec-addons/language/de/)\n"
+"Language-Team: French (http://www.transifex.com/projects/p/openelec-addons/language/fr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgctxt "#32000"
-msgid "audo"
-msgstr "audo"
+msgid "General"
+msgstr ""
 
 msgctxt "#32001"
 msgid "User Settings"
-msgstr "Benutzer einstellungen"
+msgstr "Paramètres utilisateur"
 
 msgctxt "#32002"
 msgid "Username"
-msgstr "Benutzername"
+msgstr "Nom d'utilisateur"
 
 msgctxt "#32003"
 msgid "Password"
-msgstr "Passwort"
+msgstr "Mot de Passe"
 
 msgctxt "#32004"
-msgid "Enable SABnzbd"
-msgstr "SABnzbd aktivieren"
+msgid "Enable SABnzbd on Port: 8081"
+msgstr "Activer SABnzbd"
 
 msgctxt "#32005"
-msgid "Enable Sickbeard"
-msgstr "Sickbeard aktivieren"
+msgid "Enable Sickbeard on Port: 8082"
+msgstr "Activer Sickbeard"
 
 msgctxt "#32006"
-msgid "Enable Couchpotato"
-msgstr "Couchpotato aktivieren"
+msgid "Enable Couchpotato on Port: 8083"
+msgstr "Activer Couchpotato"
 
 msgctxt "#32007"
-msgid "Enable Headphones"
-msgstr "Headphones aktivieren"
+msgid "Enable Headphones on Port: 8084"
+msgstr "Activer les écouteurs"
 
 msgctxt "#32008"
 msgid "Network Settings"
-msgstr "Netzwerk Eigenschaften"
+msgstr "Paramètres réseau"
 
 msgctxt "#32009"
 msgid "Allowed IP addresses"
-msgstr "Zugelassene IP-Adressen"
+msgstr "Adresses IP autorisées"
 
 msgctxt "#32010"
 msgid "Sleep"
-msgstr "Schlafen"
+msgstr "Mettre en veille"
 
 msgctxt "#32011"
 msgid "Keep awake while downloading"
-msgstr "Wach halten während dem runterladen"
+msgstr "Laisser en marche pendant le téléchargement"
 
 msgctxt "#32012"
 msgid "Wake up periodically"
-msgstr "Periodisch aufwecken"
+msgstr "Réveiller régulièrement"
 
 msgctxt "#32013"
 msgid "Wake up at"
-msgstr "Aufwachen um"
+msgstr "Réveiller à"
 
 msgctxt "#32014"
 msgid "Restart on suspend / resume"
-msgstr "Neu starten bei sperren / fortsetzen"
+msgstr "Redémarrage en attente / reprendre"
