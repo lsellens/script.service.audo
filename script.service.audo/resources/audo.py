@@ -146,6 +146,9 @@ except StandardError:
 # prepare execution environment
 os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
 
+#Touch audo-programs folder stating they are currently loaded <-- for detecting update
+open(__programs__ + '/.current', 'a').close()
+
 # SABnzbd start
 try:
     # write SABnzbd settings
