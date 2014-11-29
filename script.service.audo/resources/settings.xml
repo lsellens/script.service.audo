@@ -26,7 +26,9 @@
                 <setting id="RESTART_ON_RESUME" type="bool" label="32014" default="true"
                          visible="System.CanSuspend"/>
     </category>
-    <category label="3000">
+    <category label="Folders">
+		<setting label="Folder Settings" type="lsep"/>
+		<setting type="sep"/>
 		<setting id="FOLDER_MODE" type="bool" label="Configure folders through WEB Interfaces?" default="false" visible="true"/>
                 <setting label="Log on to [IP]:[PORT] to setup Sickbeard, CouchPotato & Headphones" type="lsep" visible="eq(-1,true)"/>
 		<setting id="MOVIES_DIR" type="folder" label="Default Movie Directory" source="auto" option="writeable" visible="!eq(-2,true)" />
