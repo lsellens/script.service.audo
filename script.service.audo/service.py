@@ -80,6 +80,16 @@ while not xbmc.abortRequested:
     # detect machine arch and setup binaries after an update
     if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)
+        count1 = 1
+        count2 = 2
+        while count1 != count2:
+            count1 = 0
+            count2 = 0
+            for root, dirs, files in os.walk(__dependencies__):
+                count1 += len(files)
+            time.sleep(3)
+            for root, dirs, files in os.walk(__dependencies__):
+                count2 += len(files)
         try:
             xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependencies__ + '/default.py'), True)
         except Exception, e:
