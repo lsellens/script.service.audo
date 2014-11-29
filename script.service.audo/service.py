@@ -15,6 +15,7 @@ __addon__        = xbmcaddon.Addon(id='script.service.audo')
 __addonpath__    = __addon__.getAddonInfo('path')
 __addonhome__    = __addon__.getAddonInfo('profile')
 __dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
+__programs__     = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
 __start__        = xbmc.translatePath(__addonpath__ + '/resources/audo.py')
 
 checkInterval    = 240
@@ -80,6 +81,16 @@ while not xbmc.abortRequested:
     # detect machine arch and setup binaries after an update
     if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)
+        count1 = 1
+        count2 = 2
+        while count1 != count2:
+            count1 = 0
+            count2 = 0
+            for root, dirs, files in os.walk(__dependencies__):
+                count1 += len(files)
+            time.sleep(3)
+            for root, dirs, files in os.walk(__dependencies__):
+                count2 += len(files)
         try:
             xbmc.executebuiltin('XBMC.RunScript(%s)' % xbmc.translatePath(__dependencies__ + '/default.py'), True)
         except Exception, e:
@@ -87,6 +98,30 @@ while not xbmc.abortRequested:
             xbmc.log(str(e), level=xbmc.LOGERROR)
         while not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
             time.sleep(5)
+
+    # detect update of audo-programs and restart services
+    if not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/.current')):
+        xbmc.log('AUDO: Update occurred. Attempting to restart Audo services:', level=xbmc.LOGDEBUG)
+        count1 = 1
+        count2 = 2
+        xbmc.executebuiltin('XBMC.Notification('+__scriptname__+': Update detected,Stopping services now...,5000,)')
+        os.system("kill `ps | grep -E 'python.*script.module.audo' | awk '{print $1}'`")
+        while count1 != count2:
+            count1 = 0
+            count2 = 0
+            for root, dirs, files in os.walk(__programs__):
+                count1 += len(files)
+            time.sleep(3)
+            for root, dirs, files in os.walk(__programs__):
+                count2 += len(files)
+        try:
+            if (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'))) and (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'))) and (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'))):
+                xbmc.executebuiltin('XBMC.Notification('+__scriptname__+': Update detected,Restarting services now...,5000,)')
+                time.sleep(3)
+                xbmc.executebuiltin('XBMC.RunScript(%s)' % __start__, True)
+        except Exception, e:
+            xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
 
     #RPI and other arm devices do not have a wakealarm
     if not parch.startswith('arm'):
