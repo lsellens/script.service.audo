@@ -86,20 +86,81 @@ pSickBeardSettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
 pCouchPotatoServerSettings  = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
 pHeadphonesSettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
 
-# the settings file already exists if the user set settings before the first launch
-if not xbmcvfs.exists(pSuiteSettings):
-    xbmcvfs.copy(pDefaultSuiteSettings, pSuiteSettings)
+
+# Read add-on settings
+# --------------------
+# Transmission-Daemon
+transauth = False
+try:
+    transmissionaddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
+    transauth = (transmissionaddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
+    transdl = (transmissionaddon.getSetting('TRANSMISSION_DL_DIR').decode('utf-8'))
+    transinc = (transmissionaddon.getSetting('TRANSMISSION_INC_DIR').decode('utf-8'))
+    transwatch = (transmissionaddon.getSetting('TRANSMISSION_WATCH_DIR').decode('utf-8'))
+
+    if transauth:
+        xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
+        transuser = (transmissionaddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
+        if transuser == '':
+            transuser = None
+        transpwd = (transmissionaddon.getSetting('TRANSMISSION_PWD').decode('utf-8'))
+        if transpwd == '':
+            transpwd = None
+    else:
+        xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
+
+except Exception, e:
+    xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
+    xbmc.log(str(e), level=xbmc.LOGNOTICE)
+    pass
+
+# audo
+user = (__addon__.getSetting('SABNZBD_USER').decode('utf-8'))
+pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
+host = (__addon__.getSetting('SABNZBD_IP'))
+sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
+sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
+couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
+headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
 
 #Get Device Home DIR
 pHomeDIR = expanduser('~/')
 
+# the settings file already exists if the user set settings before the first launch
+if not xbmcvfs.exists(pSuiteSettings):
+    # Write default settings file with default folder locations (Done this way to support multi-platforms)
+    # (Also, there must be an easier way to do this...)
+    create_dir(__addonhome__)
+    infile       = open(pDefaultSuiteSettings)
+    outfile      = open(pSuiteSettings, 'w')
+    replacements = {"pDL":pHomeDIR+'downloads', "pTV":pHomeDIR+'TVShows', "pMOV":pHomeDIR+'Movies', "pMUS":pHomeDIR+'Music'}
+
+    for line in infile:
+        for src, target in replacements.iteritems():
+            line = line.replace(src, target)
+        outfile.write(line)
+    infile.close()
+    outfile.close()
+
+# Define current folder location from settings
+sickbeard_watch_dir = (__addon__.getSetting('TVSHOW_DIR').decode('utf-8'))
+couchpotato_watch_dir = (__addon__.getSetting('MOVIES_DIR').decode('utf-8'))
+headphones_watch_dir = (__addon__.getSetting('MUSIC_DIR').decode('utf-8'))
+dl_dir = (__addon__.getSetting('DL_DIR').decode('utf-8'))
+pmode = (__addon__.getSetting('FOLDER_MODE').decode('utf-8'))
+
 # directories
-pSabNzbdComplete = pHomeDIR+'downloads'
-pSabNzbdWatchDir = pHomeDIR+'downloads/watch'
-pSabNzbdCompleteTV = pHomeDIR+'downloads/tvshows'
-pSabNzbdCompleteMov = pHomeDIR+'downloads/movies'
-pSabNzbdCompleteMusic = pHomeDIR+'downloads/music'
-pSabNzbdIncomplete = pHomeDIR+'downloads/incomplete'
+pHomeDownloadsDir = dl_dir
+pSabNzbdComplete = dl_dir+'complete'
+pSabNzbdCompleteTV = dl_dir+'complete/tvshows'
+pSabNzbdCompleteMov = dl_dir+'complete/movies'
+pSabNzbdCompleteMusic = dl_dir+'complete/music'
+pSabNzbdWatchDir = dl_dir+'watch'
+pSabNzbdIncomplete = dl_dir+'nzb/incomplete'
+pTorrentComplete = dl_dir + "torrent/complete"
+pTorrentCompleteTV = dl_dir + "torrent/complete/tvshows"
+pTorrentCompleteMov = dl_dir + "torrent/complete/movies"
+pTorrentCompleteMus = dl_dir + "torrent/complete/music"
 pSickBeardTvScripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
 pSabNzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts')
 
@@ -145,37 +206,8 @@ if not xbmcvfs.exists(xbmc.translatePath(pSabNzbdScripts + '/autoProcessTV.py'))
 # read addon and xbmc settings
 # ----------------------------
 
-# Transmission-Daemon
-transauth = False
-try:
-    transmissionaddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
-    transauth = (transmissionaddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
-
-    if transauth:
-        xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
-        transuser = (transmissionaddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
-        if transuser == '':
-            transuser = None
-        transpwd = (transmissionaddon.getSetting('TRANSMISSION_PWD').decode('utf-8'))
-        if transpwd == '':
-            transpwd = None
-    else:
-        xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
-
-except Exception, e:
-    xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
-    xbmc.log(str(e), level=xbmc.LOGNOTICE)
-    pass
-
-# audo
-user = (__addon__.getSetting('SABNZBD_USER').decode('utf-8'))
-pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
-host = (__addon__.getSetting('SABNZBD_IP'))
-sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
-sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
-couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
-headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
-
+# read XBMC settings
+# ----------------------------
 # XBMC
 fXbmcSettings = open(pXbmcSettings, 'r')
 data = fXbmcSettings.read()
@@ -222,8 +254,6 @@ try:
         defaultConfig['misc']['web_dir2']      = 'Plush'
         defaultConfig['misc']['web_color']     = 'gold'
         defaultConfig['misc']['web_color2']    = 'gold'
-        defaultConfig['misc']['download_dir']  = pSabNzbdIncomplete
-        defaultConfig['misc']['complete_dir']  = pSabNzbdComplete
         servers = {}
         servers['localhost'] = {}
         servers['localhost']['host']           = 'localhost'
@@ -244,6 +274,10 @@ try:
         categories['music']['priority']        = '-100'
         defaultConfig['servers'] = servers
         defaultConfig['categories'] = categories
+
+    if not pmode:
+        defaultConfig['misc']['download_dir']  = pSabNzbdIncomplete
+        defaultConfig['misc']['complete_dir']  = pSabNzbdComplete
 
     sabNzbdConfig.merge(defaultConfig)
     sabNzbdConfig.write()
@@ -329,9 +363,7 @@ try:
         defaultConfig['TORRENT']['torrent_host']          = 'http://localhost:9091/'
 
     if sbfirstLaunch:
-        defaultConfig['TORRENT']['torrent_path']          = pSabNzbdCompleteTV
         defaultConfig['General']['use_api']               = '1'
-        defaultConfig['General']['tv_download_dir']       = pSabNzbdComplete
         defaultConfig['General']['metadata_xbmc_12plus']  = '0|0|0|0|0|0|0|0|0|0'
         defaultConfig['General']['nzb_method']            = 'sabnzbd'
         defaultConfig['General']['keep_processed_dir']    = '0'
@@ -341,7 +373,6 @@ try:
         defaultConfig['General']['naming_use_periods']    = '1'
         defaultConfig['General']['naming_sep_type']       = '1'
         defaultConfig['General']['naming_ep_type']        = '1'
-        defaultConfig['General']['root_dirs']             = '0|'+pHomeDIR+'tvshows'
         defaultConfig['General']['naming_custom_abd']     = '0'
         defaultConfig['General']['naming_abd_pattern']    = '%SN - %A-D - %EN'
         defaultConfig['Blackhole'] = {}
@@ -353,6 +384,11 @@ try:
         defaultConfig['XBMC']['xbmc_notify_ondownload']   = '1'
         defaultConfig['XBMC']['xbmc_update_library']      = '1'
         defaultConfig['XBMC']['xbmc_update_full']         = '1'
+
+    if not pmode:
+        defaultConfig['TORRENT']['torrent_path']          = pTorrentCompleteTV
+        defaultConfig['General']['tv_download_dir']       = pTorrentCompleteTV
+        defaultConfig['General']['root_dirs']             = '0|'+sickbeard_watch_dir
 
     sickBeardConfig.merge(defaultConfig)
     sickBeardConfig.write()
@@ -413,7 +449,6 @@ try:
         defaultConfig['transmission']['host']             = 'localhost:9091'
 
     if cpfirstLaunch:
-        defaultConfig['transmission']['directory']        = pSabNzbdCompleteMov
         defaultConfig['xbmc']['xbmc_update_library']      = '1'
         defaultConfig['xbmc']['xbmc_update_full']         = '1'
         defaultConfig['xbmc']['xbmc_notify_onsnatch']     = '1'
@@ -423,11 +458,8 @@ try:
         defaultConfig['blackhole']['use_for']             = 'both'
         defaultConfig['blackhole']['enabled']             = '0'
         defaultConfig['sabnzbd']['category']              = 'movies'
-        defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
         defaultConfig['renamer'] = {}
         defaultConfig['renamer']['enabled']               = '1'
-        defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
-        defaultConfig['renamer']['to']                    = pHomeDIR+'videos'
         defaultConfig['renamer']['separator']             = '.'
         defaultConfig['renamer']['cleanup']               = '0'
         defaultConfig['core']['permission_folder']        = '0644'
@@ -435,6 +467,12 @@ try:
         defaultConfig['core']['show_wizard']              = '0'
         defaultConfig['core']['debug']                    = '0'
         defaultConfig['core']['development']              = '0'
+
+    if not pmode:
+        defaultConfig['transmission']['directory']        = pTorrentCompleteMov
+        defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
+        defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
+        defaultConfig['renamer']['to']                    = couchpotato_watch_dir
 
     couchPotatoServerConfig.merge(defaultConfig)
     couchPotatoServerConfig.write()
@@ -487,18 +525,20 @@ try:
         defaultConfig['Transmission']['transmission_host']     = 'http://localhost:9091'
 
     if hpfirstLaunch:
-        defaultConfig['Transmission']['download_torrent_dir']  = pSabNzbdCompleteMusic
         defaultConfig['General']['api_enabled']                = '1'
         defaultConfig['SABnzbd']['sab_category']               = 'music'
         defaultConfig['XBMC']['xbmc_update']                   = '1'
         defaultConfig['XBMC']['xbmc_notify']                   = '1'
-        defaultConfig['General']['music_dir']                  = pHomeDIR+'music'
-        defaultConfig['General']['destination_dir']            = pHomeDIR+'music'
-        defaultConfig['General']['torrentblackhole_dir']       = pSabNzbdWatchDir
-        defaultConfig['General']['download_dir']               = pSabNzbdCompleteMusic
         defaultConfig['General']['move_files']                 = '1'
         defaultConfig['General']['rename_files']               = '1'
         defaultConfig['General']['folder_permissions']         = '0644'
+
+    if not pmode:
+        defaultConfig['General']['music_dir']                  = headphones_watch_dir
+        defaultConfig['General']['destination_dir']            = headphones_watch_dir
+        defaultConfig['General']['torrentblackhole_dir']       = pSabNzbdWatchDir
+        defaultConfig['Transmission']['download_torrent_dir']  = pSabNzbdCompleteMusic
+        defaultConfig['General']['download_dir']               = pSabNzbdCompleteMusic
 
     headphonesConfig.merge(defaultConfig)
     headphonesConfig.write()

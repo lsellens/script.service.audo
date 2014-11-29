@@ -26,4 +26,12 @@
                 <setting id="RESTART_ON_RESUME" type="bool" label="32014" default="true"
                          visible="System.CanSuspend"/>
     </category>
+    <category label="3000">
+		<setting id="FOLDER_MODE" type="bool" label="Configure folders through WEB Interfaces?" default="false" visible="true"/>
+                <setting label="Log on to [IP]:[PORT] to setup Sickbeard, CouchPotato & Headphones" type="lsep" visible="eq(-1,true)"/>
+		<setting id="MOVIES_DIR" type="folder" label="Default Movie Directory" source="auto" option="writeable" visible="!eq(-2,true)" />
+		<setting id="TVSHOW_DIR" type="folder" label="Default TV Show Directory" source="auto" option="writeable" visible="!eq(-3,true)" />
+		<setting id="MUSIC_DIR" type="folder" label="Default Music Directory" source="auto" option="writeable" visible="!eq(-4,true)" />
+		<setting id="DL_DIR" type="folder" label="Download Directory" value="" visible="!eq(-5,true)" />
+    </category>
 </settings>
