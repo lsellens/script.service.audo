@@ -9,9 +9,36 @@ import xbmc
 import xbmcaddon
 import xbmcvfs
 
+import time
+import xbmcgui
+import sys
+import socket
+import fcntl
+import struct
+import os
+
 # helper functions
 # ----------------
 
+
+def check_connection():
+        ifaces = ['eth0','eth1','wlan0','wlan1','wlan2','wlan3']
+        connected = []
+        i = 0
+        for ifname in ifaces:
+            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+            try:
+                socket.inet_ntoa(fcntl.ioctl(
+                        s.fileno(),
+                        0x8915,  # SIOCGIFADDR
+                        struct.pack('256s', ifname[:15])
+                )[20:24])
+                connected.append(ifname)
+                print "%s is connected" % ifname
+            except:
+                print "%s is not connected" % ifname
+            i += 1
+        return connected
 
 def create_dir(dirname):
     if not xbmcvfs.exists(dirname):
@@ -21,10 +48,32 @@ def create_dir(dirname):
 # define some things that we're gonna need, mainly paths
 # ------------------------------------------------------
 
+#Get host IP:
+connected_ifaces = check_connection()
+if len(connected_ifaces) == 0:
+    print 'not connected to any network'
+    hostIP = "on Port"
+else:
+    GetIP = ([(s.connect(('8.8.8.8', 80)), s.getsockname()[0], s.close()) for s in [socket.socket(socket.AF_INET, socket.SOCK_DGRAM)]][0][1])
+    hostIP = ' on '+GetIP
+    print hostIP
+
+#Create Strings for notifications:
+started   = 'Service started'+hostIP
+waiting   = 'Looking for Media download folders...'
+disabled  = 'Service disabled for this session'
+restarted = 'Service restarted'+hostIP
+SAport  = ':8081'
+SBport  = ':8082'
+CPport  = ':8083'
+HPport  = ':8084'
+
 # addon
 __addon__             = xbmcaddon.Addon(id='script.service.audo')
 __addonpath__         = xbmc.translatePath(__addon__.getAddonInfo('path'))
 __addonhome__         = xbmc.translatePath(__addon__.getAddonInfo('profile'))
+__addonname__         = __addon__.getAddonInfo('name')
+__icon__              = __addon__.getAddonInfo('icon')
 __programs__          = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
 __dependencies__      = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 
@@ -37,20 +86,80 @@ pSickBeardSettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
 pCouchPotatoServerSettings  = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
 pHeadphonesSettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
 
-# the settings file already exists if the user set settings before the first launch
-if not xbmcvfs.exists(pSuiteSettings):
-    xbmcvfs.copy(pDefaultSuiteSettings, pSuiteSettings)
 
 #Get Device Home DIR
 pHomeDIR = expanduser('~/')
 
+# the settings file already exists if the user set settings before the first launch
+if not xbmcvfs.exists(pSuiteSettings):
+    # Write default settings file with default folder locations (Done this way to support multi-platforms)
+    # (Also, there must be an easier way to do this...)
+    create_dir(__addonhome__)
+    infile       = open(pDefaultSuiteSettings)
+    outfile      = open(pSuiteSettings, 'w')
+    replacements = {"pDL":pHomeDIR+'downloads/', "pTV":pHomeDIR+'TVShows/', "pMOV":pHomeDIR+'Movies/', "pMUS":pHomeDIR+'Music/'}
+
+    for line in infile:
+        for src, target in replacements.iteritems():
+            line = line.replace(src, target)
+        outfile.write(line)
+    infile.close()
+    outfile.close()
+
+# Read add-on settings
+# --------------------
+# Transmission-Daemon
+transauth = False
+try:
+    transmissionaddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
+    transauth = (transmissionaddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
+    transdl = (transmissionaddon.getSetting('TRANSMISSION_DL_DIR').decode('utf-8'))
+    transinc = (transmissionaddon.getSetting('TRANSMISSION_INC_DIR').decode('utf-8'))
+    transwatch = (transmissionaddon.getSetting('TRANSMISSION_WATCH_DIR').decode('utf-8'))
+
+    if transauth:
+        xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
+        transuser = (transmissionaddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
+        if transuser == '':
+            transuser = None
+        transpwd = (transmissionaddon.getSetting('TRANSMISSION_PWD').decode('utf-8'))
+        if transpwd == '':
+            transpwd = None
+    else:
+        xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
+
+except Exception, e:
+    xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
+    xbmc.log(str(e), level=xbmc.LOGNOTICE)
+    pass
+
+# audo
+user = (__addon__.getSetting('SABNZBD_USER').decode('utf-8'))
+pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
+host = (__addon__.getSetting('SABNZBD_IP'))
+sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
+sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
+couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
+headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
+
+sickbeard_watch_dir = (__addon__.getSetting('TVSHOW_DIR').decode('utf-8'))
+couchpotato_watch_dir = (__addon__.getSetting('MOVIES_DIR').decode('utf-8'))
+headphones_watch_dir = (__addon__.getSetting('MUSIC_DIR').decode('utf-8'))
+dl_dir = (__addon__.getSetting('DL_DIR').decode('utf-8'))
+pmode = (__addon__.getSetting('FOLDER_MODE').decode('utf-8'))
+
 # directories
-pSabNzbdComplete = pHomeDIR+'downloads'
-pSabNzbdWatchDir = pHomeDIR+'downloads/watch'
-pSabNzbdCompleteTV = pHomeDIR+'downloads/tvshows'
-pSabNzbdCompleteMov = pHomeDIR+'downloads/movies'
-pSabNzbdCompleteMusic = pHomeDIR+'downloads/music'
-pSabNzbdIncomplete = pHomeDIR+'downloads/incomplete'
+pHomeDownloadsDir = dl_dir
+pSabNzbdComplete = dl_dir+'complete'
+pSabNzbdCompleteTV = dl_dir+'complete/tvshows'
+pSabNzbdCompleteMov = dl_dir+'complete/movies'
+pSabNzbdCompleteMusic = dl_dir+'complete/music'
+pSabNzbdWatchDir = dl_dir+'watch'
+pSabNzbdIncomplete = dl_dir+'nzb/incomplete'
+pTorrentComplete = dl_dir + "torrent/complete"
+pTorrentCompleteTV = dl_dir + "torrent/complete/tvshows"
+pTorrentCompleteMov = dl_dir + "torrent/complete/movies"
+pTorrentCompleteMus = dl_dir + "torrent/complete/music"
 pSickBeardTvScripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
 pSabNzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts')
 
@@ -96,37 +205,8 @@ if not xbmcvfs.exists(xbmc.translatePath(pSabNzbdScripts + '/autoProcessTV.py'))
 # read addon and xbmc settings
 # ----------------------------
 
-# Transmission-Daemon
-transauth = False
-try:
-    transmissionaddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
-    transauth = (transmissionaddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
-
-    if transauth:
-        xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
-        transuser = (transmissionaddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
-        if transuser == '':
-            transuser = None
-        transpwd = (transmissionaddon.getSetting('TRANSMISSION_PWD').decode('utf-8'))
-        if transpwd == '':
-            transpwd = None
-    else:
-        xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
-
-except Exception, e:
-    xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
-    xbmc.log(str(e), level=xbmc.LOGNOTICE)
-    pass
-
-# audo
-user = (__addon__.getSetting('SABNZBD_USER').decode('utf-8'))
-pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
-host = (__addon__.getSetting('SABNZBD_IP'))
-sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
-sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
-couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
-headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
-
+# read XBMC settings
+# ----------------------------
 # XBMC
 fXbmcSettings = open(pXbmcSettings, 'r')
 data = fXbmcSettings.read()
@@ -145,6 +225,16 @@ except StandardError:
 
 # prepare execution environment
 os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
+
+### make binaries executable and add to PATH
+subprocess.Popen("chmod -R +x " + __dependencies__ + "/bin/*" , shell=True, close_fds=True)
+binPATH  = xbmc.translatePath(__dependencies__ + '/bin')
+os.environ['PATH'] = str(os.environ.get('PATH')) + ':' + binPATH
+sys.path.append(binPATH)
+
+ckPATH = "echo $PATH"
+PATHis = subprocess.check_output(ckPATH, shell=True)
+print "PATH: "+PATHis
 
 #Touch audo-programs folder stating they are currently loaded <-- for detecting update
 open(__programs__ + '/.current', 'a').close()
@@ -199,6 +289,10 @@ try:
         defaultConfig['servers'] = servers
         defaultConfig['categories'] = categories
 
+    if(pmode == "false"):
+        defaultConfig['misc']['download_dir']  = pSabNzbdIncomplete
+        defaultConfig['misc']['complete_dir']  = pSabNzbdComplete
+
     sabNzbdConfig.merge(defaultConfig)
     sabNzbdConfig.write()
 
@@ -219,6 +313,7 @@ try:
         xbmc.log('AUDO: Launching SABnzbd...', level=xbmc.LOGDEBUG)
         subprocess.call(sabnzbd, close_fds=True)
         xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+        xbmc.executebuiltin('XBMC.Notification(SABnzbd,'+ started + SAport +',5000,'+ __icon__ +')')
 
         # SABnzbd will only complete the .ini file when we first access the web interface
         if firstLaunch:
@@ -307,6 +402,11 @@ try:
         defaultConfig['XBMC']['xbmc_update_library']      = '1'
         defaultConfig['XBMC']['xbmc_update_full']         = '1'
 
+    if(pmode == "false"):
+        defaultConfig['TORRENT']['torrent_path']          = pTorrentCompleteTV
+        defaultConfig['General']['tv_download_dir']       = pTorrentCompleteTV
+        defaultConfig['General']['root_dirs']             = '0|'+sickbeard_watch_dir
+
     sickBeardConfig.merge(defaultConfig)
     sickBeardConfig.write()
 
@@ -316,6 +416,7 @@ try:
         xbmc.log('AUDO: Launching SickBeard...', level=xbmc.LOGDEBUG)
         subprocess.call(sickBeard, close_fds=True)
         xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+        xbmc.executebuiltin('XBMC.Notification(SickBeard,'+ started + SBport +',5000,'+ __icon__ +')')
 except Exception, e:
     xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
     xbmc.log(str(e), level=xbmc.LOGERROR)
@@ -388,6 +489,12 @@ try:
         defaultConfig['core']['debug']                    = '0'
         defaultConfig['core']['development']              = '0'
 
+    if(pmode == "false"):
+        defaultConfig['transmission']['directory']        = pTorrentCompleteMov
+        defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
+        defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
+        defaultConfig['renamer']['to']                    = couchpotato_watch_dir
+
     couchPotatoServerConfig.merge(defaultConfig)
     couchPotatoServerConfig.write()
 
@@ -397,6 +504,7 @@ try:
         xbmc.log('AUDO: Launching CouchPotatoServer...', level=xbmc.LOGDEBUG)
         subprocess.call(couchPotatoServer, close_fds=True)
         xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+        xbmc.executebuiltin('XBMC.Notification(CouchPotatoServer,'+ started + CPport +',5000,'+ __icon__ +')')
 except Exception, e:
     xbmc.log('AUDO: CouchPotatoServer exception occurred', level=xbmc.LOGERROR)
     xbmc.log(str(e), level=xbmc.LOGERROR)
@@ -451,6 +559,13 @@ try:
         defaultConfig['General']['rename_files']               = '1'
         defaultConfig['General']['folder_permissions']         = '0644'
 
+    if(pmode == "false"):
+        defaultConfig['General']['music_dir']                  = headphones_watch_dir
+        defaultConfig['General']['destination_dir']            = headphones_watch_dir
+        defaultConfig['General']['torrentblackhole_dir']       = pSabNzbdWatchDir
+        defaultConfig['Transmission']['download_torrent_dir']  = pSabNzbdCompleteMusic
+        defaultConfig['General']['download_dir']               = pSabNzbdCompleteMusic
+
     headphonesConfig.merge(defaultConfig)
     headphonesConfig.write()
 
@@ -460,6 +575,7 @@ try:
         xbmc.log('AUDO: Launching Headphones...', level=xbmc.LOGDEBUG)
         subprocess.call(headphones, close_fds=True)
         xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+        xbmc.executebuiltin('XBMC.Notification(Headphones,'+ started + HPport +',5000,'+ __icon__ +')')
 except Exception, e:
     xbmc.log('AUDO: Headphones exception occurred', level=xbmc.LOGERROR)
     xbmc.log(str(e), level=xbmc.LOGERROR)

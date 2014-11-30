@@ -10,4 +10,9 @@
     <setting id="COUCHPOTATO_LAUNCH" value="true" />
     <setting id="HEADPHONES_LAUNCH" value="true" />
     <setting id="RESTART_ON_RESUME" value="true" />
+    <setting id="MOVIES_DIR" value="pMOV" />
+    <setting id="TVSHOW_DIR" value="pTV" />
+    <setting id="MUSIC_DIR" value="pMUS" />
+    <setting id="DL_DIR" value="pDL" />
+    <setting id="FOLDER_MODE" value="false" />
 </settings>
