@@ -453,6 +453,7 @@ try:
     defaultConfig['xbmc']['password']            = xbmcPwd
     defaultConfig['sabnzbd'] = {}
     defaultConfig['transmission'] = {}
+    defaultConfig['renamer'] = {}
 
     if sabnzbd_launch:
         defaultConfig['sabnzbd']['username']     = user
@@ -477,7 +478,6 @@ try:
         defaultConfig['blackhole']['enabled']             = '0'
         defaultConfig['sabnzbd']['category']              = 'movies'
         defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
-        defaultConfig['renamer'] = {}
         defaultConfig['renamer']['enabled']               = '1'
         defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
         defaultConfig['renamer']['to']                    = pHomeDIR+'videos'
