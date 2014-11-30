@@ -26,4 +26,11 @@
                 <setting id="RESTART_ON_RESUME" type="bool" label="32014" default="true"
                          visible="System.CanSuspend"/>
     </category>
+    <category label="32100">
+		<setting label="32100" type="lsep"/>
+		<setting type="sep"/>
+                <setting label="32101" type="action" action="RunScript($CWD/changlogs.py, script.module.audo-programs)"/>
+                <setting label="32102" type="action" action="RunScript($CWD/changlogs.py, script.service.audo)"/>
+                <setting label="32103" type="action" action="RunScript($CWD/changlogs.py, script.module.audo-dependencies)"/>
+    </category>
 </settings>
