@@ -73,3 +73,19 @@ msgstr "Wake up at"
 msgctxt "#32014"
 msgid "Restart on suspend / resume"
 msgstr "Restart on suspend / resume"
+
+msgctxt "#32100"
+msgid "Changelogs"
+msgstr "Changelogs"
+
+msgctxt "#32101"
+msgid "Programs"
+msgstr "Programs"
+
+msgctxt "#32102"
+msgid "Service"
+msgstr "Service"
+
+msgctxt "#32103"
+msgid "Dependencies"
+msgstr "Dependencies"

@@ -36,4 +36,11 @@
 		<setting id="MUSIC_DIR" type="folder" label="Default Music Directory" source="auto" option="writeable" visible="!eq(-4,true)" />
 		<setting id="DL_DIR" type="folder" label="Download Directory" value="" visible="!eq(-5,true)" />
     </category>
+    <category label="32100">
+		<setting label="32100" type="lsep"/>
+		<setting type="sep"/>
+                <setting label="32101" type="action" action="RunScript($CWD/changlogs.py, script.module.audo-programs)"/>
+                <setting label="32102" type="action" action="RunScript($CWD/changlogs.py, script.service.audo)"/>
+                <setting label="32103" type="action" action="RunScript($CWD/changlogs.py, script.module.audo-dependencies)"/>
+    </category>
 </settings>

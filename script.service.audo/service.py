@@ -119,6 +119,7 @@ while not xbmc.abortRequested:
                 xbmc.executebuiltin('XBMC.Notification('+__scriptname__+': Update detected,Restarting services now...,5000,)')
                 time.sleep(3)
                 xbmc.executebuiltin('XBMC.RunScript(%s)' % __start__, True)
+                time.sleep(10)
         except Exception, e:
             xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)

@@ -74,3 +74,19 @@ msgstr "Despertar a las"
 msgctxt "#32014"
 msgid "Restart on suspend / resume"
 msgstr "Reinicie la suspensión / reanudar"
+
+msgctxt "#32100"
+msgid "Changelogs"
+msgstr ""
+
+msgctxt "#32101"
+msgid "Programs"
+msgstr ""
+
+msgctxt "#32102"
+msgid "Service"
+msgstr ""
+
+msgctxt "#32103"
+msgid "Dependencies"
+msgstr ""
