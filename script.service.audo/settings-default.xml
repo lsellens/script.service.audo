@@ -14,4 +14,5 @@
     <setting id="TVSHOW_DIR" value="pTV" />
     <setting id="MUSIC_DIR" value="pMUS" />
     <setting id="DL_DIR" value="pDL" />
+    <setting id="FOLDER_MODE" value="false" />
 </settings>
