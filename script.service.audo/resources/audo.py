@@ -1,7 +1,7 @@
 # Initializes and launches SABnzbd, Couchpotato, Sickbeard and Headphones
 from xml.dom.minidom import parseString
 from configobj import ConfigObj
-from os.path import expanduser
+import os
 import subprocess
 import urllib2
 import hashlib
@@ -9,458 +9,446 @@ import xbmc
 import xbmcaddon
 import xbmcvfs
 
-# helper functions
-# ----------------
 
+def main():
+    # helper functions
+    def create_dir(dirname):
+        if not xbmcvfs.exists(dirname):
+            xbmcvfs.mkdirs(dirname)
+            xbmc.log('AUDO: Created directory ' + dirname, level=xbmc.LOGDEBUG)
+    # addon
+    __addon__        = xbmcaddon.Addon(id='script.service.audo')
+    __addonpath__    = xbmc.translatePath(__addon__.getAddonInfo('path'))
+    __addonhome__    = xbmc.translatePath(__addon__.getAddonInfo('profile'))
+    __programs__     = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
+    __dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 
-def create_dir(dirname):
-    if not xbmcvfs.exists(dirname):
-        xbmcvfs.mkdirs(dirname)
-        xbmc.log('AUDO: Created directory ' + dirname, level=xbmc.LOGDEBUG)
+    # settings
+    pdefaultsuitesettings = xbmc.translatePath(__addonpath__ + '/settings-default.xml')
+    psuitesettings        = xbmc.translatePath(__addonhome__ + 'settings.xml')
+    pxbmcsettings         = xbmc.translatePath('special://home/userdata/guisettings.xml')
+    psabnzbdsettings      = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
+    psickbeardsettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
+    pcouchpotatoserversettings = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
+    pheadphonessettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
 
-# define some things that we're gonna need, mainly paths
-# ------------------------------------------------------
+    # the settings file already exists if the user set settings before the first launch
+    if not xbmcvfs.exists(psuitesettings):
+        xbmcvfs.copy(pdefaultsuitesettings, psuitesettings)
 
-# addon
-__addon__             = xbmcaddon.Addon(id='script.service.audo')
-__addonpath__         = xbmc.translatePath(__addon__.getAddonInfo('path'))
-__addonhome__         = xbmc.translatePath(__addon__.getAddonInfo('profile'))
-__programs__          = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
-__dependencies__      = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
+    # Get Device Home DIR
+    phomedir = os.path.expanduser('~/')
 
-# settings
-pDefaultSuiteSettings = xbmc.translatePath(__addonpath__ + '/settings-default.xml')
-pSuiteSettings        = xbmc.translatePath(__addonhome__ + 'settings.xml')
-pXbmcSettings         = xbmc.translatePath('special://home/userdata/guisettings.xml')
-pSabNzbdSettings      = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
-pSickBeardSettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
-pCouchPotatoServerSettings  = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
-pHeadphonesSettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
+    # directories
+    psabnzbdcomplete = phomedir + 'downloads'
+    psabnzbdwatchdir = phomedir + 'downloads/watch'
+    psabnzbdcompletetv = phomedir + 'downloads/tvshows'
+    psabnzbdcompletemov = phomedir + 'downloads/movies'
+    psabnzbdcompletemusic = phomedir + 'downloads/music'
+    psabnzbdincomplete = phomedir + 'downloads/incomplete'
+    psickbeardtvscripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
+    psabnzbdscripts = xbmc.translatePath(__addonhome__ + 'scripts')
 
-# the settings file already exists if the user set settings before the first launch
-if not xbmcvfs.exists(pSuiteSettings):
-    xbmcvfs.copy(pDefaultSuiteSettings, pSuiteSettings)
+    # service commands
+    sabnzbd           = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
+                         '-d', '--pidfile=/var/run/sabnzbd.pid', '-f', psabnzbdsettings, '-l 0']
+    sickbeard         = ['python', xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'),
+                         '--daemon', '--datadir', __addonhome__, '--pidfile=/var/run/sickbeard.pid', '--config',
+                         psickbeardsettings]
+    couchpotatoserver = ['python', xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'),
+                         '--daemon', '--pid_file=/var/run/couchpotato.pid', '--config_file', pcouchpotatoserversettings]
+    headphones        = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
+                         '-d', '--datadir', __addonhome__, '--pidfile=/var/run/headphones.pid', '--config',
+                         pheadphonessettings]
 
-#Get Device Home DIR
-pHomeDIR = expanduser('~/')
+    # Other stuff
+    sabnzbdhost = 'localhost:8081'
 
-# directories
-pSabNzbdComplete = pHomeDIR+'downloads'
-pSabNzbdWatchDir = pHomeDIR+'downloads/watch'
-pSabNzbdCompleteTV = pHomeDIR+'downloads/tvshows'
-pSabNzbdCompleteMov = pHomeDIR+'downloads/movies'
-pSabNzbdCompleteMusic = pHomeDIR+'downloads/music'
-pSabNzbdIncomplete = pHomeDIR+'downloads/incomplete'
-pSickBeardTvScripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
-pSabNzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts')
+    # create directories and settings on first launch
+    firstlaunch = not xbmcvfs.exists(psabnzbdsettings)
+    sbfirstlaunch = not xbmcvfs.exists(psickbeardsettings)
+    cpfirstlaunch = not xbmcvfs.exists(pcouchpotatoserversettings)
+    hpfirstlaunch = not xbmcvfs.exists(pheadphonessettings)
 
-# service commands
-sabnzbd               = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
-                         '-d', '--pidfile', xbmc.translatePath(__addonhome__ + 'sabnzbd.pid'), '-f', pSabNzbdSettings, '-l 0']
-sickBeard             = ['python', xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'),
-                         '--daemon', '--datadir', __addonhome__, '--pidfile', xbmc.translatePath(__addonhome__ + 'sickbeard.pid'),
-                         '--config', pSickBeardSettings]
-couchPotatoServer     = ['python', xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'),
-                         '--daemon', '--pid_file', xbmc.translatePath(__addonhome__ + 'couchpotato.pid'),
-                         '--config_file', pCouchPotatoServerSettings]
-headphones            = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
-                         '-d', '--datadir', __addonhome__, '--pidfile', xbmc.translatePath(__addonhome__ + 'headphones.pid'),
-                         '--config', pHeadphonesSettings]
+    xbmc.log('AUDO: Creating directories if missing', level=xbmc.LOGDEBUG)
+    create_dir(__addonhome__)
+    create_dir(psabnzbdcomplete)
+    create_dir(psabnzbdwatchdir)
+    create_dir(psabnzbdcompletetv)
+    create_dir(psabnzbdcompletemov)
+    create_dir(psabnzbdcompletemusic)
+    create_dir(psabnzbdincomplete)
+    create_dir(psabnzbdscripts)
 
-# Other stuff
-sabNzbdHost           = 'localhost:8081'
+    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + '/sabToSickBeard.py')):
+        xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + '/sabToSickBeard.py'), psabnzbdscripts +
+                     '/sabToSickBeard.py')
+    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + '/autoProcessTV.py')):
+        xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + '/autoProcessTV.py'), psabnzbdscripts +
+                     '/autoProcessTV.py')
 
-# create directories and settings on first launch
-# -----------------------------------------------
+    # Transmission-Daemon
+    transauth = False
+    try:
+        transmissionaddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
+        transauth = (transmissionaddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
 
-firstLaunch = not xbmcvfs.exists(pSabNzbdSettings)
-sbfirstLaunch = not xbmcvfs.exists(pSickBeardSettings)
-cpfirstLaunch = not xbmcvfs.exists(pCouchPotatoServerSettings)
-hpfirstLaunch = not xbmcvfs.exists(pHeadphonesSettings)
+        if transauth:
+            xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
+            transuser = (transmissionaddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
+            if transuser == '':
+                transuser = None
+            transpwd = (transmissionaddon.getSetting('TRANSMISSION_PWD').decode('utf-8'))
+            if transpwd == '':
+                transpwd = None
+        else:
+            xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
 
-xbmc.log('AUDO: Creating directories if missing', level=xbmc.LOGDEBUG)
-create_dir(__addonhome__)
-create_dir(pSabNzbdComplete)
-create_dir(pSabNzbdWatchDir)
-create_dir(pSabNzbdCompleteTV)
-create_dir(pSabNzbdCompleteMov)
-create_dir(pSabNzbdCompleteMusic)
-create_dir(pSabNzbdIncomplete)
-create_dir(pSabNzbdScripts)
+    except Exception, e:
+        xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
+        xbmc.log(str(e), level=xbmc.LOGNOTICE)
+        pass
 
-if not xbmcvfs.exists(xbmc.translatePath(pSabNzbdScripts + '/sabToSickBeard.py')):
-    xbmcvfs.copy(xbmc.translatePath(pSickBeardTvScripts + '/sabToSickBeard.py'), pSabNzbdScripts + '/sabToSickBeard.py')
-if not xbmcvfs.exists(xbmc.translatePath(pSabNzbdScripts + '/autoProcessTV.py')):
-    xbmcvfs.copy(xbmc.translatePath(pSickBeardTvScripts + '/autoProcessTV.py'), pSabNzbdScripts + '/autoProcessTV.py')
+    # audo
+    user = (__addon__.getSetting('SABNZBD_USER').decode('utf-8'))
+    pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
+    host = (__addon__.getSetting('SABNZBD_IP'))
+    sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
+    sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
+    couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
+    headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
 
-# read addon and xbmc settings
-# ----------------------------
+    # XBMC
+    fxbmcsettings = open(pxbmcsettings, 'r')
+    data = fxbmcsettings.read()
+    fxbmcsettings.close()
+    xbmcsettings = parseString(data)
+    xbmcservices = xbmcsettings.getElementsByTagName('services')[0]
+    xbmcport         = xbmcservices.getElementsByTagName('webserverport')[0].firstChild.data
+    try:
+        xbmcuser     = xbmcservices.getElementsByTagName('webserverusername')[0].firstChild.data
+    except StandardError:
+        xbmcuser = ''
+    try:
+        xbmcpwd      = xbmcservices.getElementsByTagName('webserverpassword')[0].firstChild.data
+    except StandardError:
+        xbmcpwd = ''
 
-# Transmission-Daemon
-transauth = False
-try:
-    transmissionaddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
-    transauth = (transmissionaddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
+    # prepare execution environment
+    os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
 
-    if transauth:
-        xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
-        transuser = (transmissionaddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
-        if transuser == '':
-            transuser = None
-        transpwd = (transmissionaddon.getSetting('TRANSMISSION_PWD').decode('utf-8'))
-        if transpwd == '':
-            transpwd = None
-    else:
-        xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
+    # Touch audo-programs folder stating they are currently loaded <-- for detecting update
+    open(__programs__ + '/.current', 'a').close()
 
-except Exception, e:
-    xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
-    xbmc.log(str(e), level=xbmc.LOGNOTICE)
-    pass
+    # SABnzbd start
+    try:
+        # write SABnzbd settings
+        # ----------------------
+        sabnzbdconfig = ConfigObj(psabnzbdsettings, create_empty=True)
+        defaultconfig = ConfigObj()
+        defaultconfig['misc'] = {}
+        defaultconfig['misc']['check_new_rel']                 = '0'
+        defaultconfig['misc']['auto_browser']                  = '0'
+        defaultconfig['misc']['disable_api_key']               = '0'
+        defaultconfig['misc']['username']                      = user
+        defaultconfig['misc']['password']                      = pwd
+        defaultconfig['misc']['port']                          = '8081'
+        defaultconfig['misc']['https_port']                    = '9081'
+        defaultconfig['misc']['https_cert']                    = 'server.cert'
+        defaultconfig['misc']['https_key']                     = 'server.key'
+        defaultconfig['misc']['host']                          = host
+        defaultconfig['misc']['log_dir']                       = 'logs'
+        defaultconfig['misc']['admin_dir']                     = 'admin'
+        defaultconfig['misc']['nzb_backup_dir']                = 'backup'
 
-# audo
-user = (__addon__.getSetting('SABNZBD_USER').decode('utf-8'))
-pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
-host = (__addon__.getSetting('SABNZBD_IP'))
-sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
-sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
-couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
-headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
+        if firstlaunch:
+            defaultconfig['misc']['script_dir']                    = 'scripts'
+            defaultconfig['misc']['web_dir']                       = 'Plush'
+            defaultconfig['misc']['web_dir2']                      = 'Plush'
+            defaultconfig['misc']['web_color']                     = 'gold'
+            defaultconfig['misc']['web_color2']                    = 'gold'
+            defaultconfig['misc']['download_dir']                  = psabnzbdincomplete
+            defaultconfig['misc']['complete_dir']                  = psabnzbdcomplete
+            servers = {}
+            servers['localhost'] = {}
+            servers['localhost']['host']                           = 'localhost'
+            servers['localhost']['port']                           = '119'
+            servers['localhost']['enable']                         = '0'
+            categories = {}
+            categories['tv'] = {}
+            categories['tv']['name']                               = 'tv'
+            categories['tv']['script']                             = 'sabToSickBeard.py'
+            categories['tv']['priority']                           = '-100'
+            categories['movies'] = {}
+            categories['movies']['name']                           = 'movies'
+            categories['movies']['dir']                            = 'movies'
+            categories['movies']['priority']                       = '-100'
+            categories['music'] = {}
+            categories['music']['name']                            = 'music'
+            categories['music']['dir']                             = 'music'
+            categories['music']['priority']                        = '-100'
+            defaultconfig['servers'] = servers
+            defaultconfig['categories'] = categories
 
-# XBMC
-fXbmcSettings = open(pXbmcSettings, 'r')
-data = fXbmcSettings.read()
-fXbmcSettings.close()
-xbmcSettings = parseString(data)
-xbmcServices = xbmcSettings.getElementsByTagName('services')[0]
-xbmcPort         = xbmcServices.getElementsByTagName('webserverport')[0].firstChild.data
-try:
-    xbmcUser     = xbmcServices.getElementsByTagName('webserverusername')[0].firstChild.data
-except StandardError:
-    xbmcUser = ''
-try:
-    xbmcPwd      = xbmcServices.getElementsByTagName('webserverpassword')[0].firstChild.data
-except StandardError:
-    xbmcPwd = ''
+        sabnzbdconfig.merge(defaultconfig)
+        sabnzbdconfig.write()
 
-# prepare execution environment
-os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
+        # also keep the autoProcessTV config up to date
+        autoprocessconfig = ConfigObj(xbmc.translatePath(psabnzbdscripts + '/autoProcessTV.cfg'), create_empty=True)
+        defaultconfig = ConfigObj()
+        defaultconfig['SickBeard'] = {}
+        defaultconfig['SickBeard']['host']                     = 'localhost'
+        defaultconfig['SickBeard']['port']                     = '8082'
+        defaultconfig['SickBeard']['username']                 = user
+        defaultconfig['SickBeard']['password']                 = pwd
+        autoprocessconfig.merge(defaultconfig)
+        autoprocessconfig.write()
 
-#Touch audo-programs folder stating they are currently loaded <-- for detecting update
-open(__programs__ + '/.current', 'a').close()
+        # launch SABnzbd and get the API key
+        # ----------------------------------
+        if firstlaunch or sabnzbd_launch:
+            xbmc.log('AUDO: Launching SABnzbd...', level=xbmc.LOGDEBUG)
+            subprocess.call(sabnzbd, close_fds=True)
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
 
-# SABnzbd start
-try:
-    # write SABnzbd settings
-    # ----------------------
-    sabNzbdConfig = ConfigObj(pSabNzbdSettings, create_empty=True)
-    defaultConfig = ConfigObj()
-    defaultConfig['misc'] = {}
-    defaultConfig['misc']['check_new_rel']     = '0'
-    defaultConfig['misc']['auto_browser']      = '0'
-    defaultConfig['misc']['disable_api_key']   = '0'
-    defaultConfig['misc']['username']          = user
-    defaultConfig['misc']['password']          = pwd
-    defaultConfig['misc']['port']              = '8081'
-    defaultConfig['misc']['https_port']        = '9081'
-    defaultConfig['misc']['https_cert']        = 'server.cert'
-    defaultConfig['misc']['https_key']         = 'server.key'
-    defaultConfig['misc']['host']              = host
-    defaultConfig['misc']['log_dir']           = 'logs'
-    defaultConfig['misc']['admin_dir']         = 'admin'
-    defaultConfig['misc']['nzb_backup_dir']    = 'backup'
+            # SABnzbd will only complete the .ini file when we first access the web interface
+            if firstlaunch:
+                try:
+                    if not (user and pwd):
+                        urllib2.urlopen('http://' + sabnzbdhost)
+                    else:
+                        urllib2.urlopen('http://' + sabnzbdhost + '/api?mode=queue&output=xml&ma_username=' + user +
+                                        '&ma_password=' + pwd)
+                except Exception, e:
+                    xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
+                    xbmc.log(str(e), level=xbmc.LOGERROR)
 
-    if firstLaunch:
-        defaultConfig['misc']['script_dir']    = 'scripts'
-        defaultConfig['misc']['web_dir']       = 'Plush'
-        defaultConfig['misc']['web_dir2']      = 'Plush'
-        defaultConfig['misc']['web_color']     = 'gold'
-        defaultConfig['misc']['web_color2']    = 'gold'
-        defaultConfig['misc']['download_dir']  = pSabNzbdIncomplete
-        defaultConfig['misc']['complete_dir']  = pSabNzbdComplete
-        servers = {}
-        servers['localhost'] = {}
-        servers['localhost']['host']           = 'localhost'
-        servers['localhost']['port']           = '119'
-        servers['localhost']['enable']         = '0'
-        categories = {}
-        categories['tv'] = {}
-        categories['tv']['name']               = 'tv'
-        categories['tv']['script']             = 'sabToSickBeard.py'
-        categories['tv']['priority']           = '-100'
-        categories['movies'] = {}
-        categories['movies']['name']           = 'movies'
-        categories['movies']['dir']            = 'movies'
-        categories['movies']['priority']       = '-100'
-        categories['music'] = {}
-        categories['music']['name']            = 'music'
-        categories['music']['dir']             = 'music'
-        categories['music']['priority']        = '-100'
-        defaultConfig['servers'] = servers
-        defaultConfig['categories'] = categories
+            sabnzbdconfig.reload()
+            sabnzbdapikey = sabnzbdconfig['misc']['api_key']
 
-    sabNzbdConfig.merge(defaultConfig)
-    sabNzbdConfig.write()
+            if firstlaunch and not sabnzbd_launch:
+                urllib2.urlopen('http://' + sabnzbdhost + '/api?mode=shutdown&apikey=' + sabnzbdapikey)
+                xbmc.log('AUDO: Shutting SABnzbd down...', level=xbmc.LOGDEBUG)
 
-    # also keep the autoProcessTV config up to date
-    autoProcessConfig = ConfigObj(xbmc.translatePath(pSabNzbdScripts + '/autoProcessTV.cfg'), create_empty=True)
-    defaultConfig = ConfigObj()
-    defaultConfig['SickBeard'] = {}
-    defaultConfig['SickBeard']['host']         = 'localhost'
-    defaultConfig['SickBeard']['port']         = '8082'
-    defaultConfig['SickBeard']['username']     = user
-    defaultConfig['SickBeard']['password']     = pwd
-    autoProcessConfig.merge(defaultConfig)
-    autoProcessConfig.write()
+    except Exception, e:
+        xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+    # SABnzbd end
 
-    # launch SABnzbd and get the API key
-    # ----------------------------------
-    if firstLaunch or sabnzbd_launch:
-        xbmc.log('AUDO: Launching SABnzbd...', level=xbmc.LOGDEBUG)
-        subprocess.call(sabnzbd, close_fds=True)
-        xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+    # SickBeard start
+    try:
+        # write SickBeard settings
+        # ------------------------
+        sickbeardconfig = ConfigObj(psickbeardsettings, create_empty=True)
+        defaultconfig = ConfigObj()
+        defaultconfig['General'] = {}
+        defaultconfig['General']['launch_browser']             = '0'
+        defaultconfig['General']['version_notify']             = '0'
+        defaultconfig['General']['web_port']                   = '8082'
+        defaultconfig['General']['web_host']                   = host
+        defaultconfig['General']['web_username']               = user
+        defaultconfig['General']['web_password']               = pwd
+        defaultconfig['General']['cache_dir']                  = __addonhome__ + 'sbcache'
+        defaultconfig['General']['log_dir']                    = __addonhome__ + 'logs'
+        defaultconfig['SABnzbd'] = {}
+        defaultconfig['XBMC'] = {}
+        defaultconfig['XBMC']['use_xbmc']                      = '1'
+        defaultconfig['XBMC']['xbmc_host']                     = 'localhost:' + xbmcport
+        defaultconfig['XBMC']['xbmc_username']                 = xbmcuser
+        defaultconfig['XBMC']['xbmc_password']                 = xbmcpwd
+        defaultconfig['TORRENT'] = {}
 
-        # SABnzbd will only complete the .ini file when we first access the web interface
-        if firstLaunch:
-            try:
-                if not (user and pwd):
-                    urllib2.urlopen('http://' + sabNzbdHost)
-                else:
-                    urllib2.urlopen('http://' + sabNzbdHost + '/api?mode=queue&output=xml&ma_username=' + user +
-                                    '&ma_password=' + pwd)
-            except Exception, e:
-                xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
-                xbmc.log(str(e), level=xbmc.LOGERROR)
+        if sabnzbd_launch:
+            defaultconfig['SABnzbd']['sab_username']               = user
+            defaultconfig['SABnzbd']['sab_password']               = pwd
+            defaultconfig['SABnzbd']['sab_apikey']                 = sabnzbdapikey
+            defaultconfig['SABnzbd']['sab_host']                   = 'http://' + sabnzbdhost + '/'
 
-        sabNzbdConfig.reload()
-        sabNzbdApiKey = sabNzbdConfig['misc']['api_key']
+        if transauth:
+            defaultconfig['TORRENT']['torrent_username']           = transuser
+            defaultconfig['TORRENT']['torrent_password']           = transpwd
+            defaultconfig['TORRENT']['torrent_host']               = 'http://localhost:9091/'
 
-        if firstLaunch and not sabnzbd_launch:
-            urllib2.urlopen('http://' + sabNzbdHost + '/api?mode=shutdown&apikey=' + sabNzbdApiKey)
-            xbmc.log('AUDO: Shutting SABnzbd down...', level=xbmc.LOGDEBUG)
+        if sbfirstlaunch:
+            defaultconfig['TORRENT']['torrent_path']               = psabnzbdcompletetv
+            defaultconfig['General']['use_api']                    = '1'
+            defaultconfig['General']['tv_download_dir']            = psabnzbdcomplete
+            defaultconfig['General']['metadata_xbmc_12plus']       = '0|0|0|0|0|0|0|0|0|0'
+            defaultconfig['General']['nzb_method']                 = 'sabnzbd'
+            defaultconfig['General']['keep_processed_dir']         = '0'
+            defaultconfig['General']['use_banner']                 = '1'
+            defaultconfig['General']['rename_episodes']            = '1'
+            defaultconfig['General']['naming_ep_name']             = '0'
+            defaultconfig['General']['naming_use_periods']         = '1'
+            defaultconfig['General']['naming_sep_type']            = '1'
+            defaultconfig['General']['naming_ep_type']             = '1'
+            defaultconfig['General']['root_dirs']                  = '0|' + phomedir + 'tvshows'
+            defaultconfig['General']['naming_custom_abd']          = '0'
+            defaultconfig['General']['naming_abd_pattern']         = '%SN - %A-D - %EN'
+            defaultconfig['Blackhole'] = {}
+            defaultconfig['Blackhole']['torrent_dir']              = psabnzbdwatchdir
+            defaultconfig['SABnzbd']['sab_category']               = 'tv'
+            # workaround: on first launch, sick beard will always add
+            # 'http://' and trailing '/' on its own
+            defaultconfig['SABnzbd']['sab_host']                   = sabnzbdhost
+            defaultconfig['XBMC']['xbmc_notify_ondownload']        = '1'
+            defaultconfig['XBMC']['xbmc_update_library']           = '1'
+            defaultconfig['XBMC']['xbmc_update_full']              = '1'
 
-except Exception, e:
-    xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
-    xbmc.log(str(e), level=xbmc.LOGERROR)
-# SABnzbd end
+        sickbeardconfig.merge(defaultconfig)
+        sickbeardconfig.write()
 
-if not xbmcvfs.exists(xbmc.translatePath(__addonhome__ + 'sabnzbd.done')):
-    xbmcvfs.File(xbmc.translatePath(__addonhome__ + 'sabnzbd.done'), 'w').close()
+        # launch SickBeard
+        # ----------------
+        if sickbeard_launch:
+            xbmc.log('AUDO: Launching SickBeard...', level=xbmc.LOGDEBUG)
+            subprocess.call(sickbeard, close_fds=True)
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+    except Exception, e:
+        xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+    # SickBeard end
 
-# SickBeard start
-try:
-    # write SickBeard settings
-    # ------------------------
-    sickBeardConfig = ConfigObj(pSickBeardSettings, create_empty=True)
-    defaultConfig = ConfigObj()
-    defaultConfig['General'] = {}
-    defaultConfig['General']['launch_browser'] = '0'
-    defaultConfig['General']['version_notify'] = '0'
-    defaultConfig['General']['web_port']       = '8082'
-    defaultConfig['General']['web_host']       = host
-    defaultConfig['General']['web_username']   = user
-    defaultConfig['General']['web_password']   = pwd
-    defaultConfig['General']['cache_dir']      = __addonhome__ + 'sbcache'
-    defaultConfig['General']['log_dir']        = __addonhome__ + 'logs'
-    defaultConfig['SABnzbd'] = {}
-    defaultConfig['XBMC'] = {}
-    defaultConfig['XBMC']['use_xbmc']          = '1'
-    defaultConfig['XBMC']['xbmc_host']         = 'localhost:' + xbmcPort
-    defaultConfig['XBMC']['xbmc_username']     = xbmcUser
-    defaultConfig['XBMC']['xbmc_password']     = xbmcPwd
-    defaultConfig['TORRENT'] = {}
+    # CouchPotatoServer start
+    try:
+        # empty password hack
+        if pwd == '':
+            md5pwd = ''
+        else:
+            # convert password to md5
+            md5pwd = hashlib.md5(str(pwd)).hexdigest()
 
-    if sabnzbd_launch:
-        defaultConfig['SABnzbd']['sab_username']   = user
-        defaultConfig['SABnzbd']['sab_password']   = pwd
-        defaultConfig['SABnzbd']['sab_apikey']     = sabNzbdApiKey
-        defaultConfig['SABnzbd']['sab_host']       = 'http://' + sabNzbdHost + '/'
+        # write CouchPotatoServer settings
+        # --------------------------
+        couchpotatoserverconfig = ConfigObj(pcouchpotatoserversettings, create_empty=True, list_values=False)
+        defaultconfig = ConfigObj()
+        defaultconfig['core'] = {}
+        defaultconfig['core']['username']                      = user
+        defaultconfig['core']['password']                      = md5pwd
+        defaultconfig['core']['port']                          = '8083'
+        defaultconfig['core']['launch_browser']                = '0'
+        defaultconfig['core']['host']                          = host
+        defaultconfig['core']['data_dir']                      = __addonhome__
+        defaultconfig['updater'] = {}
+        defaultconfig['updater']['enabled']                    = '0'
+        defaultconfig['updater']['notification']               = '0'
+        defaultconfig['updater']['automatic']                  = '0'
+        defaultconfig['xbmc'] = {}
+        defaultconfig['xbmc']['enabled']                       = '1'
+        defaultconfig['xbmc']['host']                          = 'localhost:' + xbmcport
+        defaultconfig['xbmc']['username']                      = xbmcuser
+        defaultconfig['xbmc']['password']                      = xbmcpwd
+        defaultconfig['sabnzbd'] = {}
+        defaultconfig['transmission'] = {}
 
-    if transauth:
-        defaultConfig['TORRENT']['torrent_username']      = transuser
-        defaultConfig['TORRENT']['torrent_password']      = transpwd
-        defaultConfig['TORRENT']['torrent_host']          = 'http://localhost:9091/'
+        if sabnzbd_launch:
+            defaultconfig['sabnzbd']['username']                   = user
+            defaultconfig['sabnzbd']['password']                   = pwd
+            defaultconfig['sabnzbd']['api_key']                    = sabnzbdapikey
+            defaultconfig['sabnzbd']['host']                       = sabnzbdhost
 
-    if sbfirstLaunch:
-        defaultConfig['TORRENT']['torrent_path']          = pSabNzbdCompleteTV
-        defaultConfig['General']['use_api']               = '1'
-        defaultConfig['General']['tv_download_dir']       = pSabNzbdComplete
-        defaultConfig['General']['metadata_xbmc_12plus']  = '0|0|0|0|0|0|0|0|0|0'
-        defaultConfig['General']['nzb_method']            = 'sabnzbd'
-        defaultConfig['General']['keep_processed_dir']    = '0'
-        defaultConfig['General']['use_banner']            = '1'
-        defaultConfig['General']['rename_episodes']       = '1'
-        defaultConfig['General']['naming_ep_name']        = '0'
-        defaultConfig['General']['naming_use_periods']    = '1'
-        defaultConfig['General']['naming_sep_type']       = '1'
-        defaultConfig['General']['naming_ep_type']        = '1'
-        defaultConfig['General']['root_dirs']             = '0|'+pHomeDIR+'tvshows'
-        defaultConfig['General']['naming_custom_abd']     = '0'
-        defaultConfig['General']['naming_abd_pattern']    = '%SN - %A-D - %EN'
-        defaultConfig['Blackhole'] = {}
-        defaultConfig['Blackhole']['torrent_dir']         = pSabNzbdWatchDir
-        defaultConfig['SABnzbd']['sab_category']          = 'tv'
-        # workaround: on first launch, sick beard will always add 
-        # 'http://' and trailing '/' on its own
-        defaultConfig['SABnzbd']['sab_host']              = sabNzbdHost
-        defaultConfig['XBMC']['xbmc_notify_ondownload']   = '1'
-        defaultConfig['XBMC']['xbmc_update_library']      = '1'
-        defaultConfig['XBMC']['xbmc_update_full']         = '1'
+        if transauth:
+            defaultconfig['transmission']['username']              = transuser
+            defaultconfig['transmission']['password']              = transpwd
+            defaultconfig['transmission']['host']                  = 'localhost:9091'
 
-    sickBeardConfig.merge(defaultConfig)
-    sickBeardConfig.write()
+        if cpfirstlaunch:
+            defaultconfig['transmission']['directory']             = psabnzbdcompletemov
+            defaultconfig['xbmc']['xbmc_update_library']           = '1'
+            defaultconfig['xbmc']['xbmc_update_full']              = '1'
+            defaultconfig['xbmc']['xbmc_notify_onsnatch']          = '1'
+            defaultconfig['xbmc']['xbmc_notify_ondownload']        = '1'
+            defaultconfig['blackhole'] = {}
+            defaultconfig['blackhole']['directory']                = psabnzbdwatchdir
+            defaultconfig['blackhole']['use_for']                  = 'both'
+            defaultconfig['blackhole']['enabled']                  = '0'
+            defaultconfig['sabnzbd']['category']                   = 'movies'
+            defaultconfig['sabnzbd']['pp_directory']               = psabnzbdcompletemov
+            defaultconfig['renamer'] = {}
+            defaultconfig['renamer']['enabled']                    = '1'
+            defaultconfig['renamer']['from']                       = psabnzbdcompletemov
+            defaultconfig['renamer']['to']                         = phomedir + 'videos'
+            defaultconfig['renamer']['separator']                  = '.'
+            defaultconfig['renamer']['cleanup']                    = '0'
+            defaultconfig['core']['permission_folder']             = '0644'
+            defaultconfig['core']['permission_file']               = '0644'
+            defaultconfig['core']['show_wizard']                   = '0'
+            defaultconfig['core']['debug']                         = '0'
+            defaultconfig['core']['development']                   = '0'
 
-    # launch SickBeard
-    # ----------------
-    if sickbeard_launch:
-        xbmc.log('AUDO: Launching SickBeard...', level=xbmc.LOGDEBUG)
-        subprocess.call(sickBeard, close_fds=True)
-        xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
-except Exception, e:
-    xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
-    xbmc.log(str(e), level=xbmc.LOGERROR)
-# SickBeard end
+        couchpotatoserverconfig.merge(defaultconfig)
+        couchpotatoserverconfig.write()
 
-# CouchPotatoServer start
-try:
-    # empty password hack
-    if pwd == '':
-        md5pwd = ''
-    else:
-        #convert password to md5
-        md5pwd = hashlib.md5(str(pwd)).hexdigest()
+        # launch CouchPotatoServer
+        # ------------------
+        if couchpotato_launch:
+            xbmc.log('AUDO: Launching CouchPotatoServer...', level=xbmc.LOGDEBUG)
+            subprocess.call(couchpotatoserver, close_fds=True)
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+    except Exception, e:
+        xbmc.log('AUDO: CouchPotatoServer exception occurred', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+    # CouchPotatoServer end
 
-    # write CouchPotatoServer settings
-    # --------------------------
-    couchPotatoServerConfig = ConfigObj(pCouchPotatoServerSettings, create_empty=True, list_values=False)
-    defaultConfig = ConfigObj()
-    defaultConfig['core'] = {}
-    defaultConfig['core']['username']            = user
-    defaultConfig['core']['password']            = md5pwd
-    defaultConfig['core']['port']                = '8083'
-    defaultConfig['core']['launch_browser']      = '0'
-    defaultConfig['core']['host']                = host
-    defaultConfig['core']['data_dir']            = __addonhome__
-    defaultConfig['updater'] = {}
-    defaultConfig['updater']['enabled']          = '0'
-    defaultConfig['updater']['notification']     = '0'
-    defaultConfig['updater']['automatic']        = '0'
-    defaultConfig['xbmc'] = {}
-    defaultConfig['xbmc']['enabled']             = '1'
-    defaultConfig['xbmc']['host']                = 'localhost:' + xbmcPort
-    defaultConfig['xbmc']['username']            = xbmcUser
-    defaultConfig['xbmc']['password']            = xbmcPwd
-    defaultConfig['sabnzbd'] = {}
-    defaultConfig['transmission'] = {}
+    # Headphones start
+    try:
+        # write Headphones settings
+        # -------------------------
+        headphonesconfig = ConfigObj(pheadphonessettings, create_empty=True)
+        defaultconfig = ConfigObj()
+        defaultconfig['General'] = {}
+        defaultconfig['General']['launch_browser']             = '0'
+        defaultconfig['General']['http_port']                  = '8084'
+        defaultconfig['General']['http_host']                  = host
+        defaultconfig['General']['http_username']              = user
+        defaultconfig['General']['http_password']              = pwd
+        defaultconfig['General']['check_github']               = '0'
+        defaultconfig['General']['check_github_on_startup']    = '0'
+        defaultconfig['General']['cache_dir']                  = __addonhome__ + 'hpcache'
+        defaultconfig['General']['log_dir']                    = __addonhome__ + 'logs'
+        defaultconfig['XBMC'] = {}
+        defaultconfig['XBMC']['xbmc_enabled']                  = '1'
+        defaultconfig['XBMC']['xbmc_host']                     = 'localhost:' + xbmcport
+        defaultconfig['XBMC']['xbmc_username']                 = xbmcuser
+        defaultconfig['XBMC']['xbmc_password']                 = xbmcpwd
+        defaultconfig['SABnzbd'] = {}
+        defaultconfig['Transmission'] = {}
 
-    if sabnzbd_launch:
-        defaultConfig['sabnzbd']['username']     = user
-        defaultConfig['sabnzbd']['password']     = pwd
-        defaultConfig['sabnzbd']['api_key']      = sabNzbdApiKey
-        defaultConfig['sabnzbd']['host']         = sabNzbdHost
+        if sabnzbd_launch:
+            defaultconfig['SABnzbd']['sab_apikey']                 = sabnzbdapikey
+            defaultconfig['SABnzbd']['sab_host']                   = sabnzbdhost
+            defaultconfig['SABnzbd']['sab_username']               = user
+            defaultconfig['SABnzbd']['sab_password']               = pwd
 
-    if transauth:
-        defaultConfig['transmission']['username']         = transuser
-        defaultConfig['transmission']['password']         = transpwd
-        defaultConfig['transmission']['host']             = 'localhost:9091'
+        if transauth:
+            defaultconfig['Transmission']['transmission_username'] = transuser
+            defaultconfig['Transmission']['transmission_password'] = transpwd
+            defaultconfig['Transmission']['transmission_host']     = 'http://localhost:9091'
 
-    if cpfirstLaunch:
-        defaultConfig['transmission']['directory']        = pSabNzbdCompleteMov
-        defaultConfig['xbmc']['xbmc_update_library']      = '1'
-        defaultConfig['xbmc']['xbmc_update_full']         = '1'
-        defaultConfig['xbmc']['xbmc_notify_onsnatch']     = '1'
-        defaultConfig['xbmc']['xbmc_notify_ondownload']   = '1'
-        defaultConfig['blackhole'] = {}
-        defaultConfig['blackhole']['directory']           = pSabNzbdWatchDir
-        defaultConfig['blackhole']['use_for']             = 'both'
-        defaultConfig['blackhole']['enabled']             = '0'
-        defaultConfig['sabnzbd']['category']              = 'movies'
-        defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
-        defaultConfig['renamer'] = {}
-        defaultConfig['renamer']['enabled']               = '1'
-        defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
-        defaultConfig['renamer']['to']                    = pHomeDIR+'videos'
-        defaultConfig['renamer']['separator']             = '.'
-        defaultConfig['renamer']['cleanup']               = '0'
-        defaultConfig['core']['permission_folder']        = '0644'
-        defaultConfig['core']['permission_file']          = '0644'
-        defaultConfig['core']['show_wizard']              = '0'
-        defaultConfig['core']['debug']                    = '0'
-        defaultConfig['core']['development']              = '0'
+        if hpfirstlaunch:
+            defaultconfig['Transmission']['download_torrent_dir']  = psabnzbdcompletemusic
+            defaultconfig['General']['api_enabled']                = '1'
+            defaultconfig['SABnzbd']['sab_category']               = 'music'
+            defaultconfig['XBMC']['xbmc_update']                   = '1'
+            defaultconfig['XBMC']['xbmc_notify']                   = '1'
+            defaultconfig['General']['music_dir']                  = phomedir + 'music'
+            defaultconfig['General']['destination_dir']            = phomedir + 'music'
+            defaultconfig['General']['torrentblackhole_dir']       = psabnzbdwatchdir
+            defaultconfig['General']['download_dir']               = psabnzbdcompletemusic
+            defaultconfig['General']['move_files']                 = '1'
+            defaultconfig['General']['rename_files']               = '1'
+            defaultconfig['General']['folder_permissions']         = '0644'
 
-    couchPotatoServerConfig.merge(defaultConfig)
-    couchPotatoServerConfig.write()
+        headphonesconfig.merge(defaultconfig)
+        headphonesconfig.write()
 
-    # launch CouchPotatoServer
-    # ------------------
-    if couchpotato_launch:
-        xbmc.log('AUDO: Launching CouchPotatoServer...', level=xbmc.LOGDEBUG)
-        subprocess.call(couchPotatoServer, close_fds=True)
-        xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
-except Exception, e:
-    xbmc.log('AUDO: CouchPotatoServer exception occurred', level=xbmc.LOGERROR)
-    xbmc.log(str(e), level=xbmc.LOGERROR)
-# CouchPotatoServer end
-
-# Headphones start
-try:
-    # write Headphones settings
-    # -------------------------
-    headphonesConfig = ConfigObj(pHeadphonesSettings, create_empty=True)
-    defaultConfig = ConfigObj()
-    defaultConfig['General'] = {}
-    defaultConfig['General']['launch_browser']            = '0'
-    defaultConfig['General']['http_port']                 = '8084'
-    defaultConfig['General']['http_host']                 = host
-    defaultConfig['General']['http_username']             = user
-    defaultConfig['General']['http_password']             = pwd
-    defaultConfig['General']['check_github']              = '0'
-    defaultConfig['General']['check_github_on_startup']   = '0'
-    defaultConfig['General']['cache_dir']                 = __addonhome__ + 'hpcache'
-    defaultConfig['General']['log_dir']                   = __addonhome__ + 'logs'
-    defaultConfig['XBMC'] = {}
-    defaultConfig['XBMC']['xbmc_enabled']                 = '1'
-    defaultConfig['XBMC']['xbmc_host']                    = 'localhost:' + xbmcPort
-    defaultConfig['XBMC']['xbmc_username']                = xbmcUser
-    defaultConfig['XBMC']['xbmc_password']                = xbmcPwd
-    defaultConfig['SABnzbd'] = {}
-    defaultConfig['Transmission'] = {}
-
-    if sabnzbd_launch:
-        defaultConfig['SABnzbd']['sab_apikey']         = sabNzbdApiKey
-        defaultConfig['SABnzbd']['sab_host']           = sabNzbdHost
-        defaultConfig['SABnzbd']['sab_username']       = user
-        defaultConfig['SABnzbd']['sab_password']       = pwd
-
-    if transauth:
-        defaultConfig['Transmission']['transmission_username'] = transuser
-        defaultConfig['Transmission']['transmission_password'] = transpwd
-        defaultConfig['Transmission']['transmission_host']     = 'http://localhost:9091'
-
-    if hpfirstLaunch:
-        defaultConfig['Transmission']['download_torrent_dir']  = pSabNzbdCompleteMusic
-        defaultConfig['General']['api_enabled']                = '1'
-        defaultConfig['SABnzbd']['sab_category']               = 'music'
-        defaultConfig['XBMC']['xbmc_update']                   = '1'
-        defaultConfig['XBMC']['xbmc_notify']                   = '1'
-        defaultConfig['General']['music_dir']                  = pHomeDIR+'music'
-        defaultConfig['General']['destination_dir']            = pHomeDIR+'music'
-        defaultConfig['General']['torrentblackhole_dir']       = pSabNzbdWatchDir
-        defaultConfig['General']['download_dir']               = pSabNzbdCompleteMusic
-        defaultConfig['General']['move_files']                 = '1'
-        defaultConfig['General']['rename_files']               = '1'
-        defaultConfig['General']['folder_permissions']         = '0644'
-
-    headphonesConfig.merge(defaultConfig)
-    headphonesConfig.write()
-
-    # launch Headphones
-    # -----------------
-    if headphones_launch:
-        xbmc.log('AUDO: Launching Headphones...', level=xbmc.LOGDEBUG)
-        subprocess.call(headphones, close_fds=True)
-        xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
-except Exception, e:
-    xbmc.log('AUDO: Headphones exception occurred', level=xbmc.LOGERROR)
-    xbmc.log(str(e), level=xbmc.LOGERROR)
-# Headphones end
+        # launch Headphones
+        # -----------------
+        if headphones_launch:
+            xbmc.log('AUDO: Launching Headphones...', level=xbmc.LOGDEBUG)
+            subprocess.call(headphones, close_fds=True)
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+    except Exception, e:
+        xbmc.log('AUDO: Headphones exception occurred', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+    # Headphones end

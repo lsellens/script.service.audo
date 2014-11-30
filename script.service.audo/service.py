@@ -1,12 +1,13 @@
 from configobj import ConfigObj
-import xbmc
-import xbmcaddon
-import xbmcvfs
 import urllib2
 import socket
 import time
 import datetime
 import os
+import resources.audo as audo
+import xbmc
+import xbmcaddon
+import xbmcvfs
 
 __scriptname__   = "audo"
 __author__       = "lsellens"
@@ -16,12 +17,11 @@ __addonpath__    = __addon__.getAddonInfo('path')
 __addonhome__    = __addon__.getAddonInfo('profile')
 __dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 __programs__     = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
-__start__        = xbmc.translatePath(__addonpath__ + '/resources/audo.py')
 
 checkInterval    = 240
 timeout          = 20
 wake_times       = ['01:00', '03:00', '05:00', '07:00', '09:00', '11:00', '13:00', '15:00', '17:00', '19:00', '21:00',
-                  '23:00']
+                    '23:00']
 idleTimer        = 0
 
 # detect machine arch and setup binaries on first run
@@ -39,7 +39,7 @@ if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
 
 # Launch audo
 try:
-    xbmc.executebuiltin('XBMC.RunScript(%s)' % __start__, True)
+    audo.main()
 except Exception, e:
     xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)
     xbmc.log(str(e), level=xbmc.LOGERROR)
@@ -60,14 +60,6 @@ if not parch.startswith('arm'):
         xbmc.log('AUDO: Will try to wake system daily at ' + wake_times[wakeHourIdx])
 
 # SABnzbd addresses and api key
-sabNzbdConfigFileDone = (xbmc.translatePath(__addonhome__ + 'sabnzbd.done'))
-
-while True:
-    if not xbmcvfs.exists(sabNzbdConfigFileDone):
-        time.sleep(5)
-    else:
-        break
-
 sabNzbdConfigFile = (xbmc.translatePath(__addonhome__ + 'sabnzbd.ini'))
 sabConfiguration = ConfigObj(sabNzbdConfigFile)
 sabNzbdApiKey = sabConfiguration['misc']['api_key']
@@ -104,7 +96,7 @@ while not xbmc.abortRequested:
         xbmc.log('AUDO: Update occurred. Attempting to restart Audo services:', level=xbmc.LOGDEBUG)
         count1 = 1
         count2 = 2
-        xbmc.executebuiltin('XBMC.Notification('+__scriptname__+': Update detected,Stopping services now...,5000,)')
+        xbmc.executebuiltin('XBMC.Notification(' + __scriptname__ + ': Update detected,Stopping services now...,5000,)')
         os.system("kill `ps | grep -E 'python.*script.module.audo' | awk '{print $1}'`")
         while count1 != count2:
             count1 = 0
@@ -115,16 +107,19 @@ while not xbmc.abortRequested:
             for root, dirs, files in os.walk(__programs__):
                 count2 += len(files)
         try:
-            if (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'))) and (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'))) and (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'))):
-                xbmc.executebuiltin('XBMC.Notification('+__scriptname__+': Update detected,Restarting services now...,5000,)')
+            if (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'))) and (
+                    xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'))) and (
+                    xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'))):
+                xbmc.executebuiltin(
+                    'XBMC.Notification(' + __scriptname__ + ': Update detected,Restarting services now...,5000,)')
                 time.sleep(3)
-                xbmc.executebuiltin('XBMC.RunScript(%s)' % __start__, True)
+                audo.main()
                 time.sleep(10)
         except Exception, e:
             xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
 
-    #RPI and other arm devices do not have a wakealarm
+    # RPI and other arm devices do not have a wakealarm
     if not parch.startswith('arm'):
 
         # reread setting in case it has changed
