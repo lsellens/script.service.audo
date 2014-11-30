@@ -227,6 +227,16 @@ except StandardError:
 # prepare execution environment
 os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
 
+### make binaries executable and add to PATH
+subprocess.Popen("chmod -R +x " + __dependencies__ + "/bin/*" , shell=True, close_fds=True)
+binPATH  = xbmc.translatePath(__dependencies__ + '/bin')
+os.environ['PATH'] = str(os.environ.get('PATH')) + ':' + binPATH
+sys.path.append(binPATH)
+
+#ckPATH = "echo $PATH"
+#PATHis = subprocess.check_output(ckPATH, shell=True)
+#print "PATH: "+PATHis
+
 #Touch audo-programs folder stating they are currently loaded <-- for detecting update
 open(__programs__ + '/.current', 'a').close()
 
@@ -278,7 +288,7 @@ try:
         defaultConfig['servers'] = servers
         defaultConfig['categories'] = categories
 
-    if not pmode:
+    if(pmode == "false"):
         defaultConfig['misc']['download_dir']  = pSabNzbdIncomplete
         defaultConfig['misc']['complete_dir']  = pSabNzbdComplete
 
@@ -388,7 +398,7 @@ try:
         defaultConfig['XBMC']['xbmc_update_library']      = '1'
         defaultConfig['XBMC']['xbmc_update_full']         = '1'
 
-    if not pmode:
+    if(pmode == "false"):
         defaultConfig['TORRENT']['torrent_path']          = pTorrentCompleteTV
         defaultConfig['General']['tv_download_dir']       = pTorrentCompleteTV
         defaultConfig['General']['root_dirs']             = '0|'+sickbeard_watch_dir
@@ -471,7 +481,7 @@ try:
         defaultConfig['core']['debug']                    = '0'
         defaultConfig['core']['development']              = '0'
 
-    if not pmode:
+    if(pmode == "false"):
         defaultConfig['transmission']['directory']        = pTorrentCompleteMov
         defaultConfig['sabnzbd']['pp_directory']          = pSabNzbdCompleteMov
         defaultConfig['renamer']['from']                  = pSabNzbdCompleteMov
@@ -536,7 +546,7 @@ try:
         defaultConfig['General']['rename_files']               = '1'
         defaultConfig['General']['folder_permissions']         = '0644'
 
-    if not pmode:
+    if(pmode == "false"):
         defaultConfig['General']['music_dir']                  = headphones_watch_dir
         defaultConfig['General']['destination_dir']            = headphones_watch_dir
         defaultConfig['General']['torrentblackhole_dir']       = pSabNzbdWatchDir
