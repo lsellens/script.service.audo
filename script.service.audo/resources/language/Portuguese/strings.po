@@ -90,3 +90,35 @@ msgstr ""
 msgctxt "#32103"
 msgid "Dependencies"
 msgstr ""
+
+msgctxt "#32200"
+msgid "Folders"
+msgstr ""
+
+msgctxt "#32201"
+msgid "Folder Settings"
+msgstr ""
+
+msgctxt "#32202"
+msgid "Configure folders through WEB Interfaces?"
+msgstr ""
+
+msgctxt "#32203"
+msgid "Log on to [IP]:[PORT] to setup Sickbeard, CouchPotato & Headphones"
+msgstr ""
+
+msgctxt "#32204"
+msgid "Default Movie Directory"
+msgstr ""
+
+msgctxt "#32205"
+msgid "Default TV Show Directory"
+msgstr ""
+
+msgctxt "#32206"
+msgid "Default Music Directory"
+msgstr ""
+
+msgctxt "#32207"
+msgid "Download Directory"
+msgstr ""

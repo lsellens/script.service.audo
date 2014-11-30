@@ -77,11 +77,11 @@ msgstr "Herstart op opschorten / hervatten"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr ""
+msgstr "Changelogs"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr ""
+msgstr "Programmeren"
 
 msgctxt "#32102"
 msgid "Service"
@@ -89,4 +89,36 @@ msgstr ""
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr ""
+msgstr "Afhankelijkheden"
+
+msgctxt "#32200"
+msgid "Folders"
+msgstr "Mappen"
+
+msgctxt "#32201"
+msgid "Folder Settings"
+msgstr "Vouweenheidinstellingen"
+
+msgctxt "#32202"
+msgid "Configure folders through WEB Interfaces?"
+msgstr "Mappen te configureren door middel van web -interfaces?"
+
+msgctxt "#32203"
+msgid "Log on to [IP]:[PORT] to setup Sickbeard, CouchPotato & Headphones"
+msgstr "Log in op [IP]:[PORT] om setup Sickbeard, CouchPotato & Headphones"
+
+msgctxt "#32204"
+msgid "Default Movie Directory"
+msgstr "Standaard Movie Folder"
+
+msgctxt "#32205"
+msgid "Default TV Show Directory"
+msgstr "Standaard TV Toon Folder"
+
+msgctxt "#32206"
+msgid "Default Music Directory"
+msgstr "Standaard Muziek Folder"
+
+msgctxt "#32207"
+msgid "Download Directory"
+msgstr "Download Folder"
