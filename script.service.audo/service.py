@@ -11,7 +11,7 @@ import xbmcvfs
 
 __scriptname__   = "audo"
 __author__       = "lsellens"
-__url__          = "http://code.google.com/p/repository-lsellens/"
+__url__          = "http://lsellens.openelec.tv"
 __addon__        = xbmcaddon.Addon(id='script.service.audo')
 __addonpath__    = __addon__.getAddonInfo('path')
 __addonhome__    = __addon__.getAddonInfo('profile')
