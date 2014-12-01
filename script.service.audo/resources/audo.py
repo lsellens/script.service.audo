@@ -136,6 +136,8 @@ def main():
 
     # prepare execution environment
     os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
+    os_env = os.environ
+    os_env["PATH"] = (xbmc.translatePath(__dependencies__ + '/bin:')) + os_env["PATH"]
 
     # Touch audo-programs folder stating they are currently loaded <-- for detecting update
     open(__programs__ + '/.current', 'a').close()
@@ -208,7 +210,7 @@ def main():
         # ----------------------------------
         if firstlaunch or sabnzbd_launch:
             xbmc.log('AUDO: Launching SABnzbd...', level=xbmc.LOGDEBUG)
-            subprocess.call(sabnzbd, close_fds=True)
+            subprocess.call(sabnzbd, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
 
             # SABnzbd will only complete the .ini file when we first access the web interface
@@ -302,7 +304,7 @@ def main():
         # ----------------
         if sickbeard_launch:
             xbmc.log('AUDO: Launching SickBeard...', level=xbmc.LOGDEBUG)
-            subprocess.call(sickbeard, close_fds=True)
+            subprocess.call(sickbeard, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
         xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
@@ -383,7 +385,7 @@ def main():
         # ------------------
         if couchpotato_launch:
             xbmc.log('AUDO: Launching CouchPotatoServer...', level=xbmc.LOGDEBUG)
-            subprocess.call(couchpotatoserver, close_fds=True)
+            subprocess.call(couchpotatoserver, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
         xbmc.log('AUDO: CouchPotatoServer exception occurred', level=xbmc.LOGERROR)
@@ -446,7 +448,7 @@ def main():
         # -----------------
         if headphones_launch:
             xbmc.log('AUDO: Launching Headphones...', level=xbmc.LOGDEBUG)
-            subprocess.call(headphones, close_fds=True)
+            subprocess.call(headphones, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
         xbmc.log('AUDO: Headphones exception occurred', level=xbmc.LOGERROR)
