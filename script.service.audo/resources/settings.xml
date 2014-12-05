@@ -13,18 +13,18 @@
 		<setting label="32008" type="lsep"/>
 		<setting type="sep"/>
 		<setting id="SABNZBD_IP" type="text" label="32009" default="0.0.0.0"/>
-		<setting label="32010" type="lsep" visible="System.CanHibernate"/>
-		<setting type="sep" visible="System.CanHibernate"/>
+		<setting label="32010" type="lsep" visible="[! System.Platform.Linux.RaspberryPi] + System.CanSuspend"/>
+		<setting type="sep" visible="[! System.Platform.Linux.RaspberryPi] + System.CanSuspend"/>
 		<setting id="SABNZBD_KEEP_AWAKE" type="bool" label="32011" default="false" enable="eq(-9,true)"
-                         visible="System.CanHibernate"/>
+                         visible="[! System.Platform.Linux.RaspberryPi] + System.CanSuspend"/>
 		<setting id="PERIODIC_WAKE" type="bool" label="32012" default="false"
-                         visible="System.CanHibernate"/>
+                         visible="[! System.Platform.Linux.RaspberryPi] + System.CanSuspend"/>
 		<setting id="WAKE_AT" type="enum" subsetting="true" enable="eq(-1,true)"
 		         label="32013" default="01"
 		         values="|01:00|03:00|05:00|07:00|09:00|11:00|13:00|15:00|17:00|19:00|21:00|23:00"
-                         visible="System.CanHibernate"/>
+                         visible="[! System.Platform.Linux.RaspberryPi] + System.CanSuspend"/>
                 <setting id="RESTART_ON_RESUME" type="bool" label="32014" default="true"
-                         visible="System.CanHibernate"/>
+                         visible="[! System.Platform.Linux.RaspberryPi] + System.CanSuspend"/>
     </category>
     <category label="32100">
 		<setting label="32100" type="lsep"/>
