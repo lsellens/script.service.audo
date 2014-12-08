@@ -40,14 +40,14 @@ def main():
     phomedir = os.path.expanduser('~/')
 
     # directories
-    psabnzbdcomplete = phomedir + 'downloads'
-    psabnzbdwatchdir = phomedir + 'downloads/watch'
-    psabnzbdcompletetv = phomedir + 'downloads/tvshows'
-    psabnzbdcompletemov = phomedir + 'downloads/movies'
-    psabnzbdcompletemusic = phomedir + 'downloads/music'
-    psabnzbdincomplete = phomedir + 'downloads/incomplete'
-    psickbeardtvscripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV')
-    psabnzbdscripts = xbmc.translatePath(__addonhome__ + 'scripts')
+    psabnzbdcomplete = xbmc.translatePath(phomedir + 'downloads/')
+    psabnzbdwatchdir = xbmc.translatePath(phomedir + 'downloads/watch/')
+    psabnzbdcompletetv = xbmc.translatePath(phomedir + 'downloads/tvshows/')
+    psabnzbdcompletemov = xbmc.translatePath(phomedir + 'downloads/movies/')
+    psabnzbdcompletemusic = xbmc.translatePath(phomedir + 'downloads/music/')
+    psabnzbdincomplete = xbmc.translatePath(phomedir + 'downloads/incomplete/')
+    psickbeardtvscripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV/')
+    psabnzbdscripts = xbmc.translatePath(__addonhome__ + 'scripts/')
 
     # service commands
     sabnzbd           = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
@@ -80,12 +80,12 @@ def main():
     create_dir(psabnzbdincomplete)
     create_dir(psabnzbdscripts)
 
-    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + '/sabToSickBeard.py')):
-        xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + '/sabToSickBeard.py'), psabnzbdscripts +
-                     '/sabToSickBeard.py')
-    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + '/autoProcessTV.py')):
-        xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + '/autoProcessTV.py'), psabnzbdscripts +
-                     '/autoProcessTV.py')
+    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + 'sabToSickBeard.py')):
+        xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + 'sabToSickBeard.py'), psabnzbdscripts +
+                     'sabToSickBeard.py')
+    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + 'autoProcessTV.py')):
+        xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + 'autoProcessTV.py'), psabnzbdscripts +
+                     'autoProcessTV.py')
 
     # Transmission-Daemon
     transauth = False
@@ -196,7 +196,7 @@ def main():
         sabnzbdconfig.write()
 
         # also keep the autoProcessTV config up to date
-        autoprocessconfig = ConfigObj(xbmc.translatePath(psabnzbdscripts + '/autoProcessTV.cfg'), create_empty=True)
+        autoprocessconfig = ConfigObj(xbmc.translatePath(psabnzbdscripts + 'autoProcessTV.cfg'), create_empty=True)
         defaultconfig = ConfigObj()
         defaultconfig['SickBeard'] = {}
         defaultconfig['SickBeard']['host']                     = 'localhost'
