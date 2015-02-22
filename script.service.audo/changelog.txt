@@ -1,3 +1,6 @@
+1.1.6
+- fix crash on first time install for slower devices
+
 1.1.5
 - fix for dependancies script running before everything unpacks
 
