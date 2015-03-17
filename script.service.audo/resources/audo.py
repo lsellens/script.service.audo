@@ -169,7 +169,7 @@ def main():
     os_env["PATH"] = (xbmc.translatePath(__dependencies__ + '/bin:')) + os_env["PATH"]
     
     # Touch audo-programs folder stating they are currently loaded <-- for detecting update
-    xbmcvfs.File(xbmc.translatePath(__programs__ + '/.current', 'a').close()
+    open(__programs__ + '/.current', 'a').close()
     # SABnzbd start
     try:
         # write SABnzbd settings
