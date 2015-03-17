@@ -1,3 +1,6 @@
+1.1.7
+- fix missing autoProcessTV scripts dependencies in SABnzbd
+
 1.1.6
 - fix crash on first time install for slower devices
 

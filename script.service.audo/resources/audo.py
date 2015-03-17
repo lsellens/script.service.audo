@@ -113,7 +113,9 @@ def main():
     if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + 'autoProcessTV.py')):
         xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + 'autoProcessTV.py'), psabnzbdscripts +
                      'autoProcessTV.py')
-    
+    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + 'lib')):
+        os.symlink(psickbeardtvscripts + 'lib', psabnzbdscripts + 'lib')
+
     # Transmission-Daemon
     transauth = False
     try:
@@ -167,8 +169,7 @@ def main():
     os_env["PATH"] = (xbmc.translatePath(__dependencies__ + '/bin:')) + os_env["PATH"]
     
     # Touch audo-programs folder stating they are currently loaded <-- for detecting update
-    open(__programs__ + '/.current', 'a').close()
-    
+    xbmcvfs.File(xbmc.translatePath(__programs__ + '/.current', 'a').close()
     # SABnzbd start
     try:
         # write SABnzbd settings
