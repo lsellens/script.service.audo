@@ -1,3 +1,6 @@
+1.1.8
+- fix bug causing crash
+
 1.1.7
 - fix missing autoProcessTV scripts dependencies in SABnzbd
 

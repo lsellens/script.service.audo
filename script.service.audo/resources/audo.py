@@ -113,7 +113,7 @@ def main():
     if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + 'autoProcessTV.py')):
         xbmcvfs.copy(xbmc.translatePath(psickbeardtvscripts + 'autoProcessTV.py'), psabnzbdscripts +
                      'autoProcessTV.py')
-    if not xbmcvfs.exists(xbmc.translatePath(psabnzbdscripts + 'lib')):
+    if not os.path.exists(xbmc.translatePath(psabnzbdscripts + 'lib')):
         os.symlink(psickbeardtvscripts + 'lib', psabnzbdscripts + 'lib')
 
     # Transmission-Daemon
