@@ -365,7 +365,6 @@ def main():
         defaultconfig['updater']['automatic']                  = '0'
         defaultconfig['xbmc'] = {}
         defaultconfig['xbmc']['enabled']                       = '1'
-        defaultconfig['xbmc']['host']                          = 'localhost:' + xbmcport
         defaultconfig['xbmc']['username']                      = xbmcuser
         defaultconfig['xbmc']['password']                      = xbmcpwd
         defaultconfig['sabnzbd'] = {}
@@ -384,6 +383,7 @@ def main():
         
         if cpfirstlaunch:
             defaultconfig['transmission']['directory']             = psabnzbdcompletemov
+            defaultconfig['xbmc']['host']                          = 'localhost:' + xbmcport
             defaultconfig['xbmc']['xbmc_update_library']           = '1'
             defaultconfig['xbmc']['xbmc_update_full']              = '1'
             defaultconfig['xbmc']['xbmc_notify_onsnatch']          = '1'
