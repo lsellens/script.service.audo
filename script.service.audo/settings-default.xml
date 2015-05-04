@@ -6,6 +6,7 @@
     <setting id="PERIODIC_WAKE" value="false" />
     <setting id="WAKE_AT" value="1" />
     <setting id="SABNZBD_LAUNCH" value="true" />
+    <setting id="NZBGet_LAUNCH" value="false" />
     <setting id="SICKBEARD_LAUNCH" value="true" />
     <setting id="COUCHPOTATO_LAUNCH" value="true" />
     <setting id="HEADPHONES_LAUNCH" value="true" />

@@ -58,6 +58,7 @@ def main():
     psickbeardsettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
     pcouchpotatoserversettings = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
     pheadphonessettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
+    pnzbgetsettings       = xbmc.translatePath(__addonhome__ + 'nzbget.conf')
     
     # the settings file already exists if the user set settings before the first launch
     if not xbmcvfs.exists(psuitesettings):
@@ -87,12 +88,14 @@ def main():
     headphones        = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
                          '-d', '--datadir', __addonhome__, '--pidfile=/var/run/headphones.pid', '--config',
                          pheadphonessettings]
+    nzbget            = [xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget'), '-D', '-c', pnzbgetsettings]
     
     # Other stuff
     sabnzbdhost = 'localhost:8081'
     
     # create directories and settings on first launch
     firstlaunch = not xbmcvfs.exists(psabnzbdsettings)
+    ngfirstlaunch = not xbmcvfs.exists(pnzbgetsettings)
     sbfirstlaunch = not xbmcvfs.exists(psickbeardsettings)
     cpfirstlaunch = not xbmcvfs.exists(pcouchpotatoserversettings)
     hpfirstlaunch = not xbmcvfs.exists(pheadphonessettings)
@@ -115,7 +118,7 @@ def main():
                      'autoProcessTV.py')
     if not os.path.exists(xbmc.translatePath(psabnzbdscripts + 'lib')):
         os.symlink(psickbeardtvscripts + 'lib', psabnzbdscripts + 'lib')
-
+    
     # Transmission-Daemon
     transauth = False
     try:
@@ -143,6 +146,7 @@ def main():
     pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
     host = (__addon__.getSetting('SABNZBD_IP'))
     sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
+    nzbget_launch = (__addon__.getSetting('NZBGET_LAUNCH').lower() == 'true')
     sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
     couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
     headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
@@ -167,6 +171,18 @@ def main():
     os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
     os_env = os.environ
     os_env["PATH"] = (xbmc.translatePath(__dependencies__ + '/bin:')) + os_env["PATH"]
+    
+    # NZBGet Binary Install
+    try:
+        if not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
+            installnzbget = ['sh', xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget-bin-linux.run'),
+                             '--destdir', xbmc.translatePath(__programs__ + '/resources/nzbget/')]
+            xbmc.log('AUDO: Installing NZBGet Binaries...', level=xbmc.LOGDEBUG)
+            subprocess.call(installnzbget, close_fds=True, env=os_env)
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+    except Exception, e:
+        xbmc.log('AUDO: NZBGet Install exception occurred', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
     
     # Touch audo-programs folder stating they are currently loaded <-- for detecting update
     open(__programs__ + '/.current', 'a').close()
@@ -264,6 +280,31 @@ def main():
         xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
     # SABnzbd end
+    
+    # NZBGet start
+    try:
+        # write NZBGet settings
+        # ------------------------
+        nzbgetconfig = ConfigObj(pnzbgetsettings, create_empty=True)
+        defaultconfig = ConfigObj()
+        defaultconfig['ControlPort']                           = '8081'
+        defaultconfig['ControlUsername']                       = user
+        defaultconfig['ControlPassword']                       = pwd
+        
+        
+        nzbgetconfig.merge(defaultconfig)
+        nzbgetconfig.write()
+        
+        # launch NZBGet
+        # ----------------
+        if nzbget_launch:
+            xbmc.log('AUDO: Launching NZBGet...', level=xbmc.LOGDEBUG)
+            subprocess.call(nzbget, close_fds=True, env=os_env)
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+    except Exception, e:
+        xbmc.log('AUDO: NZBGet exception occurred', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+    # NZBGet end
     
     # SickBeard start
     try:

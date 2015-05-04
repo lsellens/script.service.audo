@@ -36,42 +36,46 @@ msgid "Enable SABnzbd on Port: 8081"
 msgstr "SABnzbd aktivieren"
 
 msgctxt "#32005"
+msgid "Enable NZBGet on Port: 8081"
+msgstr "NZBGet aktivieren"
+
+msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
 msgstr "Sickbeard aktivieren"
 
-msgctxt "#32006"
+msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
 msgstr "Couchpotato aktivieren"
 
-msgctxt "#32007"
+msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
 msgstr "Headphones aktivieren"
 
-msgctxt "#32008"
+msgctxt "#32009"
 msgid "Network Settings"
 msgstr "Netzwerk Eigenschaften"
 
-msgctxt "#32009"
+msgctxt "#32010"
 msgid "Allowed IP addresses"
 msgstr "Zugelassene IP-Adressen"
 
-msgctxt "#32010"
+msgctxt "#32011"
 msgid "Sleep"
 msgstr "Schlafen"
 
-msgctxt "#32011"
+msgctxt "#32012"
 msgid "Keep awake while downloading"
 msgstr "Wach halten während dem runterladen"
 
-msgctxt "#32012"
+msgctxt "#32013"
 msgid "Wake up periodically"
 msgstr "Periodisch aufwecken"
 
-msgctxt "#32013"
+msgctxt "#32014"
 msgid "Wake up at"
 msgstr "Aufwachen um"
 
-msgctxt "#32014"
+msgctxt "#32015"
 msgid "Restart on suspend / resume"
 msgstr "Neu starten bei sperren / fortsetzen"
 
