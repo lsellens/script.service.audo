@@ -88,7 +88,7 @@ def main():
     headphones        = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
                          '-d', '--datadir', __addonhome__, '--pidfile=/var/run/headphones.pid', '--config',
                          pheadphonessettings]
-    nzbget            = [xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget'), '-D', '-c', pnzbgetsettings]
+    nzbget            = ['.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget'), '-D', '-c', pnzbgetsettings]
     
     # Other stuff
     sabnzbdhost = 'localhost:8081'
@@ -287,13 +287,28 @@ def main():
         # ------------------------
         nzbgetconfig = ConfigObj(pnzbgetsettings, create_empty=True)
         defaultconfig = ConfigObj()
+        defaultconfig['ControlIP']                             = host
         defaultconfig['ControlPort']                           = '8081'
         defaultconfig['ControlUsername']                       = user
         defaultconfig['ControlPassword']                       = pwd
+        defaultconfig['LogFile']                               = __addonhome__ + 'logs/nzbget.log'
+        defaultconfig['DaemonUsername']                        = 'root'
+        defaultconfig['UMask']                                 = '1000'
+        defaultconfig['LockFile']                              = '/var/run/nzbget.pid'
+        defaultconfig['TempDir']                               = '/var/tmp'
+        defaultconfig['UnrarCmd']                              = 'unrar'
         
+        if ngfirstlaunch:
+            defaultconfig['MainDir']                               = psabnzbdcomplete
+            defaultconfig['DestDir']                               = psabnzbdcomplete
+            defaultconfig['InterDir']                              = psabnzbdincomplete
+            defaultconfig['NzbDir']                                = psabnzbdwatchdir
+            defaultconfig['WebDir']                                = __programs__ + '/resources/nzbget/webui'
+            defaultconfig['ConfigTemplate']                        = __programs__ + '/resources/nzbget/webui/nzbget.conf.template'
+            defaultconfig['ScriptDir']                             = __programs__ + '/resources/nzbget/scripts'
         
         nzbgetconfig.merge(defaultconfig)
-        nzbgetconfig.write()
+        nzbgetconfig.writenowhitespace()
         
         # launch NZBGet
         # ----------------
@@ -328,12 +343,18 @@ def main():
         defaultconfig['XBMC']['xbmc_username']                 = xbmcuser
         defaultconfig['XBMC']['xbmc_password']                 = xbmcpwd
         defaultconfig['TORRENT'] = {}
+        defaultconfig['NZBget'] = {}
         
         if sabnzbd_launch:
             defaultconfig['SABnzbd']['sab_username']               = user
             defaultconfig['SABnzbd']['sab_password']               = pwd
             defaultconfig['SABnzbd']['sab_apikey']                 = sabnzbdapikey
             defaultconfig['SABnzbd']['sab_host']                   = 'http://' + sabnzbdhost + '/'
+        
+        if nzbget_launch:
+            defaultconfig['NZBget']['nzbget_username']             = user
+            defaultconfig['NZBget']['nzbget_password']             = pwd
+            defaultconfig['NZBget']['nzbget_host']                 = 'http://' + sabnzbdhost + '/'
         
         if transauth:
             defaultconfig['TORRENT']['torrent_username']           = transuser
@@ -410,12 +431,18 @@ def main():
         defaultconfig['xbmc']['password']                      = xbmcpwd
         defaultconfig['sabnzbd'] = {}
         defaultconfig['transmission'] = {}
+        defaultconfig['nzbget'] = {}
         
         if sabnzbd_launch:
             defaultconfig['sabnzbd']['username']                   = user
             defaultconfig['sabnzbd']['password']                   = pwd
             defaultconfig['sabnzbd']['api_key']                    = sabnzbdapikey
             defaultconfig['sabnzbd']['host']                       = sabnzbdhost
+            
+        if nzbget_launch:
+            defaultconfig['nzbget']['username']                    = user
+            defaultconfig['nzbget']['password']                    = pwd
+            defaultconfig['nzbget']['host']                        = sabnzbdhost
         
         if transauth:
             defaultconfig['transmission']['username']              = transuser
@@ -484,12 +511,18 @@ def main():
         defaultconfig['XBMC']['xbmc_password']                 = xbmcpwd
         defaultconfig['SABnzbd'] = {}
         defaultconfig['Transmission'] = {}
+        defaultconfig['NZBget'] = {}
         
         if sabnzbd_launch:
             defaultconfig['SABnzbd']['sab_apikey']                 = sabnzbdapikey
             defaultconfig['SABnzbd']['sab_host']                   = sabnzbdhost
             defaultconfig['SABnzbd']['sab_username']               = user
             defaultconfig['SABnzbd']['sab_password']               = pwd
+        
+        if nzbget_launch:
+            defaultconfig['NZBget']['nzbget_username']               = user
+            defaultconfig['NZBget']['nzbget_password']               = pwd
+            defaultconfig['NZBget']['nzbget_host']                   = sabnzbdhost
         
         if transauth:
             defaultconfig['Transmission']['transmission_username'] = transuser
