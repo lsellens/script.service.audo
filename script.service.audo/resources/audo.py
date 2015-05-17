@@ -297,15 +297,26 @@ def main():
         defaultconfig['LockFile']                              = '/var/run/nzbget.pid'
         defaultconfig['TempDir']                               = '/var/tmp'
         defaultconfig['UnrarCmd']                              = 'unrar'
+        defaultconfig['WebDir']                                = __programs__ + '/resources/nzbget/webui'
+        defaultconfig['ConfigTemplate']                        = __programs__ + '/resources/nzbget/webui/nzbget.conf.template'
         
         if ngfirstlaunch:
             defaultconfig['MainDir']                               = psabnzbdcomplete
             defaultconfig['DestDir']                               = psabnzbdcomplete
             defaultconfig['InterDir']                              = psabnzbdincomplete
             defaultconfig['NzbDir']                                = psabnzbdwatchdir
-            defaultconfig['WebDir']                                = __programs__ + '/resources/nzbget/webui'
-            defaultconfig['ConfigTemplate']                        = __programs__ + '/resources/nzbget/webui/nzbget.conf.template'
             defaultconfig['ScriptDir']                             = __programs__ + '/resources/nzbget/scripts'
+            defaultconfig['WriteLog']                              = 'append'
+            defaultconfig['RotateLog']                             = '7'
+            defaultconfig['ErrorTarget']                           = 'log'
+            defaultconfig['WarningTarget']                         = 'log'
+            defaultconfig['InfoTarget']                            = 'log'
+            defaultconfig['DetailTarget']                          = 'log'
+            defaultconfig['DebugTarget']                           = 'log'
+            defaultconfig['LogBufferSize']                         = '1000'
+            defaultconfig['NzbLog']                                = 'yes'
+            defaultconfig['BrokenLog']                             = 'yes'
+            defaultconfig['DumpCore']                              = 'yes'
         
         nzbgetconfig.merge(defaultconfig)
         nzbgetconfig.writenowhitespace()
