@@ -136,7 +136,7 @@ def main():
                 transpwd = None
         else:
             xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
-
+    
     except Exception, e:
         xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
         xbmc.log(str(e), level=xbmc.LOGNOTICE)
