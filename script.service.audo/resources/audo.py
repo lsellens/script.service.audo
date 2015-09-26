@@ -11,11 +11,22 @@ import xbmc
 import xbmcaddon
 import xbmcvfs
 
+# addon
+__addon__ = xbmcaddon.Addon(id='script.service.audo')
+__addonpath__ = xbmc.translatePath(__addon__.getAddonInfo('path'))
+__addonhome__ = xbmc.translatePath(__addon__.getAddonInfo('profile'))
+__programs__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
+__dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 
-def create_dir(dirname):
-    if not xbmcvfs.exists(dirname):
-        xbmcvfs.mkdirs(dirname)
-        xbmc.log('AUDO: Created directory ' + dirname, level=xbmc.LOGDEBUG)
+# settings
+pdefaultsuitesettings = xbmc.translatePath(__addonpath__ + '/settings-default.xml')
+psuitesettings = xbmc.translatePath(__addonhome__ + 'settings.xml')
+pxbmcsettings = xbmc.translatePath('special://home/userdata/guisettings.xml')
+psabnzbdsettings = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
+psickbeardsettings = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
+pcouchpotatosettings = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
+pheadphonessettings = xbmc.translatePath(__addonhome__ + 'headphones.ini')
+pnzbgetsettings = xbmc.translatePath(__addonhome__ + 'nzbget.conf')
 
 
 def retry_on_exc(exceptiontocheck, tries, delay, backoff):
@@ -33,7 +44,9 @@ def retry_on_exc(exceptiontocheck, tries, delay, backoff):
                     mtries -= 1
                     mdelay *= backoff
             return f(*args, **kwargs)
+
         return f_retry
+
     return retry
 
 
@@ -43,22 +56,10 @@ def urlopen_with_retry(url):
 
 
 def main():
-    # addon
-    __addon__        = xbmcaddon.Addon(id='script.service.audo')
-    __addonpath__    = xbmc.translatePath(__addon__.getAddonInfo('path'))
-    __addonhome__    = xbmc.translatePath(__addon__.getAddonInfo('profile'))
-    __programs__     = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
-    __dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
-
-    # settings
-    pdefaultsuitesettings = xbmc.translatePath(__addonpath__ + '/settings-default.xml')
-    psuitesettings        = xbmc.translatePath(__addonhome__ + 'settings.xml')
-    pxbmcsettings         = xbmc.translatePath('special://home/userdata/guisettings.xml')
-    psabnzbdsettings      = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
-    psickbeardsettings    = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
-    pcouchpotatoserversettings = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
-    pheadphonessettings   = xbmc.translatePath(__addonhome__ + 'headphones.ini')
-    pnzbgetsettings       = xbmc.translatePath(__addonhome__ + 'nzbget.conf')
+    def create_dir(dirname):
+        if not xbmcvfs.exists(dirname):
+            xbmcvfs.mkdirs(dirname)
+            xbmc.log('AUDO: Created directory ' + dirname, level=xbmc.LOGDEBUG)
     
     # the settings file already exists if the user set settings before the first launch
     if not xbmcvfs.exists(psuitesettings):
@@ -78,17 +79,17 @@ def main():
     psabnzbdscripts = xbmc.translatePath(__addonhome__ + 'scripts/')
     
     # service commands
-    sabnzbd           = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
-                         '-d', '--pidfile=/var/run/sabnzbd.pid', '-f', psabnzbdsettings, '-l 0']
-    sickbeard         = ['python', xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'),
-                         '--daemon', '--datadir', __addonhome__, '--pidfile=/var/run/sickbeard.pid', '--config',
-                         psickbeardsettings]
+    sabnzbd = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
+               '-d', '--pidfile=/var/run/sabnzbd.pid', '-f', psabnzbdsettings, '-l 0']
+    sickbeard = ['python', xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'),
+                 '--daemon', '--datadir', __addonhome__, '--pidfile=/var/run/sickbeard.pid', '--config',
+                 psickbeardsettings]
     couchpotatoserver = ['python', xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'),
-                         '--daemon', '--pid_file=/var/run/couchpotato.pid', '--config_file', pcouchpotatoserversettings]
-    headphones        = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
-                         '-d', '--datadir', __addonhome__, '--pidfile=/var/run/headphones.pid', '--config',
-                         pheadphonessettings]
-    nzbget            = ['.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget'), '-D', '-c', pnzbgetsettings]
+                         '--daemon', '--pid_file=/var/run/couchpotato.pid', '--config_file', pcouchpotatosettings]
+    headphones = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
+                  '-d', '--datadir', __addonhome__, '--pidfile=/var/run/headphones.pid', '--config',
+                  pheadphonessettings]
+    nzbget = ['.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget'), '-D', '-c', pnzbgetsettings]
     
     # Other stuff
     sabnzbdhost = 'localhost:8081'
@@ -97,7 +98,7 @@ def main():
     firstlaunch = not xbmcvfs.exists(psabnzbdsettings)
     ngfirstlaunch = not xbmcvfs.exists(pnzbgetsettings)
     sbfirstlaunch = not xbmcvfs.exists(psickbeardsettings)
-    cpfirstlaunch = not xbmcvfs.exists(pcouchpotatoserversettings)
+    cpfirstlaunch = not xbmcvfs.exists(pcouchpotatosettings)
     hpfirstlaunch = not xbmcvfs.exists(pheadphonessettings)
     
     xbmc.log('AUDO: Creating directories if missing', level=xbmc.LOGDEBUG)
@@ -135,7 +136,7 @@ def main():
                 transpwd = None
         else:
             xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
-    
+
     except Exception, e:
         xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
         xbmc.log(str(e), level=xbmc.LOGNOTICE)
@@ -157,13 +158,13 @@ def main():
     fxbmcsettings.close()
     xbmcsettings = parseString(data)
     xbmcservices = xbmcsettings.getElementsByTagName('services')[0]
-    xbmcport         = xbmcservices.getElementsByTagName('webserverport')[0].firstChild.data
+    xbmcport = xbmcservices.getElementsByTagName('webserverport')[0].firstChild.data
     try:
-        xbmcuser     = xbmcservices.getElementsByTagName('webserverusername')[0].firstChild.data
+        xbmcuser = xbmcservices.getElementsByTagName('webserverusername')[0].firstChild.data
     except StandardError:
         xbmcuser = ''
     try:
-        xbmcpwd      = xbmcservices.getElementsByTagName('webserverpassword')[0].firstChild.data
+        xbmcpwd = xbmcservices.getElementsByTagName('webserverpassword')[0].firstChild.data
     except StandardError:
         xbmcpwd = ''
     
@@ -193,49 +194,49 @@ def main():
         sabnzbdconfig = ConfigObj(psabnzbdsettings, create_empty=True)
         defaultconfig = ConfigObj()
         defaultconfig['misc'] = {}
-        defaultconfig['misc']['check_new_rel']                 = '0'
-        defaultconfig['misc']['auto_browser']                  = '0'
-        defaultconfig['misc']['disable_api_key']               = '0'
-        defaultconfig['misc']['username']                      = user
-        defaultconfig['misc']['password']                      = pwd
-        defaultconfig['misc']['port']                          = '8081'
-        defaultconfig['misc']['https_port']                    = '9081'
-        defaultconfig['misc']['https_cert']                    = 'server.cert'
-        defaultconfig['misc']['https_key']                     = 'server.key'
-        defaultconfig['misc']['host']                          = host
-        defaultconfig['misc']['log_dir']                       = 'logs'
-        defaultconfig['misc']['admin_dir']                     = 'admin'
-        defaultconfig['misc']['nzb_backup_dir']                = 'backup'
+        defaultconfig['misc']['check_new_rel'] = '0'
+        defaultconfig['misc']['auto_browser'] = '0'
+        defaultconfig['misc']['disable_api_key'] = '0'
+        defaultconfig['misc']['username'] = user
+        defaultconfig['misc']['password'] = pwd
+        defaultconfig['misc']['port'] = '8081'
+        defaultconfig['misc']['https_port'] = '9081'
+        defaultconfig['misc']['https_cert'] = 'server.cert'
+        defaultconfig['misc']['https_key'] = 'server.key'
+        defaultconfig['misc']['host'] = host
+        defaultconfig['misc']['log_dir'] = 'logs'
+        defaultconfig['misc']['admin_dir'] = 'admin'
+        defaultconfig['misc']['nzb_backup_dir'] = 'backup'
         
         if firstlaunch:
-            defaultconfig['misc']['script_dir']                    = 'scripts'
-            defaultconfig['misc']['web_dir']                       = 'Plush'
-            defaultconfig['misc']['web_dir2']                      = 'Plush'
-            defaultconfig['misc']['web_color']                     = 'gold'
-            defaultconfig['misc']['web_color2']                    = 'gold'
-            defaultconfig['misc']['download_dir']                  = psabnzbdincomplete
-            defaultconfig['misc']['complete_dir']                  = psabnzbdcomplete
+            defaultconfig['misc']['script_dir'] = 'scripts'
+            defaultconfig['misc']['web_dir'] = 'Plush'
+            defaultconfig['misc']['web_dir2'] = 'Plush'
+            defaultconfig['misc']['web_color'] = 'gold'
+            defaultconfig['misc']['web_color2'] = 'gold'
+            defaultconfig['misc']['download_dir'] = psabnzbdincomplete
+            defaultconfig['misc']['complete_dir'] = psabnzbdcomplete
             servers = {}
             servers['localhost'] = {}
-            servers['localhost']['host']                           = 'localhost'
-            servers['localhost']['port']                           = '119'
-            servers['localhost']['enable']                         = '0'
+            servers['localhost']['host'] = 'localhost'
+            servers['localhost']['port'] = '119'
+            servers['localhost']['enable'] = '0'
             categories = {}
             categories['tv'] = {}
-            categories['tv']['name']                               = 'tv'
-            categories['tv']['script']                             = 'sabToSickBeard.py'
-            categories['tv']['priority']                           = '-100'
+            categories['tv']['name'] = 'tv'
+            categories['tv']['script'] = 'sabToSickBeard.py'
+            categories['tv']['priority'] = '-100'
             categories['movies'] = {}
-            categories['movies']['name']                           = 'movies'
-            categories['movies']['dir']                            = 'movies'
-            categories['movies']['priority']                       = '-100'
+            categories['movies']['name'] = 'movies'
+            categories['movies']['dir'] = 'movies'
+            categories['movies']['priority'] = '-100'
             categories['music'] = {}
-            categories['music']['name']                            = 'music'
-            categories['music']['dir']                             = 'music'
-            categories['music']['priority']                        = '-100'
+            categories['music']['name'] = 'music'
+            categories['music']['dir'] = 'music'
+            categories['music']['priority'] = '-100'
             defaultconfig['servers'] = servers
             defaultconfig['categories'] = categories
-        
+            
         sabnzbdconfig.merge(defaultconfig)
         sabnzbdconfig.write()
         
@@ -243,10 +244,10 @@ def main():
         autoprocessconfig = ConfigObj(xbmc.translatePath(psabnzbdscripts + 'autoProcessTV.cfg'), create_empty=True)
         defaultconfig = ConfigObj()
         defaultconfig['SickBeard'] = {}
-        defaultconfig['SickBeard']['host']                     = 'localhost'
-        defaultconfig['SickBeard']['port']                     = '8082'
-        defaultconfig['SickBeard']['username']                 = user
-        defaultconfig['SickBeard']['password']                 = pwd
+        defaultconfig['SickBeard']['host'] = 'localhost'
+        defaultconfig['SickBeard']['port'] = '8082'
+        defaultconfig['SickBeard']['username'] = user
+        defaultconfig['SickBeard']['password'] = pwd
         autoprocessconfig.merge(defaultconfig)
         autoprocessconfig.write()
         
@@ -282,47 +283,58 @@ def main():
     # SABnzbd end
     
     # NZBGet start
+    if ngfirstlaunch and nzbget_launch:
+        try:
+            # write NZBGet settings
+            # ------------------------
+            nzbgetconfig = ConfigObj(pnzbgetsettings, create_empty=True, write_empty_values=True)
+            defaultconfig = ConfigObj()
+            defaultconfig['ControlIP'] = host
+            defaultconfig['ControlPort'] = '8081'
+            if user:
+                defaultconfig['ControlUsername'] = user
+            else:
+                defaultconfig['ControlUsername'] = ''
+            if pwd:
+                defaultconfig['ControlPassword'] = pwd
+            else:
+                defaultconfig['ControlPassword'] = ''
+            defaultconfig['LogFile'] = __addonhome__ + 'logs/nzbget.log'
+            defaultconfig['DaemonUsername'] = 'root'
+            defaultconfig['UMask'] = '1000'
+            defaultconfig['LockFile'] = '/var/run/nzbget.pid'
+            defaultconfig['TempDir'] = '/var/tmp'
+            defaultconfig['UnrarCmd'] = 'unrar'
+            defaultconfig['SevenZipCmd'] = __programs__ + '/resources/nzbget/7za'
+            defaultconfig['WebDir'] = __programs__ + '/resources/nzbget/webui'
+            defaultconfig['ConfigTemplate'] = __programs__ + '/resources/nzbget/webui/nzbget.conf.template'
+            defaultconfig['MainDir'] = psabnzbdcomplete
+            defaultconfig['DestDir'] = psabnzbdcomplete
+            defaultconfig['InterDir'] = psabnzbdincomplete
+            defaultconfig['NzbDir'] = psabnzbdwatchdir
+            defaultconfig['ScriptDir'] = __programs__ + '/resources/nzbget/scripts'
+            defaultconfig['WriteLog'] = 'append'
+            defaultconfig['RotateLog'] = '7'
+            defaultconfig['ErrorTarget'] = 'log'
+            defaultconfig['WarningTarget'] = 'log'
+            defaultconfig['InfoTarget'] = 'log'
+            defaultconfig['DetailTarget'] = 'log'
+            defaultconfig['DebugTarget'] = 'log'
+            defaultconfig['LogBufferSize'] = '1000'
+            defaultconfig['NzbLog'] = 'yes'
+            defaultconfig['BrokenLog'] = 'yes'
+            defaultconfig['DumpCore'] = 'yes'
+            
+            nzbgetconfig.merge(defaultconfig)
+            nzbgetconfig.writenowhitespace()
+            
+        except Exception, e:
+            xbmc.log('AUDO: NZBGet exception occurred', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
+    
+    # launch NZBGet
+    # ----------------
     try:
-        # write NZBGet settings
-        # ------------------------
-        nzbgetconfig = ConfigObj(pnzbgetsettings, create_empty=True)
-        defaultconfig = ConfigObj()
-        defaultconfig['ControlIP']                             = host
-        defaultconfig['ControlPort']                           = '8081'
-        defaultconfig['ControlUsername']                       = user
-        defaultconfig['ControlPassword']                       = pwd
-        defaultconfig['LogFile']                               = __addonhome__ + 'logs/nzbget.log'
-        defaultconfig['DaemonUsername']                        = 'root'
-        defaultconfig['UMask']                                 = '1000'
-        defaultconfig['LockFile']                              = '/var/run/nzbget.pid'
-        defaultconfig['TempDir']                               = '/var/tmp'
-        defaultconfig['UnrarCmd']                              = 'unrar'
-        defaultconfig['WebDir']                                = __programs__ + '/resources/nzbget/webui'
-        defaultconfig['ConfigTemplate']                        = __programs__ + '/resources/nzbget/webui/nzbget.conf.template'
-        
-        if ngfirstlaunch:
-            defaultconfig['MainDir']                               = psabnzbdcomplete
-            defaultconfig['DestDir']                               = psabnzbdcomplete
-            defaultconfig['InterDir']                              = psabnzbdincomplete
-            defaultconfig['NzbDir']                                = psabnzbdwatchdir
-            defaultconfig['ScriptDir']                             = __programs__ + '/resources/nzbget/scripts'
-            defaultconfig['WriteLog']                              = 'append'
-            defaultconfig['RotateLog']                             = '7'
-            defaultconfig['ErrorTarget']                           = 'log'
-            defaultconfig['WarningTarget']                         = 'log'
-            defaultconfig['InfoTarget']                            = 'log'
-            defaultconfig['DetailTarget']                          = 'log'
-            defaultconfig['DebugTarget']                           = 'log'
-            defaultconfig['LogBufferSize']                         = '1000'
-            defaultconfig['NzbLog']                                = 'yes'
-            defaultconfig['BrokenLog']                             = 'yes'
-            defaultconfig['DumpCore']                              = 'yes'
-        
-        nzbgetconfig.merge(defaultconfig)
-        nzbgetconfig.writenowhitespace()
-        
-        # launch NZBGet
-        # ----------------
         if nzbget_launch:
             xbmc.log('AUDO: Launching NZBGet...', level=xbmc.LOGDEBUG)
             subprocess.call(nzbget, close_fds=True, env=os_env)
@@ -339,64 +351,64 @@ def main():
         sickbeardconfig = ConfigObj(psickbeardsettings, create_empty=True)
         defaultconfig = ConfigObj()
         defaultconfig['General'] = {}
-        defaultconfig['General']['launch_browser']             = '0'
-        defaultconfig['General']['version_notify']             = '0'
-        defaultconfig['General']['web_port']                   = '8082'
-        defaultconfig['General']['web_host']                   = host
-        defaultconfig['General']['web_username']               = user
-        defaultconfig['General']['web_password']               = pwd
-        defaultconfig['General']['cache_dir']                  = __addonhome__ + 'sbcache'
-        defaultconfig['General']['log_dir']                    = __addonhome__ + 'logs'
+        defaultconfig['General']['launch_browser'] = '0'
+        defaultconfig['General']['version_notify'] = '0'
+        defaultconfig['General']['web_port'] = '8082'
+        defaultconfig['General']['web_host'] = host
+        defaultconfig['General']['web_username'] = user
+        defaultconfig['General']['web_password'] = pwd
+        defaultconfig['General']['cache_dir'] = __addonhome__ + 'sbcache'
+        defaultconfig['General']['log_dir'] = __addonhome__ + 'logs'
         defaultconfig['SABnzbd'] = {}
         defaultconfig['XBMC'] = {}
-        defaultconfig['XBMC']['use_xbmc']                      = '1'
-        defaultconfig['XBMC']['xbmc_host']                     = 'localhost:' + xbmcport
-        defaultconfig['XBMC']['xbmc_username']                 = xbmcuser
-        defaultconfig['XBMC']['xbmc_password']                 = xbmcpwd
+        defaultconfig['XBMC']['use_xbmc'] = '1'
+        defaultconfig['XBMC']['xbmc_host'] = 'localhost:' + xbmcport
+        defaultconfig['XBMC']['xbmc_username'] = xbmcuser
+        defaultconfig['XBMC']['xbmc_password'] = xbmcpwd
         defaultconfig['TORRENT'] = {}
         defaultconfig['NZBget'] = {}
         
         if sabnzbd_launch:
-            defaultconfig['SABnzbd']['sab_username']               = user
-            defaultconfig['SABnzbd']['sab_password']               = pwd
-            defaultconfig['SABnzbd']['sab_apikey']                 = sabnzbdapikey
-            defaultconfig['SABnzbd']['sab_host']                   = 'http://' + sabnzbdhost + '/'
+            defaultconfig['SABnzbd']['sab_username'] = user
+            defaultconfig['SABnzbd']['sab_password'] = pwd
+            defaultconfig['SABnzbd']['sab_apikey'] = sabnzbdapikey
+            defaultconfig['SABnzbd']['sab_host'] = 'http://' + sabnzbdhost + '/'
         
         if nzbget_launch:
-            defaultconfig['NZBget']['nzbget_username']             = user
-            defaultconfig['NZBget']['nzbget_password']             = pwd
-            defaultconfig['NZBget']['nzbget_host']                 = 'http://' + sabnzbdhost + '/'
+            defaultconfig['NZBget']['nzbget_username'] = user
+            defaultconfig['NZBget']['nzbget_password'] = pwd
+            defaultconfig['NZBget']['nzbget_host'] = 'http://' + sabnzbdhost + '/'
         
         if transauth:
-            defaultconfig['TORRENT']['torrent_username']           = transuser
-            defaultconfig['TORRENT']['torrent_password']           = transpwd
-            defaultconfig['TORRENT']['torrent_host']               = 'http://localhost:9091/'
+            defaultconfig['TORRENT']['torrent_username'] = transuser
+            defaultconfig['TORRENT']['torrent_password'] = transpwd
+            defaultconfig['TORRENT']['torrent_host'] = 'http://localhost:9091/'
         
         if sbfirstlaunch:
-            defaultconfig['TORRENT']['torrent_path']               = psabnzbdcompletetv
-            defaultconfig['General']['use_api']                    = '1'
-            defaultconfig['General']['tv_download_dir']            = psabnzbdcomplete
-            defaultconfig['General']['metadata_xbmc_12plus']       = '0|0|0|0|0|0|0|0|0|0'
-            defaultconfig['General']['nzb_method']                 = 'sabnzbd'
-            defaultconfig['General']['keep_processed_dir']         = '0'
-            defaultconfig['General']['use_banner']                 = '1'
-            defaultconfig['General']['rename_episodes']            = '1'
-            defaultconfig['General']['naming_ep_name']             = '0'
-            defaultconfig['General']['naming_use_periods']         = '1'
-            defaultconfig['General']['naming_sep_type']            = '1'
-            defaultconfig['General']['naming_ep_type']             = '1'
-            defaultconfig['General']['root_dirs']                  = '0|' + phomedir + 'tvshows'
-            defaultconfig['General']['naming_custom_abd']          = '0'
-            defaultconfig['General']['naming_abd_pattern']         = '%SN - %A-D - %EN'
+            defaultconfig['TORRENT']['torrent_path'] = psabnzbdcompletetv
+            defaultconfig['General']['use_api'] = '1'
+            defaultconfig['General']['tv_download_dir'] = psabnzbdcomplete
+            defaultconfig['General']['metadata_xbmc_12plus'] = '0|0|0|0|0|0|0|0|0|0'
+            defaultconfig['General']['nzb_method'] = 'sabnzbd'
+            defaultconfig['General']['keep_processed_dir'] = '0'
+            defaultconfig['General']['use_banner'] = '1'
+            defaultconfig['General']['rename_episodes'] = '1'
+            defaultconfig['General']['naming_ep_name'] = '0'
+            defaultconfig['General']['naming_use_periods'] = '1'
+            defaultconfig['General']['naming_sep_type'] = '1'
+            defaultconfig['General']['naming_ep_type'] = '1'
+            defaultconfig['General']['root_dirs'] = '0|' + phomedir + 'tvshows'
+            defaultconfig['General']['naming_custom_abd'] = '0'
+            defaultconfig['General']['naming_abd_pattern'] = '%SN - %A-D - %EN'
             defaultconfig['Blackhole'] = {}
-            defaultconfig['Blackhole']['torrent_dir']              = psabnzbdwatchdir
-            defaultconfig['SABnzbd']['sab_category']               = 'tv'
+            defaultconfig['Blackhole']['torrent_dir'] = psabnzbdwatchdir
+            defaultconfig['SABnzbd']['sab_category'] = 'tv'
             # workaround: on first launch, sick beard will always add
             # 'http://' and trailing '/' on its own
-            defaultconfig['SABnzbd']['sab_host']                   = sabnzbdhost
-            defaultconfig['XBMC']['xbmc_notify_ondownload']        = '1'
-            defaultconfig['XBMC']['xbmc_update_library']           = '1'
-            defaultconfig['XBMC']['xbmc_update_full']              = '1'
+            defaultconfig['SABnzbd']['sab_host'] = sabnzbdhost
+            defaultconfig['XBMC']['xbmc_notify_ondownload'] = '1'
+            defaultconfig['XBMC']['xbmc_update_library'] = '1'
+            defaultconfig['XBMC']['xbmc_update_full'] = '1'
         
         sickbeardconfig.merge(defaultconfig)
         sickbeardconfig.write()
@@ -423,67 +435,67 @@ def main():
         
         # write CouchPotatoServer settings
         # --------------------------
-        couchpotatoserverconfig = ConfigObj(pcouchpotatoserversettings, create_empty=True, list_values=False)
+        couchpotatoserverconfig = ConfigObj(pcouchpotatosettings, create_empty=True, list_values=False)
         defaultconfig = ConfigObj()
         defaultconfig['core'] = {}
-        defaultconfig['core']['username']                      = user
-        defaultconfig['core']['password']                      = md5pwd
-        defaultconfig['core']['port']                          = '8083'
-        defaultconfig['core']['launch_browser']                = '0'
-        defaultconfig['core']['host']                          = host
-        defaultconfig['core']['data_dir']                      = __addonhome__
+        defaultconfig['core']['username'] = user
+        defaultconfig['core']['password'] = md5pwd
+        defaultconfig['core']['port'] = '8083'
+        defaultconfig['core']['launch_browser'] = '0'
+        defaultconfig['core']['host'] = host
+        defaultconfig['core']['data_dir'] = __addonhome__
         defaultconfig['updater'] = {}
-        defaultconfig['updater']['enabled']                    = '0'
-        defaultconfig['updater']['notification']               = '0'
-        defaultconfig['updater']['automatic']                  = '0'
+        defaultconfig['updater']['enabled'] = '0'
+        defaultconfig['updater']['notification'] = '0'
+        defaultconfig['updater']['automatic'] = '0'
         defaultconfig['xbmc'] = {}
-        defaultconfig['xbmc']['enabled']                       = '1'
-        defaultconfig['xbmc']['username']                      = xbmcuser
-        defaultconfig['xbmc']['password']                      = xbmcpwd
+        defaultconfig['xbmc']['enabled'] = '1'
+        defaultconfig['xbmc']['username'] = xbmcuser
+        defaultconfig['xbmc']['password'] = xbmcpwd
         defaultconfig['sabnzbd'] = {}
         defaultconfig['transmission'] = {}
         defaultconfig['nzbget'] = {}
         
         if sabnzbd_launch:
-            defaultconfig['sabnzbd']['username']                   = user
-            defaultconfig['sabnzbd']['password']                   = pwd
-            defaultconfig['sabnzbd']['api_key']                    = sabnzbdapikey
-            defaultconfig['sabnzbd']['host']                       = sabnzbdhost
-            
+            defaultconfig['sabnzbd']['username'] = user
+            defaultconfig['sabnzbd']['password'] = pwd
+            defaultconfig['sabnzbd']['api_key'] = sabnzbdapikey
+            defaultconfig['sabnzbd']['host'] = sabnzbdhost
+        
         if nzbget_launch:
-            defaultconfig['nzbget']['username']                    = user
-            defaultconfig['nzbget']['password']                    = pwd
-            defaultconfig['nzbget']['host']                        = sabnzbdhost
+            defaultconfig['nzbget']['username'] = user
+            defaultconfig['nzbget']['password'] = pwd
+            defaultconfig['nzbget']['host'] = sabnzbdhost
         
         if transauth:
-            defaultconfig['transmission']['username']              = transuser
-            defaultconfig['transmission']['password']              = transpwd
-            defaultconfig['transmission']['host']                  = 'localhost:9091'
+            defaultconfig['transmission']['username'] = transuser
+            defaultconfig['transmission']['password'] = transpwd
+            defaultconfig['transmission']['host'] = 'localhost:9091'
         
         if cpfirstlaunch:
-            defaultconfig['transmission']['directory']             = psabnzbdcompletemov
-            defaultconfig['xbmc']['host']                          = 'localhost:' + xbmcport
-            defaultconfig['xbmc']['xbmc_update_library']           = '1'
-            defaultconfig['xbmc']['xbmc_update_full']              = '1'
-            defaultconfig['xbmc']['xbmc_notify_onsnatch']          = '1'
-            defaultconfig['xbmc']['xbmc_notify_ondownload']        = '1'
+            defaultconfig['transmission']['directory'] = psabnzbdcompletemov
+            defaultconfig['xbmc']['host'] = 'localhost:' + xbmcport
+            defaultconfig['xbmc']['xbmc_update_library'] = '1'
+            defaultconfig['xbmc']['xbmc_update_full'] = '1'
+            defaultconfig['xbmc']['xbmc_notify_onsnatch'] = '1'
+            defaultconfig['xbmc']['xbmc_notify_ondownload'] = '1'
             defaultconfig['blackhole'] = {}
-            defaultconfig['blackhole']['directory']                = psabnzbdwatchdir
-            defaultconfig['blackhole']['use_for']                  = 'both'
-            defaultconfig['blackhole']['enabled']                  = '0'
-            defaultconfig['sabnzbd']['category']                   = 'movies'
-            defaultconfig['sabnzbd']['pp_directory']               = psabnzbdcompletemov
+            defaultconfig['blackhole']['directory'] = psabnzbdwatchdir
+            defaultconfig['blackhole']['use_for'] = 'both'
+            defaultconfig['blackhole']['enabled'] = '0'
+            defaultconfig['sabnzbd']['category'] = 'movies'
+            defaultconfig['sabnzbd']['pp_directory'] = psabnzbdcompletemov
             defaultconfig['renamer'] = {}
-            defaultconfig['renamer']['enabled']                    = '1'
-            defaultconfig['renamer']['from']                       = psabnzbdcompletemov
-            defaultconfig['renamer']['to']                         = phomedir + 'videos'
-            defaultconfig['renamer']['separator']                  = '.'
-            defaultconfig['renamer']['cleanup']                    = '0'
-            defaultconfig['core']['permission_folder']             = '0644'
-            defaultconfig['core']['permission_file']               = '0644'
-            defaultconfig['core']['show_wizard']                   = '0'
-            defaultconfig['core']['debug']                         = '0'
-            defaultconfig['core']['development']                   = '0'
+            defaultconfig['renamer']['enabled'] = '1'
+            defaultconfig['renamer']['from'] = psabnzbdcompletemov
+            defaultconfig['renamer']['to'] = phomedir + 'videos'
+            defaultconfig['renamer']['separator'] = '.'
+            defaultconfig['renamer']['cleanup'] = '0'
+            defaultconfig['core']['permission_folder'] = '0644'
+            defaultconfig['core']['permission_file'] = '0644'
+            defaultconfig['core']['show_wizard'] = '0'
+            defaultconfig['core']['debug'] = '0'
+            defaultconfig['core']['development'] = '0'
         
         couchpotatoserverconfig.merge(defaultconfig)
         couchpotatoserverconfig.write()
@@ -506,53 +518,53 @@ def main():
         headphonesconfig = ConfigObj(pheadphonessettings, create_empty=True)
         defaultconfig = ConfigObj()
         defaultconfig['General'] = {}
-        defaultconfig['General']['launch_browser']             = '0'
-        defaultconfig['General']['http_port']                  = '8084'
-        defaultconfig['General']['http_host']                  = host
-        defaultconfig['General']['http_username']              = user
-        defaultconfig['General']['http_password']              = pwd
-        defaultconfig['General']['check_github']               = '0'
-        defaultconfig['General']['check_github_on_startup']    = '0'
-        defaultconfig['General']['cache_dir']                  = __addonhome__ + 'hpcache'
-        defaultconfig['General']['log_dir']                    = __addonhome__ + 'logs'
+        defaultconfig['General']['launch_browser'] = '0'
+        defaultconfig['General']['http_port'] = '8084'
+        defaultconfig['General']['http_host'] = host
+        defaultconfig['General']['http_username'] = user
+        defaultconfig['General']['http_password'] = pwd
+        defaultconfig['General']['check_github'] = '0'
+        defaultconfig['General']['check_github_on_startup'] = '0'
+        defaultconfig['General']['cache_dir'] = __addonhome__ + 'hpcache'
+        defaultconfig['General']['log_dir'] = __addonhome__ + 'logs'
         defaultconfig['XBMC'] = {}
-        defaultconfig['XBMC']['xbmc_enabled']                  = '1'
-        defaultconfig['XBMC']['xbmc_host']                     = 'localhost:' + xbmcport
-        defaultconfig['XBMC']['xbmc_username']                 = xbmcuser
-        defaultconfig['XBMC']['xbmc_password']                 = xbmcpwd
+        defaultconfig['XBMC']['xbmc_enabled'] = '1'
+        defaultconfig['XBMC']['xbmc_host'] = 'localhost:' + xbmcport
+        defaultconfig['XBMC']['xbmc_username'] = xbmcuser
+        defaultconfig['XBMC']['xbmc_password'] = xbmcpwd
         defaultconfig['SABnzbd'] = {}
         defaultconfig['Transmission'] = {}
         defaultconfig['NZBget'] = {}
         
         if sabnzbd_launch:
-            defaultconfig['SABnzbd']['sab_apikey']                 = sabnzbdapikey
-            defaultconfig['SABnzbd']['sab_host']                   = sabnzbdhost
-            defaultconfig['SABnzbd']['sab_username']               = user
-            defaultconfig['SABnzbd']['sab_password']               = pwd
+            defaultconfig['SABnzbd']['sab_apikey'] = sabnzbdapikey
+            defaultconfig['SABnzbd']['sab_host'] = sabnzbdhost
+            defaultconfig['SABnzbd']['sab_username'] = user
+            defaultconfig['SABnzbd']['sab_password'] = pwd
         
         if nzbget_launch:
-            defaultconfig['NZBget']['nzbget_username']               = user
-            defaultconfig['NZBget']['nzbget_password']               = pwd
-            defaultconfig['NZBget']['nzbget_host']                   = sabnzbdhost
+            defaultconfig['NZBget']['nzbget_username'] = user
+            defaultconfig['NZBget']['nzbget_password'] = pwd
+            defaultconfig['NZBget']['nzbget_host'] = sabnzbdhost
         
         if transauth:
             defaultconfig['Transmission']['transmission_username'] = transuser
             defaultconfig['Transmission']['transmission_password'] = transpwd
-            defaultconfig['Transmission']['transmission_host']     = 'http://localhost:9091'
+            defaultconfig['Transmission']['transmission_host'] = 'http://localhost:9091'
         
         if hpfirstlaunch:
-            defaultconfig['Transmission']['download_torrent_dir']  = psabnzbdcompletemusic
-            defaultconfig['General']['api_enabled']                = '1'
-            defaultconfig['SABnzbd']['sab_category']               = 'music'
-            defaultconfig['XBMC']['xbmc_update']                   = '1'
-            defaultconfig['XBMC']['xbmc_notify']                   = '1'
-            defaultconfig['General']['music_dir']                  = phomedir + 'music'
-            defaultconfig['General']['destination_dir']            = phomedir + 'music'
-            defaultconfig['General']['torrentblackhole_dir']       = psabnzbdwatchdir
-            defaultconfig['General']['download_dir']               = psabnzbdcompletemusic
-            defaultconfig['General']['move_files']                 = '1'
-            defaultconfig['General']['rename_files']               = '1'
-            defaultconfig['General']['folder_permissions']         = '0644'
+            defaultconfig['Transmission']['download_torrent_dir'] = psabnzbdcompletemusic
+            defaultconfig['General']['api_enabled'] = '1'
+            defaultconfig['SABnzbd']['sab_category'] = 'music'
+            defaultconfig['XBMC']['xbmc_update'] = '1'
+            defaultconfig['XBMC']['xbmc_notify'] = '1'
+            defaultconfig['General']['music_dir'] = phomedir + 'music'
+            defaultconfig['General']['destination_dir'] = phomedir + 'music'
+            defaultconfig['General']['torrentblackhole_dir'] = psabnzbdwatchdir
+            defaultconfig['General']['download_dir'] = psabnzbdcompletemusic
+            defaultconfig['General']['move_files'] = '1'
+            defaultconfig['General']['rename_files'] = '1'
+            defaultconfig['General']['folder_permissions'] = '0644'
         
         headphonesconfig.merge(defaultconfig)
         headphonesconfig.write()
@@ -566,4 +578,60 @@ def main():
     except Exception, e:
         xbmc.log('AUDO: Headphones exception occurred', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
-    # Headphones end
+        # Headphones end
+
+
+def shutdown():
+    sabnzbd_launch = (__addon__.getSetting('SABNZBD_LAUNCH').lower() == 'true')
+    nzbget_launch = (__addon__.getSetting('NZBGET_LAUNCH').lower() == 'true')
+    sickbeard_launch = (__addon__.getSetting('SICKBEARD_LAUNCH').lower() == 'true')
+    couchpotato_launch = (__addon__.getSetting('COUCHPOTATO_LAUNCH').lower() == 'true')
+    headphones_launch = (__addon__.getSetting('HEADPHONES_LAUNCH').lower() == 'true')
+    
+    if sabnzbd_launch:
+        try:
+            sabnzbdconfig = ConfigObj(psabnzbdsettings, create_empty=False)
+            sabnzbdapikey = sabnzbdconfig['misc']['api_key']
+            urlopen_with_retry('http://localhost:8081/api?mode=shutdown&apikey=' + sabnzbdapikey)
+            xbmc.log('AUDO: Shutting SABnzbd down...', level=xbmc.LOGDEBUG)
+        except Exception, e:
+            xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
+            os.system("kill `ps | grep -E 'python.*script.module.audo.*SABnzbd' | awk '{print $1}'`")
+    
+    if nzbget_launch:
+        os.system('.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget') + ' -Q -c ' + pnzbgetsettings)
+        xbmc.log('AUDO: Shutting NZBGet down...', level=xbmc.LOGDEBUG)
+    
+    if sickbeard_launch:
+        try:       
+            sickbeardconfig = ConfigObj(psickbeardsettings, create_empty=False)
+            sickbeardapikey = sickbeardconfig['General']['api_key']
+            urlopen_with_retry('http://localhost:8082/api/' + sickbeardapikey + '/?cmd=sb.shutdown')
+            xbmc.log('AUDO: Shutting SickBeard down...', level=xbmc.LOGDEBUG)
+        except Exception, e:
+            xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
+            os.system("kill `ps | grep -E 'python.*script.module.audo.*SickBeard' | awk '{print $1}'`")
+    
+    if couchpotato_launch:
+        try:
+            couchpotatoconfig = ConfigObj(pcouchpotatosettings, create_empty=False, list_values=False)
+            couchpotatoapikey = couchpotatoconfig['core']['api_key']
+            urlopen_with_retry('http://localhost:8083/api/' + couchpotatoapikey + '/app.shutdown')
+            xbmc.log('AUDO: Shutting CouchPotato down...', level=xbmc.LOGDEBUG)
+        except Exception, e:
+            xbmc.log('AUDO: CouchPotato exception occurred', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
+            os.system("kill `ps | grep -E 'python.*script.module.audo.*CouchPotato' | awk '{print $1}'`")
+    
+    if headphones_launch:
+        try:
+            headphonesconfig = ConfigObj(pheadphonessettings, create_empty=False)
+            headphonesapikey = headphonesconfig['General']['api_key']
+            urlopen_with_retry('http://localhost:8084/api?apikey=' + headphonesapikey + '&cmd=shutdown')
+            xbmc.log('AUDO: Shutting HeadPhones down...', level=xbmc.LOGDEBUG)
+        except Exception, e:
+            xbmc.log('AUDO: HeadPhones exception occurred', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
+            os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")

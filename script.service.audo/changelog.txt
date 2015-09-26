@@ -1,5 +1,6 @@
 1.1.9
 - added NZBGet
+- modified shutdown method
 
 1.1.8
 - fix bug causing crash

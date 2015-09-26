@@ -34,4 +34,5 @@
                 <setting label="32102" type="action" action="RunScript($CWD/changlogs.py, script.service.audo)"/>
                 <setting label="32103" type="action" action="RunScript($CWD/changlogs.py, script.module.audo-dependencies)"/>
     </category>
+       <setting id="SHUTDOWN" type="bool" default="false"/>
 </settings>

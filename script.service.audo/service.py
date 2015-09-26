@@ -69,7 +69,9 @@ sabNzbdHistory = ('http://' + sabNzbdAddress + '/api?mode=history&output=xml&api
 sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
 sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
 
-while not xbmc.abortRequested:
+audoshutdown = (__addon__.getSetting('SHUTDOWN').lower() == 'true')
+
+while not xbmc.abortRequested and not audoshutdown:
     # detect machine arch and setup binaries after an update
     if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)
@@ -90,14 +92,14 @@ while not xbmc.abortRequested:
             xbmc.log(str(e), level=xbmc.LOGERROR)
         while not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
             time.sleep(5)
-
+    
     # detect update of audo-programs and restart services
     if not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/.current')):
         xbmc.log('AUDO: Update occurred. Attempting to restart Audo services:', level=xbmc.LOGDEBUG)
         count1 = 1
         count2 = 2
         xbmc.executebuiltin('XBMC.Notification(' + __scriptname__ + ': Update detected,Stopping services now...,5000,)')
-        os.system("kill `ps | grep -E 'python.*script.module.audo' | awk '{print $1}'`")
+        audo.shutdown()
         while count1 != count2:
             count1 = 0
             count2 = 0
@@ -118,15 +120,15 @@ while not xbmc.abortRequested:
         except Exception, e:
             xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
-
+    
     # RPI and other arm devices do not have a wakealarm
     if not parch.startswith('arm'):
-
+        
         # reread setting in case it has changed
         shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
         wakePeriodically = (__addon__.getSetting('PERIODIC_WAKE').lower() == 'true')
         wakeHourIdx = int(__addon__.getSetting('WAKE_AT'))
-
+        
         # check if SABnzbd is downloading
         if shouldKeepAwake:
             idleTimer += 1
@@ -145,7 +147,7 @@ while not xbmc.abortRequested:
                     handle.close()
                     if any(x in queue for x in sabNzbdQueueKeywords):
                         sabIsActive = True
-
+                
                 req = urllib2.Request(sabNzbdHistory)
                 try:
                     handle = urllib2.urlopen(req)
@@ -157,7 +159,7 @@ while not xbmc.abortRequested:
                     handle.close()
                     if any(x in history for x in sabNzbdHistoryKeywords):
                         sabIsActive = True
-
+                
                 # reset idle timer if queue is downloading/reparing/verifying/extracting
                 if sabIsActive:
                     xbmc.executebuiltin('InhibitIdleShutdown(true)')
@@ -165,7 +167,7 @@ while not xbmc.abortRequested:
                 else:
                     xbmc.executebuiltin('InhibitIdleShutdown(false)')
                     xbmc.log('AUDO: Not preventing sleep', level=xbmc.LOGDEBUG)
-
+        
         # calculate and set the time to wake up at (if any)
         if wakePeriodically:
             wakeHour = wakeHourIdx * 2 + 1
@@ -187,8 +189,14 @@ while not xbmc.abortRequested:
             except IOError, e:
                 xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm ', level=xbmc.LOGERROR)
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
-
+    
+    audoshutdown = (__addon__.getSetting('SHUTDOWN').lower() == 'true')
+    
     time.sleep(0.250)
 
 # Shutdown audo
-os.system("kill `ps | grep -E 'python.*script.module.audo' | awk '{print $1}'`")
+try:
+    audo.shutdown()
+except Exception, e:
+    xbmc.log('AUDO: Could not execute shutdown script:', level=xbmc.LOGERROR)
+    xbmc.log(str(e), level=xbmc.LOGERROR)
