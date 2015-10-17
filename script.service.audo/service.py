@@ -71,7 +71,7 @@ sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</stat
 
 audoshutdown = (__addon__.getSetting('SHUTDOWN').lower() == 'true')
 
-while not xbmc.abortRequested and not audoshutdown:
+while not xbmc.Monitor.(abortRequested()) and not audoshutdown:
     # detect machine arch and setup binaries after an update
     if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)

@@ -6,6 +6,7 @@ echo "Building $PKG_NAME-$PKG_VERSION.$PKG_REV"
 
 rm -rf target/$PKG_VERSION.$PKG_REV/
 
+rm -rf build
 mkdir build
 
 cp -rf $PKG_NAME build/$PKG_NAME
