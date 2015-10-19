@@ -63,18 +63,22 @@ msgid "Sleep"
 msgstr "Uyku"
 
 msgctxt "#32012"
-msgid "Keep awake while downloading"
-msgstr "İndirilirken uyanık tut"
+msgid "Keep awake while downloading from SABnzbd"
+msgstr "İndirilirken uyanık tut SABnzbd"
 
 msgctxt "#32013"
+msgid "Keep awake while downloading from Transmission"
+msgstr "İndirilirken uyanık tut Transmission"
+
+msgctxt "#32014"
 msgid "Wake up periodically"
 msgstr "Düzenli olarak uyandır"
 
-msgctxt "#32014"
+msgctxt "#32015"
 msgid "Wake up at"
 msgstr "Uyandırma zamanı"
 
-msgctxt "#32015"
+msgctxt "#32016"
 msgid "Restart on suspend / resume"
 msgstr ""
 

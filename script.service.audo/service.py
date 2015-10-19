@@ -8,6 +8,7 @@ import resources.audo as audo
 import xbmc
 import xbmcaddon
 import xbmcvfs
+import transmissionrpc
 
 __scriptname__   = "audo"
 __author__       = "lsellens"
@@ -18,7 +19,7 @@ __addonhome__    = __addon__.getAddonInfo('profile')
 __dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
 __programs__     = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
 
-checkInterval    = 240
+checkInterval    = 60
 timeout          = 20
 wake_times       = ['01:00', '03:00', '05:00', '07:00', '09:00', '11:00', '13:00', '15:00', '17:00', '19:00', '21:00',
                     '23:00']
@@ -48,14 +49,18 @@ except Exception, e:
 socket.setdefaulttimeout(timeout)
 
 # perform some initial checks and log essential settings
-shouldKeepAwake = 'false'
+sabnzbdkeepawake = 'false'
+transmissionkeepawake = 'false'
 wakePeriodically = 'false'
 if not parch.startswith('arm'):
-    shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
+    sabnzbdkeepawake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
+    transmissionkeepawake = (__addon__.getSetting('TRANSMISSION_KEEP_AWAKE').lower() == 'true')
     wakePeriodically = (__addon__.getSetting('PERIODIC_WAKE').lower() == 'true')
     wakeHourIdx = int(__addon__.getSetting('WAKE_AT'))
-    if shouldKeepAwake:
-        xbmc.log('AUDO: Will prevent idle sleep/shutdown while downloading')
+    if sabnzbdkeepawake:
+        xbmc.log('AUDO: Will prevent idle sleep/shutdown while downloading from SABnzbd')
+    if transmissionkeepawake:
+        xbmc.log('AUDO: Will prevent idle sleep/shutdown while downloading from Transmission')
     if wakePeriodically:
         xbmc.log('AUDO: Will try to wake system daily at ' + wake_times[wakeHourIdx])
 
@@ -69,9 +74,30 @@ sabNzbdHistory = ('http://' + sabNzbdAddress + '/api?mode=history&output=xml&api
 sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
 sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
 
+# get transmission settings
+if transmissionkeepawake:
+    transauth = False
+    try:
+        transmissionaddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
+        transauth = (transmissionaddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
+    
+        if transauth:
+            transuser = (transmissionaddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
+            if transuser == '':
+                transuser = None
+            transpwd = (transmissionaddon.getSetting('TRANSMISSION_PWD').decode('utf-8'))
+            if transpwd == '':
+                transpwd = None
+    
+    except Exception, e:
+        xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
+        xbmc.log(str(e), level=xbmc.LOGNOTICE)
+
+monitor = xbmc.Monitor()
+
 audoshutdown = (__addon__.getSetting('SHUTDOWN').lower() == 'true')
 
-while not xbmc.Monitor.(abortRequested()) and not audoshutdown:
+while not monitor.abortRequested() and not audoshutdown:
     # detect machine arch and setup binaries after an update
     if not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + parch)):
         xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)
@@ -125,14 +151,15 @@ while not xbmc.Monitor.(abortRequested()) and not audoshutdown:
     if not parch.startswith('arm'):
         
         # reread setting in case it has changed
-        shouldKeepAwake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
+        sabnzbdkeepawake = (__addon__.getSetting('SABNZBD_KEEP_AWAKE').lower() == 'true')
+        transmissionkeepawake = (__addon__.getSetting('TRANSMISSION_KEEP_AWAKE').lower() == 'true')
         wakePeriodically = (__addon__.getSetting('PERIODIC_WAKE').lower() == 'true')
         wakeHourIdx = int(__addon__.getSetting('WAKE_AT'))
         
         # check if SABnzbd is downloading
-        if shouldKeepAwake:
+        if sabnzbdkeepawake:
             idleTimer += 1
-            # check SABnzbd every ~60s (240 cycles)
+            # check SABnzbd every ~60s
             if idleTimer == checkInterval:
                 sabIsActive = False
                 idleTimer = 0
@@ -163,10 +190,30 @@ while not xbmc.Monitor.(abortRequested()) and not audoshutdown:
                 # reset idle timer if queue is downloading/reparing/verifying/extracting
                 if sabIsActive:
                     xbmc.executebuiltin('InhibitIdleShutdown(true)')
-                    xbmc.log('AUDO: Preventing sleep', level=xbmc.LOGDEBUG)
+                    xbmc.log('AUDO: SABnzbd active - preventing sleep', level=xbmc.LOGDEBUG)
                 else:
                     xbmc.executebuiltin('InhibitIdleShutdown(false)')
-                    xbmc.log('AUDO: Not preventing sleep', level=xbmc.LOGDEBUG)
+                    xbmc.log('AUDO: SABnzbd active - not preventing sleep', level=xbmc.LOGDEBUG)
+        
+        # check if transmission is downloading
+        if transmissionkeepawake:
+            idleTimer += 1
+            # check Transmission every ~60s
+            if idleTimer == checkInterval:
+                transIsActive = False
+                idleTimer = 0
+                if transauth:
+                    tc = transmissionrpc.Client('localhost', port=9091, user=transuser, password=transpwd)
+                else:
+                    tc = transmissionrpc.Client('localhost', port=9091)
+                for i in tc.get_torrents():
+                    if i.status is 'downloading':
+                        xbmc.executebuiltin('InhibitIdleShutdown(true)')
+                        xbmc.log('AUDO: Transmission active - preventing sleep', level=xbmc.LOGDEBUG)
+                        break
+                else:
+                    xbmc.executebuiltin('InhibitIdleShutdown(false)')
+                    xbmc.log('AUDO: Transmission not active - not preventing sleep', level=xbmc.LOGDEBUG)
         
         # calculate and set the time to wake up at (if any)
         if wakePeriodically:
@@ -189,10 +236,9 @@ while not xbmc.Monitor.(abortRequested()) and not audoshutdown:
             except IOError, e:
                 xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm ', level=xbmc.LOGERROR)
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
-    
+    if monitor.waitForAbort(1):
+        break
     audoshutdown = (__addon__.getSetting('SHUTDOWN').lower() == 'true')
-    
-    time.sleep(0.250)
 
 # Shutdown audo
 try:

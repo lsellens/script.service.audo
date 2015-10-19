@@ -64,18 +64,22 @@ msgid "Sleep"
 msgstr "Dormir"
 
 msgctxt "#32012"
-msgid "Keep awake while downloading"
-msgstr "Mantener despierto mientras descarga"
+msgid "Keep awake while downloading from SABnzbd"
+msgstr "Mantener despierto mientras descarga SABnzbd"
 
 msgctxt "#32013"
+msgid "Keep awake while downloading from Transmission"
+msgstr "Mantener despierto mientras descarga Transmssion"
+
+msgctxt "#32014"
 msgid "Wake up periodically"
 msgstr "Despertar periódicamente"
 
-msgctxt "#32014"
+msgctxt "#32015"
 msgid "Wake up at"
 msgstr "Despertar a las"
 
-msgctxt "#32015"
+msgctxt "#32016"
 msgid "Restart on suspend / resume"
 msgstr "Reinicie la suspensión / reanudar"
 

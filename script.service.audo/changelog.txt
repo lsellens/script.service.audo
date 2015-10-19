@@ -1,5 +1,5 @@
 1.2.0
-- changed to xbmc.monitor for exit request
+- added option for transmission to prevent idle sleep/shutdown
 - addon now requires helix or above
 
 1.1.9
