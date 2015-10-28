@@ -51,7 +51,7 @@ if not audo.pArch.startswith('arm'):
     if audo.transmissionKeepAwake:
         xbmc.log('AUDO: Will prevent idle sleep/shutdown while downloading from Transmission')
     if audo.wakePeriodically:
-        xbmc.log('AUDO: Will try to wake system daily at ' + wakeTimes[audo.wakehouridx])
+        xbmc.log('AUDO: Will try to wake system daily at ' + wakeTimes[audo.wakeHourIdx])
 
 monitor = MyMonitor()
 
