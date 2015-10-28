@@ -743,46 +743,70 @@ def shutdown():
     
     if sabnzbdLaunch:
         try:
-            urlopen_with_retry('http://localhost:8081/api?mode=shutdown&apikey=' + sabnzbdApiKey)
+            sabnzbdconfig = ConfigObj(sabnzbdSettings, create_empty=False)
+            sabnzbdApiKey = sabnzbdconfig['misc']['api_key']
+            if not sabnzbdApiKey:
+                os.system("kill `ps | grep -E 'python.*script.module.audo.*SABnzbd' | awk '{print $1}'`")
+            else:
+                urlopen_with_retry('http://localhost:8081/api?mode=shutdown&apikey=' + sabnzbdApiKey)
             xbmc.log('AUDO: Shutting SABnzbd down...', level=xbmc.LOGDEBUG)
         except Exception, e:
             xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
             os.system("kill `ps | grep -E 'python.*script.module.audo.*SABnzbd' | awk '{print $1}'`")
+            pass
     
     if nzbgetLaunch:
-        os.system('.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget') + ' -Q -c ' + nzbgetSettings)
-        xbmc.log('AUDO: Shutting NZBGet down...', level=xbmc.LOGDEBUG)
+        try:
+            os.system('.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget') + ' -Q -c ' + nzbgetSettings)
+            xbmc.log('AUDO: Shutting NZBGet down...', level=xbmc.LOGDEBUG)
+        except Exception, e:
+            xbmc.log('AUDO: NZBGet exception occurred', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
+            os.system("kill `ps | grep -E '.*script.module.audo.*nzbget' | awk '{print $1}'`")
+            pass
     
     if sickbeardLaunch:
         try:       
             sickbeardconfig = ConfigObj(sickbeardSettings, create_empty=False)
             sickbeardapikey = sickbeardconfig['General']['api_key']
-            urlopen_with_retry('http://localhost:8082/api/' + sickbeardapikey + '/?cmd=sb.shutdown')
+            if not sickbeardapikey:
+                os.system("kill `ps | grep -E 'python.*script.module.audo.*SickBeard' | awk '{print $1}'`")
+            else:
+                urlopen_with_retry('http://localhost:8082/api/' + sickbeardapikey + '/?cmd=sb.shutdown')
             xbmc.log('AUDO: Shutting SickBeard down...', level=xbmc.LOGDEBUG)
         except Exception, e:
             xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
             os.system("kill `ps | grep -E 'python.*script.module.audo.*SickBeard' | awk '{print $1}'`")
+            pass
     
     if couchpotatoLaunch:
         try:
             couchpotatoconfig = ConfigObj(couchpotatoSettings, create_empty=False, list_values=False)
             couchpotatoapikey = couchpotatoconfig['core']['api_key']
-            urlopen_with_retry('http://localhost:8083/api/' + couchpotatoapikey + '/app.shutdown')
+            if not couchpotatoapikey:
+                os.system("kill `ps | grep -E 'python.*script.module.audo.*CouchPotato' | awk '{print $1}'`")
+            else:
+                urlopen_with_retry('http://localhost:8083/api/' + couchpotatoapikey + '/app.shutdown')
             xbmc.log('AUDO: Shutting CouchPotato down...', level=xbmc.LOGDEBUG)
         except Exception, e:
             xbmc.log('AUDO: CouchPotato exception occurred', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
             os.system("kill `ps | grep -E 'python.*script.module.audo.*CouchPotato' | awk '{print $1}'`")
+            pass
     
     if headphonesLaunch:
         try:
             headphonesconfig = ConfigObj(headphonesSettings, create_empty=False)
             headphonesapikey = headphonesconfig['General']['api_key']
-            urlopen_with_retry('http://localhost:8084/api?apikey=' + headphonesapikey + '&cmd=shutdown')
+            if not headphonesapikey:
+                os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")
+            else:
+                urlopen_with_retry('http://localhost:8084/api?apikey=' + headphonesapikey + '&cmd=shutdown')
             xbmc.log('AUDO: Shutting HeadPhones down...', level=xbmc.LOGDEBUG)
         except Exception, e:
             xbmc.log('AUDO: HeadPhones exception occurred', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
             os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")
+            pass
