@@ -1,4 +1,4 @@
 PKG_NAME="script.service.audo"
 PKG_VERSION="1.2"
-PKG_REV="0~beta1"
+PKG_REV="0~beta3"
 PKG_DEPENDS=""

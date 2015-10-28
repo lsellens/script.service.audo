@@ -3,6 +3,7 @@
     <setting id="SABNZBD_PWD" value="" />
     <setting id="SABNZBD_USER" value="" />
     <setting id="SABNZBD_KEEP_AWAKE" value="false" />
+    <setting id="TRANSMISSION_KEEP_AWAKE" value="false" />
     <setting id="PERIODIC_WAKE" value="false" />
     <setting id="WAKE_AT" value="1" />
     <setting id="SABNZBD_LAUNCH" value="true" />
