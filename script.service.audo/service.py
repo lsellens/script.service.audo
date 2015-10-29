@@ -55,7 +55,7 @@ if not audo.pArch.startswith('arm'):
 
 monitor = MyMonitor()
 
-while not monitor.abortRequested() and not audo.audoShutdown:
+while not monitor.abortRequested():
     # detect machine arch and setup binaries after an update
     if not xbmcvfs.exists(xbmc.translatePath(audo.__dependencies__ + '/arch.' + audo.pArch)):
         audo.updatedependencies()
@@ -86,6 +86,12 @@ while not monitor.abortRequested() and not audo.audoShutdown:
                 xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm ', level=xbmc.LOGDEBUG)
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
                 pass
+    
+    if audo.audoShutdown:
+        audo.shutdown()
+        while audo.Shutdown:
+            xbmc.sleep(1000)
+        audo.main()
     
     if monitor.waitForAbort(1):
         break

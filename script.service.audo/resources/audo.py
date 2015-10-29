@@ -62,9 +62,7 @@ def retry_on_exc(exceptiontocheck, tries, delay, backoff):
                     mtries -= 1
                     mdelay *= backoff
             return f(*args, **kwargs)
-
         return f_retry
-
     return retry
 
 
