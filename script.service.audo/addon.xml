@@ -7,7 +7,7 @@
     <import addon="xbmc.addon" version="14.0.0"/>
     <import addon="xbmc.python" version="2.19.0"/>
     <import addon="script.module.six" version="1.9.0" />
-    <import addon="script.module.audo-dependencies" version="0.0.9"/>
+    <import addon="script.module.audo-dependencies" version="0.1.0"/>
     <import addon="script.module.audo-programs" version="0.1.4"/>
     <import addon="script.module.audo" version="0.0.5"/>
     <import addon="service.downloadmanager.transmission" version="0.0.0" optional="true"/>
