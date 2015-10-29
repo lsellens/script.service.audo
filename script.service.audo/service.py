@@ -89,7 +89,7 @@ while not monitor.abortRequested():
     
     if audo.audoShutdown:
         audo.shutdown()
-        while audo.Shutdown:
+        while audo.audoShutdown:
             xbmc.sleep(1000)
         audo.main()
     
