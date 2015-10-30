@@ -68,7 +68,7 @@ while not monitor.abortRequested():
     if not audo.pArch.startswith('arm'):
         
         # check if SABnzbd is downloading
-        if audo.sabnzbdKeepAwake:
+        if audo.sabnzbdKeepAwake and sabnzbdLaunch:
             audo.sabinhibitsleep()
         
         # check if transmission is downloading
