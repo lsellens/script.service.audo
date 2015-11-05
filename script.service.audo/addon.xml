@@ -16,18 +16,18 @@
              library="service.py">
   </extension>
   <extension point="xbmc.addon.metadata">
-    <summary lang="en">Audo (Automatic Downloader) is a fork of SABnzbd-Suite. SABnzbd-Suite Metapackage which combines SABnzbd, SickBeard, Couchpotato and Headphones in one Addon</summary>
-    <summary lang="nl">Audo (Automatische Downloader) is een afsplitsing van SABnzbd-Suite. Sabnzbd-Suite metapackage die SABNZBD, SickBeard, Couchpotato en Headphones combineert in een add-on.</summary>
-    <summary lang="fr">Audo (pour Automatic Downloader) est un fork de SABnzbd-Suite. SABnzbd-Suite méta-paquet qui combine SABnzbd, SickBeard, Couchpotato et Headphones dans un add-on.</summary>
-    <summary lang="pt">O Audo (Automatic Downloader) é uma derivação da SABnzbd-Suite. O Metapacote SABnzbd-Suite combina o SABnzbd, SickBeard, Couchpotato e Headphones num único Addon</summary>
-    <summary lang="de">Audo ist ein Metapaket  das SABnzb, SickBeard. Couchpotatoe und Headphones in einer Erweiterung vereint.</summary>
-    <summary lang="es">Audo (Automatic Downloader) es un fork derivado de SABnzbd-Suite. SABnzbd-Suite Metapackage el cual combina SABnzbd, SickBeard, Couchpotato y Headphones en un solo Addon</summary>
-    <description lang="en">Audo (Automatic Downloader) is a fork of SABnzbd-Suite. Updated frequently to newest versions of SAB, SB, CP, and HP.</description>
-    <description lang="nl">Audo (Automatische Downloader) is een afsplitsing van SABnzbd-Suite. Wordt frequent geüpdatet naar de nieuwste versies van SAB, SB, CP, en HP.</description>
-    <description lang="fr">Audo (pour Automatic Downloader) est un fork de SABnzbd-Suite. Mis à jour fréquemment vers les nouvelles versions de la branche SAB, SB, CP et HP.</description>
-    <description lang="pt">O Audo (Automatic Downloader) é uma derivação da SABnzbd-Suite. É actualizado frequentemente para as mais recentes versões de SAB, SB, CP, e HP.</description>
+    <summary lang="en">Audo (Automatic Downloader) is a fork of SABnzbd-Suite. SABnzbd-Suite Metapackage which combines SABnzbd, NZBGet, SickBeard, Couchpotato and Headphones in one Addon</summary>
+    <summary lang="nl">Audo (Automatische Downloader) is een afsplitsing van SABnzbd-Suite. Sabnzbd-Suite metapackage die SABNZBD, NZBGet, SickBeard, Couchpotato en Headphones combineert in een add-on.</summary>
+    <summary lang="fr">Audo (pour Automatic Downloader) est un fork de SABnzbd-Suite. SABnzbd-Suite méta-paquet qui combine SABnzbd, NZBGet, SickBeard, Couchpotato et Headphones dans un add-on.</summary>
+    <summary lang="pt">O Audo (Automatic Downloader) é uma derivação da SABnzbd-Suite. O Metapacote SABnzbd-Suite combina o SABnzbd, NZBGet, SickBeard, Couchpotato e Headphones num único Addon</summary>
+    <summary lang="de">Audo ist ein Metapaket  das SABnzb, NZBGet, SickBeard. Couchpotatoe und Headphones in einer Erweiterung vereint.</summary>
+    <summary lang="es">Audo (Automatic Downloader) es un fork derivado de SABnzbd-Suite. SABnzbd-Suite Metapackage el cual combina SABnzbd, NZBGet, SickBeard, Couchpotato y Headphones en un solo Addon</summary>
+    <description lang="en">Audo (Automatic Downloader) is a fork of SABnzbd-Suite. Updated frequently to newest versions of SAB, NZBGet, SB, CP, and HP.</description>
+    <description lang="nl">Audo (Automatische Downloader) is een afsplitsing van SABnzbd-Suite. Wordt frequent geüpdatet naar de nieuwste versies van SAB, NZBGet, SB, CP, en HP.</description>
+    <description lang="fr">Audo (pour Automatic Downloader) est un fork de SABnzbd-Suite. Mis à jour fréquemment vers les nouvelles versions de la branche SAB, NZBGet, SB, CP et HP.</description>
+    <description lang="pt">O Audo (Automatic Downloader) é uma derivação da SABnzbd-Suite. É actualizado frequentemente para as mais recentes versões de SAB, NZBGet, SB, CP, e HP.</description>
     <description lang="de">Audo macht Usenet so simpel und modernisiert wie nur möglich indem alles automatisiert wurde so weit möglich. Alles was getan werden muss ist eine .nzb datei hinzufügen. SABnzbd+ übernimmt von da aus. Es lädt automatisch runter, verifiziert, repariert, extrahiert und archiviert ohne menschliche interaktion.</description>
-    <description lang="es">Audo (Automatic Downloader) es un fork derivado de SABnzbd-Suite. Se actualiza con frecuencia a las últimas versiones de SAB, SB, CP, and HP.</description>
+    <description lang="es">Audo (Automatic Downloader) es un fork derivado de SABnzbd-Suite. Se actualiza con frecuencia a las últimas versiones de SAB, NZBGet, SB, CP, and HP.</description>
     <platform>linux</platform>
   </extension>
 </addon>
