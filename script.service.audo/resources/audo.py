@@ -186,17 +186,18 @@ def main():
             subprocess.call(installNzbget, close_fds=True, env=os_env)
             while not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
                 xbmc.sleep(1000)
-            xbmc.log('AUDO: ...done', level=xbmc.LOGERROR)
-            femail = xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget-EMail.py.patch')
-            if xbmcvfs.exists(femail):
-                pemail = xbmc.translatePath(__programs__ + '/resources/nzbget/scripts/EMail.py')
-                xbmcvfs.delete(pemail)
-                xbmcvfs.copy(femail, pemail)
+            nzbgetScripts = xbmc.translatePath(__programs__ + '/resources/nzbget/scripts/')
+            xbmcvfs.copy(nzbgetScripts + 'Logger.py', sabnzbdScripts + 'Logger.py')
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+            patchedEmailScript = xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget-EMail.py.patch')
+            if xbmcvfs.exists(patchedEmailScript):
+                xbmcvfs.delete(sabnzbdScripts + 'EMail.py')
+                xbmcvfs.copy(patchedEmailScript, sabnzbdScripts + 'EMail.py')
                 if not ngfirstLaunch:
                     xbmcvfs.rename(nzbgetSettings, nzbgetSettings + '.bak')
         except Exception, e:
             xbmc.log('AUDO: NZBGet Install exception occurred', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGDEBUG)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
     
     # Touch audo-programs folder stating they are currently loaded <-- for detecting update
     open(__programs__ + '/.current', 'a').close()
@@ -252,17 +253,6 @@ def main():
             
         sabnzbdconfig.merge(defaultconfig)
         sabnzbdconfig.write()
-        
-        # also keep the autoProcessTV config up to date
-        autoprocessconfig = ConfigObj(xbmc.translatePath(sabnzbdScripts + 'autoProcessTV.cfg'), create_empty=True)
-        defaultconfig = ConfigObj()
-        defaultconfig['SickBeard'] = {}
-        defaultconfig['SickBeard']['host'] = 'localhost'
-        defaultconfig['SickBeard']['port'] = '8082'
-        defaultconfig['SickBeard']['username'] = user
-        defaultconfig['SickBeard']['password'] = pwd
-        autoprocessconfig.merge(defaultconfig)
-        autoprocessconfig.write()
         
         # launch SABnzbd and get the API key
         # ----------------------------------
@@ -326,7 +316,7 @@ def main():
             defaultconfig['DestDir'] = sabnzbdComplete
             defaultconfig['InterDir'] = sabnzbdIncomplete
             defaultconfig['NzbDir'] = sabnzbdWatchDir
-            defaultconfig['ScriptDir'] = __programs__ + '/resources/nzbget/scripts'
+            defaultconfig['ScriptDir'] = sabnzbdScripts
             defaultconfig['WriteLog'] = 'append'
             defaultconfig['RotateLog'] = '7'
             defaultconfig['ErrorTarget'] = 'log'
