@@ -1,3 +1,6 @@
+1.2.1
+- fixes for nzbget
+
 1.2.0
 - added option for transmission to prevent idle sleep/shutdown
 - addon now requires helix or above
