@@ -87,6 +87,8 @@ while not monitor.abortRequested():
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
                 pass
     
+    audo.getaddonsettings()
+    
     if audo.audoShutdown:
         audo.shutdown()
         while audo.audoShutdown:
