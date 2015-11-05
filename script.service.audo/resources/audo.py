@@ -97,7 +97,7 @@ def main():
     sabnzbdCompleteMov = xbmc.translatePath(homeDir + 'downloads/movies/')
     sabnzbdCompleteMusic = xbmc.translatePath(homeDir + 'downloads/music/')
     sabnzbdIncomplete = xbmc.translatePath(homeDir + 'downloads/incomplete/')
-    sickbeardTvScripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/autoProcessTV/')
+    sickbeardTvScripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/contrib/nzbToMedia')
     sabnzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts/')
     
     # service commands
@@ -130,14 +130,8 @@ def main():
     create_dir(sabnzbdIncomplete)
     create_dir(sabnzbdScripts)
     
-    if not xbmcvfs.exists(xbmc.translatePath(sabnzbdScripts + 'sabToSickBeard.py')):
-        xbmcvfs.copy(xbmc.translatePath(sickbeardTvScripts + 'sabToSickBeard.py'), sabnzbdScripts +
-                     'sabToSickBeard.py')
-    if not xbmcvfs.exists(xbmc.translatePath(sabnzbdScripts + 'autoProcessTV.py')):
-        xbmcvfs.copy(xbmc.translatePath(sickbeardTvScripts + 'autoProcessTV.py'), sabnzbdScripts +
-                     'autoProcessTV.py')
-    if not os.path.exists(xbmc.translatePath(sabnzbdScripts + 'lib')):
-        os.symlink(sickbeardTvScripts + 'lib', sabnzbdScripts + 'lib')
+    if not os.path.exists(xbmc.translatePath(sabnzbdScripts + 'nzbToMedia')):
+        os.symlink(sickbeardTvScripts, sabnzbdScripts + 'nzbToMedia')
     
     # Transmission-Daemon
     global transAuth, transUser, transPwd
