@@ -184,16 +184,25 @@ def main():
     os_env["PATH"] = (xbmc.translatePath(__dependencies__ + '/bin:')) + os_env["PATH"]
     
     # NZBGet Binary Install
-    try:
-        if not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
+    if not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
+        try:
             installNzbget = ['sh', xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget-bin-linux.run'),
                              '--destdir', xbmc.translatePath(__programs__ + '/resources/nzbget/')]
             xbmc.log('AUDO: Installing NZBGet Binaries...', level=xbmc.LOGDEBUG)
             subprocess.call(installNzbget, close_fds=True, env=os_env)
-            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
-    except Exception, e:
-        xbmc.log('AUDO: NZBGet Install exception occurred', level=xbmc.LOGERROR)
-        xbmc.log(str(e), level=xbmc.LOGERROR)
+            while not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
+                xbmc.sleep(1000)
+            xbmc.log('AUDO: ...done', level=xbmc.LOGERROR)
+            femail = xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget-EMail.py.patch')
+            if xbmcvfs.exists(femail):
+                pemail = xbmc.translatePath(__programs__ + '/resources/nzbget/scripts/EMail.py')
+                xbmcvfs.delete(pemail)
+                xbmcvfs.copy(femail, pemail)
+                if not ngfirstLaunch:
+                    xbmcvfs.rename(nzbgetSettings, nzbgetSettings + '.bak')
+        except Exception, e:
+            xbmc.log('AUDO: NZBGet Install exception occurred', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGDEBUG)
     
     # Touch audo-programs folder stating they are currently loaded <-- for detecting update
     open(__programs__ + '/.current', 'a').close()
@@ -294,7 +303,7 @@ def main():
     # SABnzbd end
     
     # NZBGet start
-    if ngfirstLaunch and nzbgetLaunch:
+    if nzbgetLaunch:
         try:
             # write NZBGet settings
             # ------------------------
@@ -388,7 +397,7 @@ def main():
         if nzbgetLaunch:
             defaultconfig['NZBget']['nzbget_username'] = user
             defaultconfig['NZBget']['nzbget_password'] = pwd
-            defaultconfig['NZBget']['nzbget_host'] = 'http://' + sabnzbdHost + '/'
+            defaultconfig['NZBget']['nzbget_host'] = sabnzbdHost
         
         if transAuth:
             defaultconfig['TORRENT']['torrent_username'] = transUser
