@@ -78,15 +78,6 @@ def main():
             xbmcvfs.mkdirs(dirname)
             xbmc.log('AUDO: Created directory ' + dirname, level=xbmc.LOGDEBUG)
     
-    # settings
-    global sabnzbdSettings, sickbeardSettings, couchpotatoSettings, headphonesSettings, nzbgetSettings
-    xbmcSettings = xbmc.translatePath('special://home/userdata/guisettings.xml')
-    sabnzbdSettings = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
-    sickbeardSettings = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
-    couchpotatoSettings = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
-    headphonesSettings = xbmc.translatePath(__addonhome__ + 'headphones.ini')
-    nzbgetSettings = xbmc.translatePath(__addonhome__ + 'nzbget.conf')
-    
     # Get Device Home DIR
     homeDir = os.path.expanduser('~/')
     
@@ -97,8 +88,18 @@ def main():
     sabnzbdCompleteMov = xbmc.translatePath(homeDir + 'downloads/movies/')
     sabnzbdCompleteMusic = xbmc.translatePath(homeDir + 'downloads/music/')
     sabnzbdIncomplete = xbmc.translatePath(homeDir + 'downloads/incomplete/')
-    sickbeardTvScripts = xbmc.translatePath(__programs__ + '/resources/SickBeard/contrib/nzbToMedia')
+    nzbToMediaScripts = xbmc.translatePath(__addonpath__ + '/resources/nzbToMedia/')
     sabnzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts/')
+    
+    # settings
+    global sabnzbdSettings, sickbeardSettings, couchpotatoSettings, headphonesSettings, nzbgetSettings
+    xbmcSettings = xbmc.translatePath('special://home/userdata/guisettings.xml')
+    sabnzbdSettings = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
+    sickbeardSettings = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
+    couchpotatoSettings = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
+    headphonesSettings = xbmc.translatePath(__addonhome__ + 'headphones.ini')
+    nzbgetSettings = xbmc.translatePath(__addonhome__ + 'nzbget.conf')
+    nzbToMediaSettings = xbmc.translatePath(sabnzbdScripts + 'autoProcessMedia.cfg')
     
     # service commands
     sabnzbd = ['python', xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'),
@@ -130,8 +131,12 @@ def main():
     create_dir(sabnzbdIncomplete)
     create_dir(sabnzbdScripts)
     
-    if not os.path.exists(xbmc.translatePath(sabnzbdScripts + 'nzbToMedia')):
-        os.symlink(sickbeardTvScripts, sabnzbdScripts + 'nzbToMedia')
+    if os.path.islink(xbmc.translatePath(sabnzbdScripts + 'nzbToMedia')):
+        os.unlink(sabnzbdScripts + 'nzbToMedia')
+    
+    for file in os.listdir(nzbToMediaScripts):
+        if not os.path.islink(sabnzbdScripts + str(file)):
+            os.symlink(nzbToMediaScripts + str(file), sabnzbdScripts + str(file))
     
     # Transmission-Daemon
     global transAuth, transUser, transPwd
@@ -187,14 +192,15 @@ def main():
             while not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
                 xbmc.sleep(1000)
             nzbgetScripts = xbmc.translatePath(__programs__ + '/resources/nzbget/scripts/')
-            xbmcvfs.copy(nzbgetScripts + 'Logger.py', sabnzbdScripts + 'Logger.py')
-            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
+            for file in os.listdir(nzbgetScripts):
+                if xbmcvfs.exists(sabnzbdScripts + str(file)):
+                    xbmcvfs.delete(sabnzbdScripts + str(file))
+                xbmcvfs.copy(nzbgetScripts + str(file), sabnzbdScripts + str(file))
             patchedEmailScript = xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget-EMail.py.patch')
             if xbmcvfs.exists(patchedEmailScript):
                 xbmcvfs.delete(sabnzbdScripts + 'EMail.py')
                 xbmcvfs.copy(patchedEmailScript, sabnzbdScripts + 'EMail.py')
-                if not ngfirstLaunch:
-                    xbmcvfs.rename(nzbgetSettings, nzbgetSettings + '.bak')
+            xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
         except Exception, e:
             xbmc.log('AUDO: NZBGet Install exception occurred', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
@@ -223,7 +229,7 @@ def main():
         defaultconfig['misc']['nzb_backup_dir'] = 'backup'
         
         if firstLaunch:
-            defaultconfig['misc']['script_dir'] = 'scripts'
+            defaultconfig['misc']['script_dir'] = sabnzbdScripts
             defaultconfig['misc']['web_dir'] = 'Plush'
             defaultconfig['misc']['web_dir2'] = 'Plush'
             defaultconfig['misc']['web_color'] = 'gold'
@@ -238,15 +244,17 @@ def main():
             categories = {}
             categories['tv'] = {}
             categories['tv']['name'] = 'tv'
-            categories['tv']['script'] = 'sabToSickBeard.py'
+            categories['tv']['script'] = 'nzbToSickBeard.py'
             categories['tv']['priority'] = '-100'
             categories['movies'] = {}
             categories['movies']['name'] = 'movies'
             categories['movies']['dir'] = 'movies'
+            categories['movies']['script'] = 'nzbToCouchPotato.py'
             categories['movies']['priority'] = '-100'
             categories['music'] = {}
             categories['music']['name'] = 'music'
             categories['music']['dir'] = 'music'
+            categories['music']['script'] = 'nzbToHeadPhones.py'
             categories['music']['priority'] = '-100'
             defaultconfig['servers'] = servers
             defaultconfig['categories'] = categories
@@ -583,6 +591,85 @@ def main():
         xbmc.log('AUDO: Headphones exception occurred', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
         # Headphones end
+    
+    # nzbToMedia start
+    try:
+        # write nzbToMedia settings
+        # ------------------------
+        nzbtomediaconfig = ConfigObj(nzbToMediaSettings, create_empty=True)
+        defaultconfig = ConfigObj()
+        defaultconfig['General'] = {}
+        defaultconfig['General']['safemode'] = '1'
+        defaultconfig['General']['auto_update'] = '0'
+        
+        defaultconfig['Nzb'] = {}
+        defaultconfig['Nzb']['sabnzbd_host'] = 'localhost'
+        defaultconfig['Nzb']['sabnzbd_port'] = '8081'
+        defaultconfig['Nzb']['default_downloadDirectory'] = sabnzbdComplete
+        if sabnzbdLaunch:
+            defaultconfig['Nzb']['clientAgent'] = 'sabnzbd'
+            defaultconfig['Nzb']['sabnzbd_apikey'] = sabnzbdApiKey
+        if nzbgetLaunch:
+            defaultconfig['Nzb']['clientAgent'] = 'nzbget'
+        
+        defaultconfig['Torrent'] = {}
+        defaultconfig['Torrent']['clientAgent'] = 'Transmission'
+        defaultconfig['Torrent']['TransmissionHost'] = 'localhost'
+        defaultconfig['Torrent']['TransmissionPort'] = '9091'
+        defaultconfig['Torrent']['outputDirectory'] = sabnzbdComplete
+        defaultconfig['Torrent']['default_downloadDirectory'] = sabnzbdComplete
+        if transAuth:
+            defaultconfig['Torrent']['TransmissionUSR'] = transUser
+            defaultconfig['Torrent']['TransmissionPWD'] = transPwd
+        
+        SickBeard = {}
+        SickBeard['tv'] = {}
+        SickBeard['tv']['host'] = 'localhost'
+        SickBeard['tv']['port'] = '8082'
+        SickBeard['tv']['username'] = user
+        SickBeard['tv']['password'] = pwd
+        SickBeard['tv']['fork'] = 'sickrage'
+        defaultconfig['SickBeard'] = SickBeard
+        
+        CouchPotato = {}
+        CouchPotato['movie'] = {}
+        CouchPotato['movie']['host'] = 'localhost'
+        CouchPotato['movie']['port'] = '8083'
+        if couchpotatoLaunch:
+            try:
+                couchpotatoconfig = ConfigObj(couchpotatoSettings, create_empty=False, list_values=False)
+                couchpotatoapikey = couchpotatoconfig['core']['api_key']
+                CouchPotato['movie']['apikey'] = couchpotatoapikey
+            except Exception, e:
+                xbmc.log('AUDO: CouchPotato exception occurred', level=xbmc.LOGERROR)
+                xbmc.log(str(e), level=xbmc.LOGERROR)
+                pass
+        defaultconfig['CouchPotato'] = CouchPotato
+        
+        HeadPhones = {}
+        HeadPhones['music'] = {}
+        HeadPhones['music']['host'] = 'localhost'
+        HeadPhones['music']['port'] = '8084'
+        if headphonesLaunch:
+            try:
+                headphonesconfig = ConfigObj(headphonesSettings, create_empty=False)
+                headphonesapikey = headphonesconfig['General']['api_key']
+                HeadPhones['music']['apikey'] = headphonesapikey
+            except Exception, e:
+                xbmc.log('AUDO: HeadPhones exception occurred', level=xbmc.LOGERROR)
+                xbmc.log(str(e), level=xbmc.LOGERROR)
+                pass
+        defaultconfig['HeadPhones'] = HeadPhones
+            
+        nzbtomediaconfig.merge(defaultconfig)
+        nzbtomediaconfig.write()
+        
+    except Exception, e:
+        xbmc.log('AUDO: nzbToMedia exception occurred', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+        pass
+    # nzbToMedia end
+
 
 # SABnzbd addresses and api key
 sabNzbdQueue = ('http://' + sabnzbdHost + '/api?mode=queue&output=xml&apikey=')

@@ -1,3 +1,6 @@
+1.2.2
+- moved nzbToMedia to this part of the addon
+
 1.2.1
 - fixes for nzbget
 

@@ -1,0 +1,38 @@
+--- build.nzbToMedia.git/nzbToMedia.py	2015-11-10 16:59:32.242193192 -0600
++++ patches/nzbToMedianew.py	2015-11-10 17:02:07.310962136 -0600
+@@ -45,7 +45,7 @@
+ #cpshost=localhost
+ 
+ # CouchPotato port.
+-#cpsport=5050
++#cpsport=8083
+ 
+ # CouchPotato uses ssl (0, 1).
+ #
+@@ -90,7 +90,7 @@
+ #sbhost=localhost
+ 
+ # SickBeard port.
+-#sbport=8081
++#sbport=8082
+ 
+ # SickBeard username.
+ #sbusername=
+@@ -111,7 +111,7 @@
+ # SickBeard watch directory.
+ #
+ # set this if SickBeard and nzbGet are on different systems.
+-#sbwatch_dir=
++#sbwatch_dir=/storage/downloads/tvshows
+ 
+ # SickBeard fork.
+ #
+@@ -192,7 +192,7 @@
+ #hphost=localhost
+ 
+ # HeadPhones port.
+-#hpport=8181
++#hpport=8084
+ 
+ # HeadPhones uses ssl (0, 1).
+ #
