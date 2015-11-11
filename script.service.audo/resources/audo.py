@@ -637,6 +637,10 @@ def main():
         SickBeard['tv']['fork'] = 'sickrage'
         if ntmfirstLaunch:
             SickBeard['tv']['watch_dir'] = sabnzbdCompleteTv
+            SickBeard['tv']['enabled'] = '1'
+            SickBeard['tv']['extract'] = '1'
+            SickBeard['tv']['delete_failed'] = '0'
+            SickBeard['tv']['delete_ignored'] = '0'
         defaultconfig['SickBeard'] = SickBeard
         
         CouchPotato = {}
@@ -645,6 +649,11 @@ def main():
         CouchPotato['movie']['port'] = '8083'
         if ntmfirstLaunch:
             CouchPotato['movie']['watch_dir'] = sabnzbdCompleteMov
+            CouchPotato['movie']['method'] = 'renamer'
+            CouchPotato['movie']['enabled'] = '1'
+            CouchPotato['movie']['extract'] = '1'
+            CouchPotato['movie']['delete_failed'] = '0'
+            CouchPotato['movie']['delete_ignored'] = '0'
         if couchpotatoLaunch:
             try:
                 couchpotatoconfig = ConfigObj(couchpotatoSettings, create_empty=False, list_values=False)
@@ -662,6 +671,9 @@ def main():
         HeadPhones['music']['port'] = '8084'
         if ntmfirstLaunch:
             HeadPhones['music']['watch_dir'] = sabnzbdCompleteMusic
+            HeadPhones['music']['enabled'] = '1'
+            HeadPhones['music']['extract'] = '1'
+            HeadPhones['music']['delete_ignored'] = '0'
         if headphonesLaunch:
             try:
                 headphonesconfig = ConfigObj(headphonesSettings, create_empty=False)
