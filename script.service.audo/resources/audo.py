@@ -120,6 +120,7 @@ def main():
     sbfirstLaunch = not xbmcvfs.exists(sickbeardSettings)
     cpfirstLaunch = not xbmcvfs.exists(couchpotatoSettings)
     hpfirstLaunch = not xbmcvfs.exists(headphonesSettings)
+    ntmfirstLaunch = not xbmcvfs.exists(nzbToMediaSettings)
     
     xbmc.log('AUDO: Creating directories if missing', level=xbmc.LOGDEBUG)
     create_dir(__addonhome__)
@@ -601,11 +602,14 @@ def main():
         defaultconfig['General'] = {}
         defaultconfig['General']['safemode'] = '1'
         defaultconfig['General']['auto_update'] = '0'
+        if ntmfirstLaunch:
+            defaultconfig['General']['check_media'] = '0'
         
         defaultconfig['Nzb'] = {}
         defaultconfig['Nzb']['sabnzbd_host'] = 'localhost'
         defaultconfig['Nzb']['sabnzbd_port'] = '8081'
-        defaultconfig['Nzb']['default_downloadDirectory'] = sabnzbdComplete
+        if ntmfirstLaunch:
+            defaultconfig['Nzb']['default_downloadDirectory'] = sabnzbdComplete
         if sabnzbdLaunch:
             defaultconfig['Nzb']['clientAgent'] = 'sabnzbd'
             defaultconfig['Nzb']['sabnzbd_apikey'] = sabnzbdApiKey
@@ -616,8 +620,10 @@ def main():
         defaultconfig['Torrent']['clientAgent'] = 'Transmission'
         defaultconfig['Torrent']['TransmissionHost'] = 'localhost'
         defaultconfig['Torrent']['TransmissionPort'] = '9091'
-        defaultconfig['Torrent']['outputDirectory'] = sabnzbdComplete
-        defaultconfig['Torrent']['default_downloadDirectory'] = sabnzbdComplete
+        if ntmfirstLaunch:
+            defaultconfig['Torrent']['outputDirectory'] = sabnzbdComplete
+            defaultconfig['Torrent']['default_downloadDirectory'] = sabnzbdComplete
+            defaultconfig['Torrent']['useLink'] = 'move'
         if transAuth:
             defaultconfig['Torrent']['TransmissionUSR'] = transUser
             defaultconfig['Torrent']['TransmissionPWD'] = transPwd
@@ -629,12 +635,16 @@ def main():
         SickBeard['tv']['username'] = user
         SickBeard['tv']['password'] = pwd
         SickBeard['tv']['fork'] = 'sickrage'
+        if ntmfirstLaunch:
+            SickBeard['tv']['watch_dir'] = sabnzbdCompleteTv
         defaultconfig['SickBeard'] = SickBeard
         
         CouchPotato = {}
         CouchPotato['movie'] = {}
         CouchPotato['movie']['host'] = 'localhost'
         CouchPotato['movie']['port'] = '8083'
+        if ntmfirstLaunch:
+            CouchPotato['movie']['watch_dir'] = sabnzbdCompleteMov
         if couchpotatoLaunch:
             try:
                 couchpotatoconfig = ConfigObj(couchpotatoSettings, create_empty=False, list_values=False)
@@ -650,6 +660,8 @@ def main():
         HeadPhones['music'] = {}
         HeadPhones['music']['host'] = 'localhost'
         HeadPhones['music']['port'] = '8084'
+        if ntmfirstLaunch:
+            HeadPhones['music']['watch_dir'] = sabnzbdCompleteMusic
         if headphonesLaunch:
             try:
                 headphonesconfig = ConfigObj(headphonesSettings, create_empty=False)
@@ -660,7 +672,14 @@ def main():
                 xbmc.log(str(e), level=xbmc.LOGERROR)
                 pass
         defaultconfig['HeadPhones'] = HeadPhones
-            
+        
+        if ntmfirstLaunch:
+            defaultconfig['Extensions'] = {}
+            defaultconfig['Extensions']['compressedExtensions'] = '.zip,.rar,.7z,.gz,.bz,.tar,.arj,.1,.01,.001'
+            defaultconfig['Extensions']['mediaExtensions'] = '.mkv,.avi,.mov,.mp4,.mpg,.mpeg,.vob,.m4v'
+            defaultconfig['Extensions']['audioExtensions'] = '.mp3,.aac,.ogg,.ape,.m4a,.asf,.flac'
+            defaultconfig['Extensions']['metaExtensions'] = '.nfo,.sub,.srt,.jpg,.gif'
+        
         nzbtomediaconfig.merge(defaultconfig)
         nzbtomediaconfig.write()
         
