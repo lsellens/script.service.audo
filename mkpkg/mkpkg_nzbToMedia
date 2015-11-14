@@ -25,6 +25,7 @@ echo "getting sources..."
 echo "copying sources..."
   rm -rf $PKG_NAME-$GIT_REV
   cp -R build.$PKG_NAME.git $PKG_NAME-$GIT_REV
+  cp -R patches/distutils $PKG_NAME-$GIT_REV/libs
 
 for i in patches/$PKG_NAME-*.patch; do
   if [ -f "$i" ]; then
@@ -38,7 +39,7 @@ for i in patches/$PKG_NAME-*.patch; do
 done
 
 echo "cleaning sources..."
-  rm -rf $PKG_NAME-$GIT_REV/.git* $PKG_NAME-$GIT_REV/*.md $PKG_NAME-$GIT_REV/*.txt $PKG_NAME-$GIT_REV/nzbToGamez.py $PKG_NAME-$GIT_REV/nzbToMylar.py $PKG_NAME-$GIT_REV/nzbToNzbDrone.py $PKG_NAME-$GIT_REV/.git* $PKG_NAME-$GIT_REV/getffmpeg.sh $PKG_NAME-$GIT_REV/*.spec
+  rm -rf $PKG_NAME-$GIT_REV/.git* $PKG_NAME-$GIT_REV/*.md $PKG_NAME-$GIT_REV/*.txt $PKG_NAME-$GIT_REV/nzbToGamez.py $PKG_NAME-$GIT_REV/nzbToMylar.py $PKG_NAME-$GIT_REV/nzbToNzbDrone.py $PKG_NAME-$GIT_REV/.git* $PKG_NAME-$GIT_REV/getffmpeg.sh $PKG_NAME-$GIT_REV/core/extractor/bin/
 
 echo "moving sources..."
   mv $PKG_NAME-$GIT_REV ../build/script.service.audo/resources/$PKG_NAME

@@ -14,7 +14,7 @@ import transmissionrpc
 
 
 sabnzbdHost = 'localhost:8081'
-
+ipAddress = xbmc.getIPAddress()
 
 # addon paths
 def getaddonpaths():
@@ -230,13 +230,14 @@ def main():
         defaultconfig['misc']['nzb_backup_dir'] = 'backup'
         
         if firstLaunch:
-            defaultconfig['misc']['script_dir'] = sabnzbdScripts
+            defaultconfig['misc']['script_dir'] = 'scripts'
             defaultconfig['misc']['web_dir'] = 'Plush'
             defaultconfig['misc']['web_dir2'] = 'Plush'
             defaultconfig['misc']['web_color'] = 'gold'
             defaultconfig['misc']['web_color2'] = 'gold'
             defaultconfig['misc']['download_dir'] = sabnzbdIncomplete
             defaultconfig['misc']['complete_dir'] = sabnzbdComplete
+            defaultconfig['misc']['dirscan_dir'] = sabnzbdWatchDir
             servers = {}
             servers['localhost'] = {}
             servers['localhost']['host'] = 'localhost'
@@ -245,6 +246,7 @@ def main():
             categories = {}
             categories['tv'] = {}
             categories['tv']['name'] = 'tv'
+            categories['tv']['dir'] = 'tvshows'
             categories['tv']['script'] = 'nzbToSickBeard.py'
             categories['tv']['priority'] = '-100'
             categories['movies'] = {}
@@ -321,22 +323,23 @@ def main():
             defaultconfig['SevenZipCmd'] = __programs__ + '/resources/nzbget/7za'
             defaultconfig['WebDir'] = __programs__ + '/resources/nzbget/webui'
             defaultconfig['ConfigTemplate'] = __programs__ + '/resources/nzbget/webui/nzbget.conf.template'
-            defaultconfig['MainDir'] = sabnzbdComplete
-            defaultconfig['DestDir'] = sabnzbdComplete
-            defaultconfig['InterDir'] = sabnzbdIncomplete
-            defaultconfig['NzbDir'] = sabnzbdWatchDir
-            defaultconfig['ScriptDir'] = sabnzbdScripts
-            defaultconfig['WriteLog'] = 'append'
-            defaultconfig['RotateLog'] = '7'
+            if ngfirstLaunch:
+                defaultconfig['MainDir'] = sabnzbdComplete
+                defaultconfig['DestDir'] = sabnzbdComplete
+                defaultconfig['InterDir'] = sabnzbdIncomplete
+                defaultconfig['NzbDir'] = sabnzbdWatchDir
+                defaultconfig['LogBufferSize'] = '1000'
+                defaultconfig['NzbLog'] = 'yes'
+                defaultconfig['BrokenLog'] = 'yes'
+                defaultconfig['WriteLog'] = 'append'
+                defaultconfig['RotateLog'] = '7'
             defaultconfig['ErrorTarget'] = 'log'
             defaultconfig['WarningTarget'] = 'log'
             defaultconfig['InfoTarget'] = 'log'
             defaultconfig['DetailTarget'] = 'log'
             defaultconfig['DebugTarget'] = 'log'
-            defaultconfig['LogBufferSize'] = '1000'
-            defaultconfig['NzbLog'] = 'yes'
-            defaultconfig['BrokenLog'] = 'yes'
             defaultconfig['DumpCore'] = 'yes'
+            defaultconfig['ScriptDir'] = sabnzbdScripts
             
             nzbgetconfig.merge(defaultconfig)
             nzbgetconfig.writenowhitespace()
@@ -395,7 +398,8 @@ def main():
         if transAuth:
             defaultconfig['TORRENT']['torrent_username'] = transUser
             defaultconfig['TORRENT']['torrent_password'] = transPwd
-            defaultconfig['TORRENT']['torrent_host'] = 'http://localhost:9091/'
+            # changed this to lan ip so the webui's manage torrents tab would work
+            defaultconfig['TORRENT']['torrent_host'] = 'http://' + ipAddress + ':9091/'
         
         if sbfirstLaunch:
             defaultconfig['TORRENT']['torrent_path'] = sabnzbdCompleteTv
@@ -821,7 +825,6 @@ def updateprograms():
         xbmc.executebuiltin(
             "XBMC.Notification(audo, Update detected. Restarting services now., 10000, %s)" % (__icon__))
         main()
-        xbmc.sleep(10000)
     except Exception, e:
         xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)

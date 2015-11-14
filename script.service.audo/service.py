@@ -6,11 +6,11 @@ import xbmc
 import xbmcvfs
 
 
-class MyMonitor( xbmc.Monitor ):
-    def __init__( self, *args, **kwargs ):
-        xbmc.Monitor.__init__( self )
+class MyMonitor(xbmc.Monitor):
+    def __init__(self, *args, **kwargs):
+        xbmc.Monitor.__init__(self)
 
-    def onSettingsChanged( self ):
+    def onSettingsChanged(self):
         audo.getaddonsettings()
 
 # addon
@@ -86,8 +86,6 @@ while not monitor.abortRequested():
                 xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm ', level=xbmc.LOGDEBUG)
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
                 pass
-    
-    audo.getaddonsettings()
     
     if audo.audoShutdown:
         audo.shutdown()
