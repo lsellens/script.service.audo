@@ -1,5 +1,5 @@
 --- build.nzbToMedia.git/nzbToMedia.py	2015-11-10 16:59:32.242193192 -0600
-+++ patches/nzbToMedianew.py	2015-11-10 17:02:07.310962136 -0600
++++ patches/nzbToMedianew.py	2015-11-16 23:40:06.780593991 -0600
 @@ -45,7 +45,7 @@
  #cpshost=localhost
  
@@ -36,3 +36,12 @@
  
  # HeadPhones uses ssl (0, 1).
  #
+@@ -510,6 +510,8 @@
+ from core.nzbToMediaUserScript import external_script
+ from core import logger, nzbToMediaDB
+ 
++sys.path.append('/storage/.kodi/addons/script.module.audo-dependencies/lib')
++
+ # post-processing
+ def process(inputDirectory, inputName=None, status=0, clientAgent='manual', download_id=None, inputCategory=None, failureLink=None):
+     if core.SAFE_MODE and inputDirectory == core.NZB_DEFAULTDIR:

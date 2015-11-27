@@ -145,7 +145,7 @@ def main():
     try:
         transmissionAddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
         transAuth = (transmissionAddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
-    
+        
         if transAuth:
             xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
             transUser = (transmissionAddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
@@ -261,7 +261,7 @@ def main():
             categories['music']['priority'] = '-100'
             defaultconfig['servers'] = servers
             defaultconfig['categories'] = categories
-            
+        
         sabnzbdconfig.merge(defaultconfig)
         sabnzbdconfig.write()
         
@@ -343,7 +343,7 @@ def main():
             
             nzbgetconfig.merge(defaultconfig)
             nzbgetconfig.writenowhitespace()
-            
+        
         except Exception, e:
             xbmc.log('AUDO: NZBGet exception occurred', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
@@ -698,7 +698,7 @@ def main():
         
         nzbtomediaconfig.merge(defaultconfig)
         nzbtomediaconfig.write()
-        
+    
     except Exception, e:
         xbmc.log('AUDO: nzbToMedia exception occurred', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
@@ -732,7 +732,7 @@ def sabinhibitsleep():
             handle.close()
             if any(x in queue for x in sabNzbdQueueKeywords):
                 sabisactive = True
-            
+        
         req = urllib2.Request(sabNzbdHistory + sabnzbdApiKey)
         try:
             handle = urllib2.urlopen(req)
@@ -922,3 +922,4 @@ def shutdown():
             xbmc.log(str(e), level=xbmc.LOGERROR)
             os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")
             pass
+

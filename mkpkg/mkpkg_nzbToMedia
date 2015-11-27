@@ -25,7 +25,6 @@ echo "getting sources..."
 echo "copying sources..."
   rm -rf $PKG_NAME-$GIT_REV
   cp -R build.$PKG_NAME.git $PKG_NAME-$GIT_REV
-  cp -R patches/distutils $PKG_NAME-$GIT_REV/libs
 
 for i in patches/$PKG_NAME-*.patch; do
   if [ -f "$i" ]; then
