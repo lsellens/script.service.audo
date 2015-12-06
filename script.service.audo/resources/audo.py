@@ -824,10 +824,10 @@ def updateprograms():
         for root, dirs, files in os.walk(__programs__):
             count2 += len(files)
     try:
-        while not (((xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'))) or not (
-                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py')))) or not (
-                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py')))) and (
-                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'))):
+        while not (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py')) and (
+                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py')) and (
+                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py')) and (
+                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py')):
             xbmc.sleep(3000)
         xbmc.executebuiltin("XBMC.Notification(audo, Update detected. Restarting services now., 10000, %s)" % __icon__)
         main()
