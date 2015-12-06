@@ -333,12 +333,12 @@ def main():
                 defaultconfig['BrokenLog'] = 'yes'
                 defaultconfig['WriteLog'] = 'append'
                 defaultconfig['RotateLog'] = '7'
-            defaultconfig['ErrorTarget'] = 'log'
-            defaultconfig['WarningTarget'] = 'log'
-            defaultconfig['InfoTarget'] = 'log'
-            defaultconfig['DetailTarget'] = 'log'
-            defaultconfig['DebugTarget'] = 'log'
-            defaultconfig['DumpCore'] = 'yes'
+                defaultconfig['ErrorTarget'] = 'log'
+                defaultconfig['WarningTarget'] = 'log'
+                defaultconfig['InfoTarget'] = 'log'
+                defaultconfig['DetailTarget'] = 'log'
+                defaultconfig['DebugTarget'] = 'log'
+                defaultconfig['DumpCore'] = 'yes'
             defaultconfig['ScriptDir'] = sabnzbdScripts
             
             nzbgetconfig.merge(defaultconfig)
@@ -604,7 +604,7 @@ def main():
         nzbtomediaconfig = ConfigObj(nzbToMediaSettings, create_empty=True)
         defaultconfig = ConfigObj()
         defaultconfig['General'] = {}
-        defaultconfig['General']['safemode'] = '1'
+        defaultconfig['General']['safemode'] = '0'
         defaultconfig['General']['auto_update'] = '0'
         if ntmfirstLaunch:
             defaultconfig['General']['check_media'] = '0'
@@ -645,6 +645,14 @@ def main():
             SickBeard['tv']['extract'] = '1'
             SickBeard['tv']['delete_failed'] = '0'
             SickBeard['tv']['delete_ignored'] = '0'
+            SickBeard['tv']['web_root'] = ''
+            SickBeard['tv']['ssl'] = '0'
+            SickBeard['tv']['Torrent_NoLink'] = '0'
+            SickBeard['tv']['process_method'] = ''
+            SickBeard['tv']['force'] = '0'
+            SickBeard['tv']['nzbExtractionBy'] = 'Downloader'
+            SickBeard['tv']['minSize'] = '0'
+            SickBeard['tv']['remote_path'] = '0'
         defaultconfig['SickBeard'] = SickBeard
         
         CouchPotato = {}
