@@ -12,9 +12,9 @@ import xbmcaddon
 import xbmcvfs
 import transmissionrpc
 
-
 sabnzbdHost = 'localhost:8081'
 ipAddress = xbmc.getIPAddress()
+
 
 # addon paths
 def getaddonpaths():
@@ -30,7 +30,8 @@ def getaddonpaths():
 
 # read addon settings
 def getaddonsettings():
-    global user, pwd, host, sabnzbdLaunch, nzbgetLaunch, sickbeardLaunch, couchpotatoLaunch, headphonesLaunch, sabnzbdKeepAwake, transmissionKeepAwake, wakePeriodically, wakeHourIdx, audoShutdown
+    global user, pwd, host, sabnzbdLaunch, nzbgetLaunch, sickbeardLaunch, couchpotatoLaunch, headphonesLaunch,\
+        sabnzbdKeepAwake, transmissionKeepAwake, wakePeriodically, wakeHourIdx, audoShutdown
     xbmc.log('AUDO: Getting addon settings', level=xbmc.LOGDEBUG)
     user = (__addon__.getSetting('SABNZBD_USER').decode('utf-8'))
     pwd = (__addon__.getSetting('SABNZBD_PWD').decode('utf-8'))
@@ -110,8 +111,7 @@ def main():
     couchpotatoserver = ['python', xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'),
                          '--daemon', '--pid_file=/var/run/couchpotato.pid', '--config_file', couchpotatoSettings]
     headphones = ['python', xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'),
-                  '-d', '--datadir', __addonhome__, '--pidfile=/var/run/headphones.pid', '--config',
-                  headphonesSettings]
+                  '-d', '--datadir', __addonhome__, '--pidfile=/var/run/headphones.pid', '--config', headphonesSettings]
     nzbget = ['.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget'), '-D', '-c', nzbgetSettings]
     
     # create directories and settings on first launch
@@ -135,9 +135,9 @@ def main():
     if os.path.islink(xbmc.translatePath(sabnzbdScripts + 'nzbToMedia')):
         os.unlink(sabnzbdScripts + 'nzbToMedia')
     
-    for file in os.listdir(nzbToMediaScripts):
-        if not os.path.islink(sabnzbdScripts + str(file)):
-            os.symlink(nzbToMediaScripts + str(file), sabnzbdScripts + str(file))
+    for files in os.listdir(nzbToMediaScripts):
+        if not os.path.islink(sabnzbdScripts + str(files)):
+            os.symlink(nzbToMediaScripts + str(files), sabnzbdScripts + str(files))
     
     # Transmission-Daemon
     global transAuth, transUser, transPwd
@@ -193,10 +193,10 @@ def main():
             while not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
                 xbmc.sleep(1000)
             nzbgetScripts = xbmc.translatePath(__programs__ + '/resources/nzbget/scripts/')
-            for file in os.listdir(nzbgetScripts):
-                if xbmcvfs.exists(sabnzbdScripts + str(file)):
-                    xbmcvfs.delete(sabnzbdScripts + str(file))
-                xbmcvfs.copy(nzbgetScripts + str(file), sabnzbdScripts + str(file))
+            for files in os.listdir(nzbgetScripts):
+                if xbmcvfs.exists(sabnzbdScripts + str(files)):
+                    xbmcvfs.delete(sabnzbdScripts + str(files))
+                xbmcvfs.copy(nzbgetScripts + str(files), sabnzbdScripts + str(files))
             patchedEmailScript = xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget-EMail.py.patch')
             if xbmcvfs.exists(patchedEmailScript):
                 xbmcvfs.delete(sabnzbdScripts + 'EMail.py')
@@ -813,8 +813,7 @@ def updateprograms():
     xbmc.log('AUDO: Update occurred. Attempting to restart audo services:', level=xbmc.LOGDEBUG)
     count1 = 1
     count2 = 2
-    xbmc.executebuiltin(
-        "XBMC.Notification(audo, Update detected. Stopping services now., 10000, %s)" % (__icon__))
+    xbmc.executebuiltin("XBMC.Notification(audo, Update detected. Stopping services now., 10000, %s)" % __icon__)
     shutdown()
     while count1 != count2:
         count1 = 0
@@ -825,13 +824,12 @@ def updateprograms():
         for root, dirs, files in os.walk(__programs__):
             count2 += len(files)
     try:
-        while not (xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'))) and (
-            xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py'))) and (
-            xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py'))) and (
-            xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'))):
+        while not (((xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SickBeard/SickBeard.py'))) or not (
+                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/Headphones/Headphones.py')))) or not (
+                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/SABnzbd/SABnzbd.py')))) and (
+                xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/CouchPotatoServer/CouchPotato.py'))):
             xbmc.sleep(3000)
-        xbmc.executebuiltin(
-            "XBMC.Notification(audo, Update detected. Restarting services now., 10000, %s)" % (__icon__))
+        xbmc.executebuiltin("XBMC.Notification(audo, Update detected. Restarting services now., 10000, %s)" % __icon__)
         main()
     except Exception, e:
         xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)

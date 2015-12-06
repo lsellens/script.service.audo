@@ -1,4 +1,3 @@
-from configobj import ConfigObj
 import socket
 import os
 import resources.audo as audo
