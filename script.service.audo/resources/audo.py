@@ -132,12 +132,16 @@ def main():
     create_dir(sabnzbdIncomplete)
     create_dir(sabnzbdScripts)
     
-    if os.path.islink(xbmc.translatePath(sabnzbdScripts + 'nzbToMedia')):
-        os.unlink(sabnzbdScripts + 'nzbToMedia')
-    
-    for files in os.listdir(nzbToMediaScripts):
-        if not os.path.islink(sabnzbdScripts + str(files)):
-            os.symlink(nzbToMediaScripts + str(files), sabnzbdScripts + str(files))
+    try:
+        if os.path.islink(xbmc.translatePath(sabnzbdScripts + 'nzbToMedia')):
+            os.unlink(sabnzbdScripts + 'nzbToMedia')
+        
+        for files in os.listdir(nzbToMediaScripts):
+            if not os.path.islink(sabnzbdScripts + str(files)):
+                os.symlink(nzbToMediaScripts + str(files), sabnzbdScripts + str(files))
+    except Exception, e:
+        xbmc.log('AUDO:Error while symlinking nzbToMedia scripts', level=xbmc.LOGNOTICE)
+        xbmc.log(str(e), level=xbmc.LOGNOTICE)
     
     # Transmission-Daemon
     global transAuth, transUser, transPwd
