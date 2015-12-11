@@ -79,6 +79,9 @@ def main():
             xbmcvfs.mkdirs(dirname)
             xbmc.log('AUDO: Created directory ' + dirname, level=xbmc.LOGDEBUG)
     
+    # Touch audo-programs folder stating they are currently loaded <-- for detecting update
+    open(__programs__ + '/.current', 'a').close()
+    
     # Get Device Home DIR
     homeDir = os.path.expanduser('~/')
     
@@ -140,8 +143,8 @@ def main():
             if not os.path.islink(sabnzbdScripts + str(files)):
                 os.symlink(nzbToMediaScripts + str(files), sabnzbdScripts + str(files))
     except Exception, e:
-        xbmc.log('AUDO:Error while symlinking nzbToMedia scripts', level=xbmc.LOGNOTICE)
-        xbmc.log(str(e), level=xbmc.LOGNOTICE)
+        xbmc.log('AUDO:Error while symlinking nzbToMedia scripts', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
     
     # Transmission-Daemon
     global transAuth, transUser, transPwd
@@ -210,8 +213,6 @@ def main():
             xbmc.log('AUDO: NZBGet Install exception occurred', level=xbmc.LOGERROR)
             xbmc.log(str(e), level=xbmc.LOGERROR)
     
-    # Touch audo-programs folder stating they are currently loaded <-- for detecting update
-    open(__programs__ + '/.current', 'a').close()
     # SABnzbd start
     try:
         # write SABnzbd settings
