@@ -17,7 +17,7 @@ msgstr ""
 
 msgctxt "#32000"
 msgid "General"
-msgstr ""
+msgstr "Geral"
 
 msgctxt "#32001"
 msgid "User Settings"
@@ -33,23 +33,23 @@ msgstr "Palavra-passe"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "Activar SABnzbd"
+msgstr "Habilitar SABnzbd na porta: 8081"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "Activar NZBGet"
+msgstr "Habilitar NZBGet na porta: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Activar Sickbeard"
+msgstr "Habilitar Sickbeard na porta: 8082"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Activar Couchpotato"
+msgstr "Habilitar Couchpotato na porta: 8083"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Activar Auscultadores"
+msgstr "Habilitar Headphones na porta: 8084"
 
 msgctxt "#32009"
 msgid "Network Settings"
@@ -85,16 +85,16 @@ msgstr "Despertar quando suspender/retomar"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr ""
+msgstr "Registros de atualizações"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr ""
+msgstr "Programas"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr ""
+msgstr "Serviço"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr ""
+msgstr "Dependências"

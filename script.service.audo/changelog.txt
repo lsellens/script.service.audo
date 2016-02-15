@@ -1,3 +1,6 @@
+1.2.3
+- update to nzbToMedia-3e4861e
+
 1.2.2
 - moved nzbToMedia to this part of the addon
 

@@ -1,18 +1,19 @@
 # XBMC Media Center language file
 # Translators:
 # Frank Duque <mr_anderson@riseup.net>, 2014
+# Black_ICE <zenobyte2@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenELEC-addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
 "POT-Creation-Date: 2014-04-03 02:08+0000\n"
-"PO-Revision-Date: 2014-10-01 09:55+0000\n"
-"Last-Translator: Frank Duque <mr_anderson@riseup.net>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/openelec-addons/language/es/)\n"
+"PO-Revision-Date: 2015-05-14 05:51+0000\n"
+"Last-Translator: lsellens <lsellens@gmail.com>\n"
+"Language-Team: Catalan (Spain) (http://www.transifex.com/lsellens/openelec-addons/language/ca_ES/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
+"Language: ca_ES\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#32000"
@@ -21,35 +22,35 @@ msgstr "General"
 
 msgctxt "#32001"
 msgid "User Settings"
-msgstr "Configuración de usuario"
+msgstr "Configuració d'usuari"
 
 msgctxt "#32002"
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr "Nom d'usuari"
 
 msgctxt "#32003"
 msgid "Password"
-msgstr "Contraseña"
+msgstr "Contrasenya"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "Habilitar SABnzbd en el Puerto: 8081"
+msgstr "Habilitar SABnzbd al Port: 8081"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "Habilitar NZBGet en el Puerto: 8081"
+msgstr "Habilitar NZBGet al Port: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Habilitar Sickbeard en el Puerto: 8082"
+msgstr "Habilitar Sickbeard al Port: 8081"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Habilitar Couchpotato en el Puerto: 8083"
+msgstr "Habilitar Couchpotato al Port: 8081"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Habilitar Headphones en el Puerto: 8084"
+msgstr "Habilitar Headphones al Port: 8081"
 
 msgctxt "#32009"
 msgid "Network Settings"
@@ -89,12 +90,12 @@ msgstr "Changelogs"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr "Programas"
+msgstr "Programes"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr "Servicio"
+msgstr "Servei"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr "Dependencias"
+msgstr "Dependències"

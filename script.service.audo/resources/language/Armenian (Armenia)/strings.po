@@ -1,100 +1,100 @@
 # XBMC Media Center language file
 # Translators:
-# Frank Duque <mr_anderson@riseup.net>, 2014
+# David Karapetyan <david090393@gmail.com>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenELEC-addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
 "POT-Creation-Date: 2014-04-03 02:08+0000\n"
-"PO-Revision-Date: 2014-10-01 09:55+0000\n"
-"Last-Translator: Frank Duque <mr_anderson@riseup.net>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/openelec-addons/language/es/)\n"
+"PO-Revision-Date: 2015-05-29 07:13+0000\n"
+"Last-Translator: lsellens <lsellens@gmail.com>\n"
+"Language-Team: Armenian (Armenia) (http://www.transifex.com/lsellens/openelec-addons/language/hy_AM/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
+"Language: hy_AM\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#32000"
 msgid "General"
-msgstr "General"
+msgstr "Գլխավոր"
 
 msgctxt "#32001"
 msgid "User Settings"
-msgstr "Configuración de usuario"
+msgstr "Օգտվողի կարգավորումներ"
 
 msgctxt "#32002"
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr "Մուտքանուն"
 
 msgctxt "#32003"
 msgid "Password"
-msgstr "Contraseña"
+msgstr "Գաղտնաբառ"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "Habilitar SABnzbd en el Puerto: 8081"
+msgstr "Միացնել SABnzbd-ն 8081 պորտի վրա"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "Habilitar NZBGet en el Puerto: 8081"
+msgstr "Միացնել NZBGet-ը 8081 պորտի վրա"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Habilitar Sickbeard en el Puerto: 8082"
+msgstr "Միացնել Sickbeard-ը 8082 պորտի վրա"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Habilitar Couchpotato en el Puerto: 8083"
+msgstr "Միացնել Couchpotato-ն 8083 պորտի վրա"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Habilitar Headphones en el Puerto: 8084"
+msgstr "Միացնել Headphones-ը 8084 պորտի վրա"
 
 msgctxt "#32009"
 msgid "Network Settings"
-msgstr "Configuración de red"
+msgstr "Ցանցային կարգավորումներ"
 
 msgctxt "#32010"
 msgid "Allowed IP addresses"
-msgstr "Direcciones IP permitidas"
+msgstr "Թույլատրված IP հասցեներ"
 
 msgctxt "#32011"
 msgid "Sleep"
-msgstr "Dormir"
+msgstr "Քնեցնել"
 
 msgctxt "#32012"
 msgid "Keep awake while downloading from SABnzbd"
-msgstr "Mantener despierto mientras descarga SABnzbd"
+msgstr "Բեռնումների ժամանակ միացած պահել SABnzbd"
 
 msgctxt "#32013"
 msgid "Keep awake while downloading from Transmission"
-msgstr "Mantener despierto mientras descarga Transmssion"
+msgstr "Բեռնումների ժամանակ միացած պահել Transmission"
 
 msgctxt "#32014"
 msgid "Wake up periodically"
-msgstr "Despertar periódicamente"
+msgstr "Պարբերաբար արթնացնել"
 
 msgctxt "#32015"
 msgid "Wake up at"
-msgstr "Despertar a las"
+msgstr "Արթնացնել"
 
 msgctxt "#32016"
 msgid "Restart on suspend / resume"
-msgstr "Reinicie la suspensión / reanudar"
+msgstr "Վերագործարկել կասեցման / վերսկսման ժամանակ"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr "Changelogs"
+msgstr "Փոփոխություններ"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr "Programas"
+msgstr "Ծրագրեր"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr "Servicio"
+msgstr "Ծառայություն"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr "Dependencias"
+msgstr "Կախվածություններ"

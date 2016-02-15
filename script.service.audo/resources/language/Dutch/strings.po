@@ -17,7 +17,7 @@ msgstr ""
 
 msgctxt "#32000"
 msgid "General"
-msgstr ""
+msgstr "Algemeen"
 
 msgctxt "#32001"
 msgid "User Settings"
@@ -33,23 +33,23 @@ msgstr "Wachtwoord"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "Activeer SABnzbd"
+msgstr "Activeer SABnzbd op Poort: 8081"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "Activeer NZBGet"
+msgstr "Activeer NZBGet op Poort: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Activeer Sickbeard"
+msgstr "Activeer Sickbeard op Poort: 8082"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Activeer Couchpotato"
+msgstr "Activeer Couchpotato op Poort: 8083"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Activeer Headphones"
+msgstr "Activeer Headphones op Poort: 8084"
 
 msgctxt "#32009"
 msgid "Network Settings"
@@ -85,16 +85,16 @@ msgstr "Herstart op opschorten / hervatten"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr ""
+msgstr "Logboek"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr ""
+msgstr "Programma`s"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr ""
+msgstr "Service"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr ""
+msgstr "Afhankelijkheden"

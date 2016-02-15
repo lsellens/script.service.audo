@@ -187,6 +187,7 @@ def main():
     
     # prepare execution environment
     os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
+    os.environ['LD_LIBRARY_PATH'] = str(os.environ.get('LD_LIBRARY_PATH')) + ':' + __dependencies__ + '/lib'
     os_env = os.environ
     os_env["PATH"] = (xbmc.translatePath(__dependencies__ + '/bin:')) + os_env["PATH"]
     

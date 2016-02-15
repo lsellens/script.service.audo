@@ -1,99 +1,96 @@
 # XBMC Media Center language file
 # Translators:
+# Krzysztof N <neri@epf.pl>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenELEC-addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
 "POT-Creation-Date: 2014-04-03 02:08+0000\n"
-"PO-Revision-Date: 2014-04-03 02:12+0000\n"
-"Last-Translator: lsellens <lsellens@gmail.com>\n"
-"Language-Team: Turkish (http://www.transifex.com/projects/p/openelec-addons/language/tr/)\n"
+"PO-Revision-Date: 2015-12-15 13:26+0000\n"
+"Last-Translator: Krzysztof N <neri@epf.pl>\n"
+"Language-Team: Polish (http://www.transifex.com/lsellens/openelec-addons/language/pl/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: tr\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Language: pl\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 msgctxt "#32000"
 msgid "General"
-msgstr ""
+msgstr "Główne"
 
 msgctxt "#32001"
 msgid "User Settings"
-msgstr "Kullanıcı Ayarları"
+msgstr "Ustawienia użytkownika"
 
 msgctxt "#32002"
 msgid "Username"
-msgstr "Kullanıcı adı"
+msgstr "Nazwa użytkownika"
 
 msgctxt "#32003"
 msgid "Password"
-msgstr "Parola"
+msgstr "Hasło"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "SABnzbd'yi Etkinleştir Port: 8081"
+msgstr "Uruchom SABnzbd na porcie: 8081"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "NZBGet'yi Etkinleştir Port: 8081"
+msgstr "Uruchom NZBGet na porcie: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Sickbeard'ı Etkinleştir Port: 8082"
+msgstr "Uruchom Sickbeard na porcie: 8082"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Couchpotato'yu Etkinleştir Port: 8083"
+msgstr "Uruchom Couchpotato na porcie: 8083"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Headphones'u Etkinleştir Port: 8084"
+msgstr "Uruchom Headphones na porcie: 8084"
 
 msgctxt "#32009"
 msgid "Network Settings"
-msgstr "Ağ Ayarları"
+msgstr "Ustawienia sieci"
 
 msgctxt "#32010"
 msgid "Allowed IP addresses"
-msgstr "İzin verilen IP adresleri"
+msgstr "Dozwolone adresy IP"
 
 msgctxt "#32011"
 msgid "Sleep"
-msgstr "Uyku"
+msgstr "Uśpij"
 
 msgctxt "#32012"
-msgid "Keep awake while downloading from SABnzbd"
-msgstr "İndirilirken uyanık tut SABnzbd"
+msgid "Keep awake while downloading"
+msgstr "Pozostań aktywny w czasie pobierania"
 
 msgctxt "#32013"
-msgid "Keep awake while downloading from Transmission"
-msgstr "İndirilirken uyanık tut Transmission"
+msgid "Wake up periodically"
+msgstr "Przebudzaj cyklicznie"
 
 msgctxt "#32014"
-msgid "Wake up periodically"
-msgstr "Düzenli olarak uyandır"
+msgid "Wake up at"
+msgstr "Aktywuj się przy"
 
 msgctxt "#32015"
-msgid "Wake up at"
-msgstr "Uyandırma zamanı"
-
-msgctxt "#32016"
 msgid "Restart on suspend / resume"
-msgstr ""
+msgstr "Uruchom ponownie przy wstrzymywaniu/wznawianiu"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr ""
+msgstr "Zmiany"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr ""
+msgstr "Programy"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr ""
+msgstr "Usługa"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr ""
+msgstr "Zależności"

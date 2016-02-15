@@ -1,91 +1,92 @@
 # XBMC Media Center language file
 # Translators:
-# Frank Duque <mr_anderson@riseup.net>, 2014
+# Translators:
+# Lucas Mindêllo de Andrade <lucas@mindello.com.br>, 2015
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenELEC-addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
 "POT-Creation-Date: 2014-04-03 02:08+0000\n"
-"PO-Revision-Date: 2014-10-01 09:55+0000\n"
-"Last-Translator: Frank Duque <mr_anderson@riseup.net>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/openelec-addons/language/es/)\n"
+"PO-Revision-Date: 2015-08-11 15:16+0000\n"
+"Last-Translator: Lucas Mindêllo de Andrade <lucas@mindello.com.br>\n"
+"Language-Team: Portuguese (Brazil) (http://www.transifex.com/lsellens/openelec-addons/language/pt_BR/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: pt_BR\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 msgctxt "#32000"
 msgid "General"
-msgstr "General"
+msgstr "Geral"
 
 msgctxt "#32001"
 msgid "User Settings"
-msgstr "Configuración de usuario"
+msgstr "Configurações de usuário"
 
 msgctxt "#32002"
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr "Usuário"
 
 msgctxt "#32003"
 msgid "Password"
-msgstr "Contraseña"
+msgstr "Senha"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "Habilitar SABnzbd en el Puerto: 8081"
+msgstr "Habilitar SABnzbd na porta: 8081"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "Habilitar NZBGet en el Puerto: 8081"
+msgstr "Habilitar NZBGet na porta: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Habilitar Sickbeard en el Puerto: 8082"
+msgstr "Habilitar Sickbeard na porta: 8082"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Habilitar Couchpotato en el Puerto: 8083"
+msgstr "Habilitar Couchpotato na porta: 8083"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Habilitar Headphones en el Puerto: 8084"
+msgstr "Habilitar Headphones na porta: 8084"
 
 msgctxt "#32009"
 msgid "Network Settings"
-msgstr "Configuración de red"
+msgstr "Configurações de rede"
 
 msgctxt "#32010"
 msgid "Allowed IP addresses"
-msgstr "Direcciones IP permitidas"
+msgstr "Endereços IP permitidos"
 
 msgctxt "#32011"
 msgid "Sleep"
-msgstr "Dormir"
+msgstr "Suspender"
 
 msgctxt "#32012"
 msgid "Keep awake while downloading from SABnzbd"
-msgstr "Mantener despierto mientras descarga SABnzbd"
+msgstr "Manter acordado enquanto fazendo download SABnzbd"
 
 msgctxt "#32013"
 msgid "Keep awake while downloading from Transmission"
-msgstr "Mantener despierto mientras descarga Transmssion"
+msgstr "Manter acordado enquanto fazendo download Transmission"
 
 msgctxt "#32014"
 msgid "Wake up periodically"
-msgstr "Despertar periódicamente"
+msgstr "Acordar periodicamente"
 
 msgctxt "#32015"
 msgid "Wake up at"
-msgstr "Despertar a las"
+msgstr "Acordar às"
 
 msgctxt "#32016"
 msgid "Restart on suspend / resume"
-msgstr "Reinicie la suspensión / reanudar"
+msgstr "Reiniciar ao suspender / resumir"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr "Changelogs"
+msgstr "Atualizações"
 
 msgctxt "#32101"
 msgid "Programs"
@@ -93,8 +94,8 @@ msgstr "Programas"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr "Servicio"
+msgstr "Serviço"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr "Dependencias"
+msgstr "Dependências"
