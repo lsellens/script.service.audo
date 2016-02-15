@@ -16,7 +16,7 @@ msgstr ""
 
 msgctxt "#32000"
 msgid "General"
-msgstr ""
+msgstr "Genel"
 
 msgctxt "#32001"
 msgid "User Settings"
@@ -84,16 +84,16 @@ msgstr ""
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr ""
+msgstr "Değişim Günlüğü"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr ""
+msgstr "Programlar"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr ""
+msgstr "Hizmet"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr ""
+msgstr "Bağımlılıklar"
