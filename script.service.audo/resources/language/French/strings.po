@@ -85,7 +85,7 @@ msgstr "Redémarrage en attente / reprendre"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr ""
+msgstr "Changelog"
 
 msgctxt "#32101"
 msgid "Programs"

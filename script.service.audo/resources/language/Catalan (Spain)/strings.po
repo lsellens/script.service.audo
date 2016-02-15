@@ -42,15 +42,15 @@ msgstr "Habilitar NZBGet al Port: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Habilitar Sickbeard al Port: 8081"
+msgstr "Habilitar Sickbeard al Port: 8082"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Habilitar Couchpotato al Port: 8081"
+msgstr "Habilitar Couchpotato al Port: 8083"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Habilitar Headphones al Port: 8081"
+msgstr "Habilitar Headphones al Port: 8084"
 
 msgctxt "#32009"
 msgid "Network Settings"

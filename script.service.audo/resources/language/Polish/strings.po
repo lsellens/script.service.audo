@@ -64,18 +64,22 @@ msgid "Sleep"
 msgstr "Uśpij"
 
 msgctxt "#32012"
-msgid "Keep awake while downloading"
-msgstr "Pozostań aktywny w czasie pobierania"
+msgid "Keep awake while downloading from SABnzbd"
+msgstr "Pozostań aktywny w czasie pobierania SABnzbd"
 
 msgctxt "#32013"
+msgid "Keep awake while downloading from Transmission"
+msgstr "Pozostań aktywny w czasie pobierania Transmission"
+
+msgctxt "#32014"
 msgid "Wake up periodically"
 msgstr "Przebudzaj cyklicznie"
 
-msgctxt "#32014"
+msgctxt "#32015"
 msgid "Wake up at"
 msgstr "Aktywuj się przy"
 
-msgctxt "#32015"
+msgctxt "#32016"
 msgid "Restart on suspend / resume"
 msgstr "Uruchom ponownie przy wstrzymywaniu/wznawianiu"
 
