@@ -233,9 +233,9 @@ def main():
         defaultconfig['misc']['host'] = host
         defaultconfig['misc']['log_dir'] = 'logs'
         defaultconfig['misc']['admin_dir'] = 'admin'
-        defaultconfig['misc']['nzb_backup_dir'] = 'backup'
         
         if firstLaunch:
+            defaultconfig['misc']['nzb_backup_dir'] = 'backup'
             defaultconfig['misc']['script_dir'] = 'scripts'
             defaultconfig['misc']['web_dir'] = 'Plush'
             defaultconfig['misc']['web_dir2'] = 'Plush'
@@ -627,7 +627,7 @@ def main():
             defaultconfig['Nzb']['clientAgent'] = 'nzbget'
         
         defaultconfig['Torrent'] = {}
-        defaultconfig['Torrent']['clientAgent'] = 'Transmission'
+        defaultconfig['Torrent']['clientAgent'] = 'transmission'
         defaultconfig['Torrent']['TransmissionHost'] = 'localhost'
         defaultconfig['Torrent']['TransmissionPort'] = '9091'
         if ntmfirstLaunch:
