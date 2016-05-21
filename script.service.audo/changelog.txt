@@ -1,7 +1,5 @@
-1.2.4
-- fix transmission setting in autoProcessMedia.cfg
-
 1.2.3
+- fix transmission setting in autoProcessMedia.cfg
 - update to nzbToMedia-3e4861e
 
 1.2.2
