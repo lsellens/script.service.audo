@@ -1,6 +1,9 @@
+1.2.4
+- update to nzbToMedia-V10.15
+
 1.2.3
 - fix transmission setting in autoProcessMedia.cfg
-- update to nzbToMedia-c50957d
+- update to nzbToMedia-V10.14
 
 1.2.2
 - moved nzbToMedia to this part of the addon
