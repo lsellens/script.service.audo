@@ -382,11 +382,11 @@ def main():
         defaultconfig['General']['cache_dir'] = __addonhome__ + 'sbcache'
         defaultconfig['General']['log_dir'] = __addonhome__ + 'logs'
         defaultconfig['SABnzbd'] = {}
-        defaultconfig['XBMC'] = {}
-        defaultconfig['XBMC']['use_xbmc'] = '1'
-        defaultconfig['XBMC']['xbmc_host'] = 'localhost:' + xbmcPort
-        defaultconfig['XBMC']['xbmc_username'] = xbmcUser
-        defaultconfig['XBMC']['xbmc_password'] = xbmcPwd
+        defaultconfig['KODI'] = {}
+        defaultconfig['KODI']['use_kodi'] = '1'
+        defaultconfig['KODI']['kodi_host'] = 'localhost:' + xbmcPort
+        defaultconfig['KODI']['kodi_username'] = xbmcUser
+        defaultconfig['KODI']['kodi_password'] = xbmcPwd
         defaultconfig['TORRENT'] = {}
         defaultconfig['NZBget'] = {}
         
@@ -411,7 +411,7 @@ def main():
             defaultconfig['TORRENT']['torrent_path'] = sabnzbdCompleteTv
             defaultconfig['General']['use_api'] = '1'
             defaultconfig['General']['tv_download_dir'] = sabnzbdComplete
-            defaultconfig['General']['metadata_xbmc_12plus'] = '0|0|0|0|0|0|0|0|0|0'
+            defaultconfig['General']['metadata_kodi_12plus'] = '0|0|0|0|0|0|0|0|0|0'
             defaultconfig['General']['nzb_method'] = 'sabnzbd'
             defaultconfig['General']['keep_processed_dir'] = '0'
             defaultconfig['General']['use_banner'] = '1'
@@ -429,9 +429,9 @@ def main():
             # workaround: on first launch, sick beard will always add
             # 'http://' and trailing '/' on its own
             defaultconfig['SABnzbd']['sab_host'] = sabnzbdHost
-            defaultconfig['XBMC']['xbmc_notify_ondownload'] = '1'
-            defaultconfig['XBMC']['xbmc_update_library'] = '1'
-            defaultconfig['XBMC']['xbmc_update_full'] = '1'
+            defaultconfig['KODI']['kodi_notify_ondownload'] = '1'
+            defaultconfig['KODI']['kodi_update_library'] = '1'
+            defaultconfig['KODI']['kodi_update_full'] = '1'
         
         sickbeardconfig.merge(defaultconfig)
         sickbeardconfig.write()
