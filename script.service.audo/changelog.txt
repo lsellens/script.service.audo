@@ -1,3 +1,6 @@
+1.2.5
+- updates to sickrage config setting names
+
 1.2.4
 - update to nzbToMedia-V10.15
 
