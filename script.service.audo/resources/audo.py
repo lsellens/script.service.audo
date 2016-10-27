@@ -384,7 +384,6 @@ def main():
         defaultconfig['SABnzbd'] = {}
         defaultconfig['KODI'] = {}
         defaultconfig['KODI']['use_kodi'] = '1'
-        defaultconfig['KODI']['kodi_host'] = 'localhost:' + xbmcPort
         defaultconfig['KODI']['kodi_username'] = xbmcUser
         defaultconfig['KODI']['kodi_password'] = xbmcPwd
         defaultconfig['TORRENT'] = {}
@@ -432,6 +431,7 @@ def main():
             defaultconfig['KODI']['kodi_notify_ondownload'] = '1'
             defaultconfig['KODI']['kodi_update_library'] = '1'
             defaultconfig['KODI']['kodi_update_full'] = '1'
+            defaultconfig['KODI']['kodi_host'] = 'localhost:' + xbmcPort
         
         sickbeardconfig.merge(defaultconfig)
         sickbeardconfig.write()
