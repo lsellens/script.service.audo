@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.service.audo"
        name="audo"
-       version="1.2.5"
+       version="1.2.6"
        provider-name="lsellens">
   <requires>
     <import addon="xbmc.addon" version="14.0.0"/>
@@ -34,6 +34,8 @@
     <description lang="es">Audo (Automatic Downloader) es un fork derivado de SABnzbd-Suite. Se actualiza con frecuencia a las últimas versiones de SAB, NZBGet, SB, CP, and HP.</description>
     <description lang="hy_AM">Աուդո (Ավտոմատ Դաունլոդեր)-ը քաղված է SABnzbd-Suite-ից: Թարմացվում է հաճախակի դեպի SABnzbd-ի, NZBget-ի, SickBeard-ի, Couchpotato-ի և Headphones-ի նոր վերսիաներ:</description>
     <description lang="pl">Audo (Automatyczny Downloader) jest rozszerzeniem SABnzbd-Suite. Uaktualniany często do najnowszej wersji SABnzbd, NZBget, SickBeard, Couchpotato i Headphones</description>
+    <language>en hy_AM ca_ES nl fr de fa pl pt pt_BR es sv tr</language>
     <platform>linux</platform>
+    <source>https://github.com/lsellens/script.service.audo</source>
   </extension>
 </addon>

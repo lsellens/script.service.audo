@@ -1,100 +1,101 @@
 # XBMC Media Center language file
 # Translators:
-# Frank Duque <mr_anderson@riseup.net>, 2014
+# Translators:
+# ben dehqan <ben.dehqan@gmail.com>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenELEC-addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
 "POT-Creation-Date: 2014-04-03 02:08+0000\n"
-"PO-Revision-Date: 2014-10-01 09:55+0000\n"
-"Last-Translator: Frank Duque <mr_anderson@riseup.net>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/openelec-addons/language/es/)\n"
+"PO-Revision-Date: 2016-10-27 14:47+0000\n"
+"Last-Translator: ben dehqan <ben.dehqan@gmail.com>\n"
+"Language-Team: Persian (http://www.transifex.com/lsellens/openelec-addons/language/fa/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: fa\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
 
 msgctxt "#32000"
 msgid "General"
-msgstr "General"
+msgstr "تنظیمات پایه"
 
 msgctxt "#32001"
 msgid "User Settings"
-msgstr "Configuración de usuario"
+msgstr "تنظیمات کاربری"
 
 msgctxt "#32002"
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr "نام کاربری"
 
 msgctxt "#32003"
 msgid "Password"
-msgstr "Contraseña"
+msgstr "رمز عبور"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "Habilitar SABnzbd en el Puerto: 8081"
+msgstr "فعال کردن  SABnzbd روی پورت 8081"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "Habilitar NZBGet en el Puerto: 8081"
+msgstr "فعال کردن NZBGet روی پورت: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Habilitar Sickbeard en el Puerto: 8082"
+msgstr " فعال کردن Sickbeard روی پورت: 8082"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Habilitar Couchpotato en el Puerto: 8083"
+msgstr "فعال کردن Couchpotato روی پورت: 8083"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Habilitar Headphones en el Puerto: 8084"
+msgstr "فعال کردن هدفون روی پورت: 8084"
 
 msgctxt "#32009"
 msgid "Network Settings"
-msgstr "Configuración de red"
+msgstr "تنظیمات شبکه"
 
 msgctxt "#32010"
 msgid "Allowed IP addresses"
-msgstr "Direcciones IP permitidas"
+msgstr "آدرس IP های مجاز"
 
 msgctxt "#32011"
 msgid "Sleep"
-msgstr "Dormir"
+msgstr "حالت sleep"
 
 msgctxt "#32012"
 msgid "Keep awake while downloading from SABnzbd"
-msgstr "Mantener despierto mientras descarga SABnzbd"
+msgstr "فعال ماندن هنگام دانلود از SABnzbd"
 
 msgctxt "#32013"
 msgid "Keep awake while downloading from Transmission"
-msgstr "Mantener despierto mientras descarga Transmission"
+msgstr "فعال ماندن در هنگام دانلود از Transmission"
 
 msgctxt "#32014"
 msgid "Wake up periodically"
-msgstr "Despertar periódicamente"
+msgstr "فعال شدن در فواصل معین"
 
 msgctxt "#32015"
 msgid "Wake up at"
-msgstr "Despertar a las"
+msgstr "فعال شدن در "
 
 msgctxt "#32016"
 msgid "Restart on suspend / resume"
-msgstr "Reinicie la suspensión / reanudar"
+msgstr "restart شدن در زمان منقضی شدن / ادامه دادن"
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr "Changelogs"
+msgstr "تغییرات"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr "Programas"
+msgstr "برنامه ها"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr "Servicio"
+msgstr "سرویس"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr "Dependencias"
+msgstr "وابستگی ها"

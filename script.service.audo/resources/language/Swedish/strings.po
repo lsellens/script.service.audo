@@ -1,100 +1,101 @@
 # XBMC Media Center language file
 # Translators:
-# Frank Duque <mr_anderson@riseup.net>, 2014
+# Translators:
+# Jonatan Nyberg <jonatan@autistici.org>, 2016
 msgid ""
 msgstr ""
 "Project-Id-Version: OpenELEC-addons\n"
 "Report-Msgid-Bugs-To: alanwww1@xbmc.org\n"
 "POT-Creation-Date: 2014-04-03 02:08+0000\n"
-"PO-Revision-Date: 2014-10-01 09:55+0000\n"
-"Last-Translator: Frank Duque <mr_anderson@riseup.net>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/openelec-addons/language/es/)\n"
+"PO-Revision-Date: 2016-10-27 14:47+0000\n"
+"Last-Translator: Jonatan Nyberg <jonatan@autistici.org>\n"
+"Language-Team: Swedish (http://www.transifex.com/lsellens/openelec-addons/language/sv/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
+"Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgctxt "#32000"
 msgid "General"
-msgstr "General"
+msgstr "Allmän"
 
 msgctxt "#32001"
 msgid "User Settings"
-msgstr "Configuración de usuario"
+msgstr "Användarinställningar"
 
 msgctxt "#32002"
 msgid "Username"
-msgstr "Nombre de usuario"
+msgstr "Användarnamn"
 
 msgctxt "#32003"
 msgid "Password"
-msgstr "Contraseña"
+msgstr "Lösenord"
 
 msgctxt "#32004"
 msgid "Enable SABnzbd on Port: 8081"
-msgstr "Habilitar SABnzbd en el Puerto: 8081"
+msgstr "Aktivera SABnzbd på Port: 8081"
 
 msgctxt "#32005"
 msgid "Enable NZBGet on Port: 8081"
-msgstr "Habilitar NZBGet en el Puerto: 8081"
+msgstr "Aktivera NZBGet på Port: 8081"
 
 msgctxt "#32006"
 msgid "Enable Sickbeard on Port: 8082"
-msgstr "Habilitar Sickbeard en el Puerto: 8082"
+msgstr "Aktivera Sickbeard på Port: 8082"
 
 msgctxt "#32007"
 msgid "Enable Couchpotato on Port: 8083"
-msgstr "Habilitar Couchpotato en el Puerto: 8083"
+msgstr "Aktivera Couchpotato på Port: 8083"
 
 msgctxt "#32008"
 msgid "Enable Headphones on Port: 8084"
-msgstr "Habilitar Headphones en el Puerto: 8084"
+msgstr "Aktivera Headphones på Port: 8084"
 
 msgctxt "#32009"
 msgid "Network Settings"
-msgstr "Configuración de red"
+msgstr "Nätverksinställningar"
 
 msgctxt "#32010"
 msgid "Allowed IP addresses"
-msgstr "Direcciones IP permitidas"
+msgstr "Tillåtna IP-adresser"
 
 msgctxt "#32011"
 msgid "Sleep"
-msgstr "Dormir"
+msgstr "Sova"
 
 msgctxt "#32012"
 msgid "Keep awake while downloading from SABnzbd"
-msgstr "Mantener despierto mientras descarga SABnzbd"
+msgstr "Håll vaken under nedladdning från SABnzbd"
 
 msgctxt "#32013"
 msgid "Keep awake while downloading from Transmission"
-msgstr "Mantener despierto mientras descarga Transmission"
+msgstr "Hålla sig vaken under nedladdningar från Transmission"
 
 msgctxt "#32014"
 msgid "Wake up periodically"
-msgstr "Despertar periódicamente"
+msgstr "Vakna upp periodvis"
 
 msgctxt "#32015"
 msgid "Wake up at"
-msgstr "Despertar a las"
+msgstr "Vakna upp på"
 
 msgctxt "#32016"
 msgid "Restart on suspend / resume"
-msgstr "Reinicie la suspensión / reanudar"
+msgstr "Starta på uppskjuta/återuppta "
 
 msgctxt "#32100"
 msgid "Changelogs"
-msgstr "Changelogs"
+msgstr "Ändringsloggar"
 
 msgctxt "#32101"
 msgid "Programs"
-msgstr "Programas"
+msgstr "Program"
 
 msgctxt "#32102"
 msgid "Service"
-msgstr "Servicio"
+msgstr "Service"
 
 msgctxt "#32103"
 msgid "Dependencies"
-msgstr "Dependencias"
+msgstr "Beroenden"
