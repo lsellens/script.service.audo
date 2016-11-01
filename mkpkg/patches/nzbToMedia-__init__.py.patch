@@ -1,13 +1,13 @@
---- build.nzbToMedia.git/core/__init__.py	2015-11-10 16:59:32.162192796 -0600
-+++ patches/__init__.new.py	2015-12-09 21:41:44.105556779 -0600
-@@ -7,17 +7,18 @@
- import time
+--- build.nzbToMedia.git/core/__init__.py	2016-10-31 22:46:07.135693091 -0500
++++ patches/__init__.py	2016-10-31 23:50:52.870961412 -0500
+@@ -12,17 +12,17 @@
+ 
  
  # init libs
 -PROGRAM_DIR = os.path.dirname(os.path.normpath(os.path.abspath(os.path.join(__file__, os.pardir))))
 +PROGRAM_DIR = '/storage/.kodi/userdata/addon_data/script.service.audo/scripts/'
  LIBS_DIR = os.path.join(PROGRAM_DIR, 'libs')
- sys.path.insert(0, LIBS_DIR)
+-sys.path.insert(0, LIBS_DIR)
 +sys.path.insert(1, '/storage/.kodi/addons/script.module.audo-dependencies/lib')
  
  # init preliminaries

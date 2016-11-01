@@ -1,6 +1,6 @@
---- build.nzbToMedia.git/nzbToMedia.py	2015-11-10 16:59:32.242193192 -0600
-+++ patches/nzbToMedianew.py	2015-11-16 23:40:06.780593991 -0600
-@@ -45,7 +45,7 @@
+--- build.nzbToMedia.git/nzbToMedia.py	2016-10-31 22:46:07.203693428 -0500
++++ patches/nzbToMedia.py	2016-10-31 23:47:05.489833890 -0500
+@@ -46,7 +46,7 @@
  #cpshost=localhost
  
  # CouchPotato port.
@@ -9,7 +9,7 @@
  
  # CouchPotato uses ssl (0, 1).
  #
-@@ -90,7 +90,7 @@
+@@ -91,7 +91,7 @@
  #sbhost=localhost
  
  # SickBeard port.
@@ -18,7 +18,7 @@
  
  # SickBeard username.
  #sbusername=
-@@ -111,7 +111,7 @@
+@@ -112,7 +112,7 @@
  # SickBeard watch directory.
  #
  # set this if SickBeard and nzbGet are on different systems.
@@ -27,7 +27,7 @@
  
  # SickBeard fork.
  #
-@@ -192,7 +192,7 @@
+@@ -198,7 +198,7 @@
  #hphost=localhost
  
  # HeadPhones port.
@@ -36,12 +36,11 @@
  
  # HeadPhones uses ssl (0, 1).
  #
-@@ -510,6 +510,8 @@
+@@ -521,6 +521,7 @@
  from core.nzbToMediaUserScript import external_script
  from core import logger, nzbToMediaDB
  
 +sys.path.append('/storage/.kodi/addons/script.module.audo-dependencies/lib')
-+
+ 
  # post-processing
  def process(inputDirectory, inputName=None, status=0, clientAgent='manual', download_id=None, inputCategory=None, failureLink=None):
-     if core.SAFE_MODE and inputDirectory == core.NZB_DEFAULTDIR:

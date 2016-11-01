@@ -1,6 +1,7 @@
 1.2.6
 - allow sickrage kodi notification host to be configurable
 - added some translations
+- update to nzbToMedia-V11.01
 
 1.2.5
 - updates to sickrage config setting names
