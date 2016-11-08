@@ -1,3 +1,6 @@
+1.2.7
+- rollback to nzbToMedia-V10.15
+
 1.2.6
 - allow sickrage kodi notification host to be configurable
 - added some translations
