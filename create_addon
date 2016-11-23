@@ -15,14 +15,14 @@ rm -f build/$PKG_NAME/*/.gitignore
 
 for i in $PKG_DEPENDS;do
   mkpkg/mkpkg_$i
-  if [ "$?" = "1" ]; then
+  if [ "$?" -ne "0" ]; then
     echo "Error building $1";exit 1
   fi
 done
 
 mkdir -p target/$PKG_VERSION.$PKG_REV/
 cd build
-zip -rq9 ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip $PKG_NAME
+zip -rq9y ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip $PKG_NAME
 if [ "$?" = "0" ]; then
   echo "$PKG_NAME/target/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip"
 fi
