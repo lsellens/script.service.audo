@@ -186,10 +186,13 @@ def main():
         xbmcPwd = ''
     
     # prepare execution environment
-    os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
+    orig_pythonpath = os.environ.get('PYTHONPATH')
+    os.environ['PYTHONPATH'] = str(orig_pythonpath) + ':' + __dependencies__ + '/lib'
     os.environ['LD_LIBRARY_PATH'] = str(os.environ.get('LD_LIBRARY_PATH')) + ':' + __dependencies__ + '/lib'
     os_env = os.environ
     os_env["PATH"] = (xbmc.translatePath(__dependencies__ + '/bin:')) + os_env["PATH"]
+    os_env_no_pythonpath = os_env.copy()
+    os_env_no_pythonpath['PYTHONPATH'] = str(orig_pythonpath)
     
     # NZBGet Binary Install
     if not xbmcvfs.exists(xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget')):
@@ -440,7 +443,7 @@ def main():
         # ----------------
         if sickbeardLaunch:
             xbmc.log('AUDO: Launching SickBeard...', level=xbmc.LOGDEBUG)
-            subprocess.call(sickbeard, close_fds=True, env=os_env)
+            subprocess.call(sickbeard, close_fds=True, env=os_env_no_pythonpath)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
         xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
@@ -527,7 +530,7 @@ def main():
         # ------------------
         if couchpotatoLaunch:
             xbmc.log('AUDO: Launching CouchPotatoServer...', level=xbmc.LOGDEBUG)
-            subprocess.call(couchpotatoserver, close_fds=True, env=os_env)
+            subprocess.call(couchpotatoserver, close_fds=True, env=os_env_no_pythonpath)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
         xbmc.log('AUDO: CouchPotatoServer exception occurred', level=xbmc.LOGERROR)
