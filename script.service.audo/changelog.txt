@@ -1,3 +1,7 @@
+1.2.8
+- handle exception if tranmissionrpc does not connect
+- require script.module.distutils
+
 1.2.7
 - rollback to nzbToMedia-V10.15
 

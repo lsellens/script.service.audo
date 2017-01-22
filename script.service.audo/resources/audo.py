@@ -776,18 +776,22 @@ def transinhibitsleep():
     # check Transmission every ~60s
     if transidletimer == 60:
         transidletimer = 0
-        if transAuth:
-            tc = transmissionrpc.Client('localhost', port=9091, user=transUser, password=transPwd)
-        else:
-            tc = transmissionrpc.Client('localhost', port=9091)
-        for i in tc.get_torrents():
-            if i.status is 'downloading':
-                xbmc.executebuiltin('InhibitIdleShutdown(true)')
-                xbmc.log('AUDO: Transmission active - preventing sleep', level=xbmc.LOGDEBUG)
-                break
-        else:
-            xbmc.executebuiltin('InhibitIdleShutdown(false)')
-            xbmc.log('AUDO: Transmission not active - not preventing sleep', level=xbmc.LOGDEBUG)
+        try:
+            if transAuth:
+                tc = transmissionrpc.Client('localhost', port=9091, user=transUser, password=transPwd)
+            else:
+                tc = transmissionrpc.Client('localhost', port=9091)
+            for i in tc.get_torrents():
+                if i.status is 'downloading':
+                    xbmc.executebuiltin('InhibitIdleShutdown(true)')
+                    xbmc.log('AUDO: Transmission active - preventing sleep', level=xbmc.LOGDEBUG)
+                    break
+            else:
+                xbmc.executebuiltin('InhibitIdleShutdown(false)')
+                xbmc.log('AUDO: Transmission not active - not preventing sleep', level=xbmc.LOGDEBUG)
+        except Exception, e:
+            xbmc.log('AUDO: Could not connect to transmission service:', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
 
 
 def writewakealarm():

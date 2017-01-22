@@ -7,16 +7,18 @@ echo "Building $PKG_NAME-$PKG_VERSION.$PKG_REV"
 rm -rf target/$PKG_VERSION.$PKG_REV/
 
 rm -rf build
-mkdir build
+mkdir -p build/stamps
 
 cp -rf $PKG_NAME build/$PKG_NAME
 
 rm -f build/$PKG_NAME/*/.gitignore
 
 for i in $PKG_DEPENDS;do
-  mkpkg/mkpkg_$i
-  if [ "$?" -ne "0" ]; then
-    echo "Error building $1";exit 1
+  if [ ! -f build/stamps/$i ]; then
+    mkpkg/mkpkg_$i
+    if [ "$?" -ne "0" ]; then
+      echo "Error building $i";exit 1
+    fi
   fi
 done
 
