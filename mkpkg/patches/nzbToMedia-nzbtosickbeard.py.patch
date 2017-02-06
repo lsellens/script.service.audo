@@ -1,6 +1,6 @@
---- build.nzbToMedia.git/nzbToSickBeard.py	2015-11-10 16:59:32.242193192 -0600
-+++ patches/nzbToSickBeardnew.py	2015-11-10 17:01:19.006722613 -0600
-@@ -42,7 +42,7 @@
+--- build.nzbToMedia.git/nzbToSickBeard.py	2017-02-06 11:43:40.045604021 -0600
++++ patches/nzbToSickBeard.py	2017-02-06 11:58:10.805921888 -0600
+@@ -48,7 +48,7 @@
  #sbhost=localhost
  
  # SickBeard port.
@@ -9,7 +9,7 @@
  
  # SickBeard username.
  #sbusername=
-@@ -63,7 +63,7 @@
+@@ -69,7 +69,7 @@
  # SickBeard watch directory.
  #
  # set this to where your SickBeard completed downloads are.
@@ -18,10 +18,3 @@
  
  # SickBeard fork.
  #
-@@ -250,4 +250,4 @@
- 
- section = "SickBeard"
- result = nzbToMedia.main(sys.argv, section)
--sys.exit(result)
-\ No newline at end of file
-+sys.exit(result)

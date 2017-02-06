@@ -1,6 +1,6 @@
---- build.nzbToMedia.git/nzbToHeadPhones.py	2015-11-10 16:59:32.242193192 -0600
-+++ patches/nzbToHeadPhonesnew.py	2015-11-10 17:00:58.262619743 -0600
-@@ -40,7 +40,7 @@
+--- build.nzbToMedia.git/nzbToHeadPhones.py	2017-02-06 11:43:40.041604001 -0600
++++ patches/nzbToHeadPhones.py	2017-02-06 11:53:51.444635785 -0600
+@@ -46,7 +46,7 @@
  #hphost=localhost
  
  # HeadPhones port.
@@ -9,7 +9,7 @@
  
  # HeadPhones uses ssl (0, 1).
  #
-@@ -55,7 +55,7 @@
+@@ -61,7 +61,7 @@
  # HeadPhones watch directory.
  #
  # set this to where your HeadPhones completed downloads are.
@@ -18,10 +18,3 @@
  
  # HeadPhones wait_for
  #
-@@ -115,4 +115,4 @@
- 
- section = "HeadPhones"
- result = nzbToMedia.main(sys.argv, section)
--sys.exit(result)
-\ No newline at end of file
-+sys.exit(result)
