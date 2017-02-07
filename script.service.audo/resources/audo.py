@@ -276,6 +276,8 @@ def main():
         # ----------------------------------
         if firstLaunch or sabnzbdLaunch:
             xbmc.log('AUDO: Launching SABnzbd...', level=xbmc.LOGDEBUG)
+            if os.path.isfile("/var/run/sabnzbd.pid"):
+                os.system("kill `cat /var/run/sabnzbd.pid`")
             subprocess.call(sabnzbd, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
             
@@ -360,6 +362,8 @@ def main():
     try:
         if nzbgetLaunch:
             xbmc.log('AUDO: Launching NZBGet...', level=xbmc.LOGDEBUG)
+            if os.path.isfile("/var/run/nzbget.pid"):
+                os.system("kill `cat /var/run/nzbget.pid`")
             subprocess.call(nzbget, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
@@ -441,6 +445,8 @@ def main():
         # ----------------
         if sickbeardLaunch:
             xbmc.log('AUDO: Launching SickBeard...', level=xbmc.LOGDEBUG)
+            if os.path.isfile("/var/run/sickbeard.pid"):
+                os.system("kill `cat /var/run/sickbeard.pid`")
             subprocess.call(sickbeard, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
@@ -528,6 +534,8 @@ def main():
         # ------------------
         if couchpotatoLaunch:
             xbmc.log('AUDO: Launching CouchPotatoServer...', level=xbmc.LOGDEBUG)
+            if os.path.isfile("/var/run/couchpotato.pid"):
+                os.system("kill `cat /var/run/couchpotato.pid`")
             subprocess.call(couchpotatoserver, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
@@ -597,6 +605,8 @@ def main():
         # -----------------
         if headphonesLaunch:
             xbmc.log('AUDO: Launching Headphones...', level=xbmc.LOGDEBUG)
+            if os.path.isfile("/var/run/headphones.pid"):
+                os.system("kill `cat /var/run/headphones.pid`")
             subprocess.call(headphones, close_fds=True, env=os_env)
             xbmc.log('AUDO: ...done', level=xbmc.LOGDEBUG)
     except Exception, e:
@@ -872,7 +882,10 @@ def shutdown():
             sabnzbdconfig = ConfigObj(sabnzbdSettings, create_empty=False)
             sabnzbdApiKey = sabnzbdconfig['misc']['api_key']
             if not sabnzbdApiKey:
-                os.system("kill `ps | grep -E 'python.*script.module.audo.*SABnzbd' | awk '{print $1}'`")
+                if os.path.isfile("/var/run/sabnzbd.pid"):
+                    os.system("kill `cat /var/run/sabnzbd.pid`")
+                else:
+                    os.system("kill `ps | grep -E 'python.*script.module.audo.*SABnzbd' | awk '{print $1}'`")
             else:
                 urlopen_with_retry('http://localhost:8081/api?mode=shutdown&apikey=' + sabnzbdApiKey)
             xbmc.log('AUDO: Shutting SABnzbd down...', level=xbmc.LOGDEBUG)
@@ -897,7 +910,10 @@ def shutdown():
             sickbeardconfig = ConfigObj(sickbeardSettings, create_empty=False)
             sickbeardapikey = sickbeardconfig['General']['api_key']
             if not sickbeardapikey:
-                os.system("kill `ps | grep -E 'python.*script.module.audo.*SickBeard' | awk '{print $1}'`")
+                if os.path.isfile("/var/run/sickbeard.pid"):
+                    os.system("kill `cat /var/run/sickbeard.pid`")
+                else:
+                    os.system("kill `ps | grep -E 'python.*script.module.audo.*SickBeard' | awk '{print $1}'`")
             else:
                 urlopen_with_retry('http://localhost:8082/api/' + sickbeardapikey + '/?cmd=sb.shutdown')
             xbmc.log('AUDO: Shutting SickBeard down...', level=xbmc.LOGDEBUG)
@@ -912,7 +928,10 @@ def shutdown():
             couchpotatoconfig = ConfigObj(couchpotatoSettings, create_empty=False, list_values=False)
             couchpotatoapikey = couchpotatoconfig['core']['api_key']
             if not couchpotatoapikey:
-                os.system("kill `ps | grep -E 'python.*script.module.audo.*CouchPotato' | awk '{print $1}'`")
+                if os.path.isfile("/var/run/couchpotato.pid"):
+                    os.system("kill `cat /var/run/couchpotato.pid`")
+                else:
+                    os.system("kill `ps | grep -E 'python.*script.module.audo.*CouchPotato' | awk '{print $1}'`")
             else:
                 urlopen_with_retry('http://localhost:8083/api/' + couchpotatoapikey + '/app.shutdown')
             xbmc.log('AUDO: Shutting CouchPotato down...', level=xbmc.LOGDEBUG)
@@ -927,7 +946,10 @@ def shutdown():
             headphonesconfig = ConfigObj(headphonesSettings, create_empty=False)
             headphonesapikey = headphonesconfig['General']['api_key']
             if not headphonesapikey:
-                os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")
+                if os.path.isfile("/var/run/headphones.pid"):
+                    os.system("kill `cat /var/run/headphones.pid`")
+                else:
+                    os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")
             else:
                 urlopen_with_retry('http://localhost:8084/api?apikey=' + headphonesapikey + '&cmd=shutdown')
             xbmc.log('AUDO: Shutting HeadPhones down...', level=xbmc.LOGDEBUG)
