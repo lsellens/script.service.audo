@@ -1,4 +1,4 @@
 PKG_NAME="script.service.audo"
 PKG_VERSION="1.2"
-PKG_REV="9~beta1"
+PKG_REV="9~beta2"
 PKG_DEPENDS="nzbToMedia"

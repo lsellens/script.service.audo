@@ -140,6 +140,7 @@ def main():
             os.unlink(sabnzbdScripts + 'nzbToMedia')
         
         for files in os.listdir(nzbToMediaScripts):
+            os.chmod(nzbToMediaScripts + str(files), 0755)
             if not os.path.islink(sabnzbdScripts + str(files)):
                 os.symlink(nzbToMediaScripts + str(files), sabnzbdScripts + str(files))
     except Exception, e:
