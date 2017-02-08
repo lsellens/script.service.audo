@@ -93,11 +93,11 @@ while not monitor.abortRequested():
         audo.main()
     
     if monitor.waitForAbort(1):
+        # Shutdown audo
+        try:
+            audo.shutdown()
+        except Exception, e:
+            xbmc.log('AUDO: Could not execute shutdown script:', level=xbmc.LOGERROR)
+            xbmc.log(str(e), level=xbmc.LOGERROR)
         break
 
-# Shutdown audo
-try:
-    audo.shutdown()
-except Exception, e:
-    xbmc.log('AUDO: Could not execute shutdown script:', level=xbmc.LOGERROR)
-    xbmc.log(str(e), level=xbmc.LOGERROR)
