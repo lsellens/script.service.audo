@@ -1,5 +1,7 @@
 1.3.0
 - now checks for existing pid files before launching
+- reduced the amount of polling on services for inhibit sleep option
+- better at catching kodi shutdown event
 
 1.2.9
 - update to nzbToMedia-V11.03

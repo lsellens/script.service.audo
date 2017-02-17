@@ -72,6 +72,10 @@ def urlopen_with_retry(url):
     return urllib2.urlopen(url)
 
 
+def addon_chk(addon_name):
+    return xbmc.getCondVisibility('System.HasAddon(%s)' % addon_name) == 1
+
+
 # Initializes and launches SABnzbd, NZBget, Couchpotato, Sickbeard and Headphones
 def main():
     def create_dir(dirname):
@@ -148,12 +152,11 @@ def main():
         xbmc.log(str(e), level=xbmc.LOGERROR)
     
     # Transmission-Daemon
-    global transAuth, transUser, transPwd
-    transAuth = False
-    try:
+    global transAuth, transUser, transPwd, transPresent
+    transPresent = addon_chk('service.downloadmanager.transmission')
+    if transPresent:
         transmissionAddon = xbmcaddon.Addon(id='service.downloadmanager.transmission')
         transAuth = (transmissionAddon.getSetting('TRANSMISSION_AUTH').lower() == 'true')
-        
         if transAuth:
             xbmc.log('AUDO: Transmission Authentication Enabled', level=xbmc.LOGDEBUG)
             transUser = (transmissionAddon.getSetting('TRANSMISSION_USER').decode('utf-8'))
@@ -164,11 +167,8 @@ def main():
                 transPwd = None
         else:
             xbmc.log('AUDO: Transmission Authentication Not Enabled', level=xbmc.LOGDEBUG)
-    
-    except Exception, e:
-        xbmc.log('AUDO: Transmission Settings are not present', level=xbmc.LOGNOTICE)
-        xbmc.log(str(e), level=xbmc.LOGNOTICE)
-        pass
+    else:
+        xbmc.log('AUDO: Transmission addon is not present', level=xbmc.LOGDEBUG)
     
     # XBMC
     f = open(xbmcSettings, 'r')
@@ -405,11 +405,12 @@ def main():
             defaultconfig['NZBget']['nzbget_password'] = pwd
             defaultconfig['NZBget']['nzbget_host'] = sabnzbdHost
         
-        if transAuth:
-            defaultconfig['TORRENT']['torrent_username'] = transUser
-            defaultconfig['TORRENT']['torrent_password'] = transPwd
+        if transPresent:
             # changed this to lan ip so the webui's manage torrents tab would work
             defaultconfig['TORRENT']['torrent_host'] = 'http://' + ipAddress + ':9091/'
+            if transAuth:
+                defaultconfig['TORRENT']['torrent_username'] = transUser
+                defaultconfig['TORRENT']['torrent_password'] = transPwd
         
         if sbfirstLaunch:
             defaultconfig['TORRENT']['torrent_path'] = sabnzbdCompleteTv
@@ -497,10 +498,11 @@ def main():
             defaultconfig['nzbget']['password'] = pwd
             defaultconfig['nzbget']['host'] = sabnzbdHost
         
-        if transAuth:
-            defaultconfig['transmission']['username'] = transUser
-            defaultconfig['transmission']['password'] = transPwd
+        if transPresent:
             defaultconfig['transmission']['host'] = 'localhost:9091'
+            if transAuth:
+                defaultconfig['transmission']['username'] = transUser
+                defaultconfig['transmission']['password'] = transPwd
         
         if cpfirstLaunch:
             defaultconfig['transmission']['directory'] = sabnzbdCompleteMov
@@ -579,10 +581,11 @@ def main():
             defaultconfig['NZBget']['nzbget_password'] = pwd
             defaultconfig['NZBget']['nzbget_host'] = sabnzbdHost
         
-        if transAuth:
-            defaultconfig['Transmission']['transmission_username'] = transUser
-            defaultconfig['Transmission']['transmission_password'] = transPwd
+        if transPresent:
             defaultconfig['Transmission']['transmission_host'] = 'http://localhost:9091'
+            if transAuth:
+                defaultconfig['Transmission']['transmission_username'] = transUser
+                defaultconfig['Transmission']['transmission_password'] = transPwd
         
         if hpfirstLaunch:
             defaultconfig['Transmission']['download_torrent_dir'] = sabnzbdCompleteMusic
@@ -637,17 +640,18 @@ def main():
         if nzbgetLaunch:
             defaultconfig['Nzb']['clientAgent'] = 'nzbget'
         
-        defaultconfig['Torrent'] = {}
-        defaultconfig['Torrent']['clientAgent'] = 'transmission'
-        defaultconfig['Torrent']['TransmissionHost'] = 'localhost'
-        defaultconfig['Torrent']['TransmissionPort'] = '9091'
+        if transPresent:
+            defaultconfig['Torrent'] = {}
+            defaultconfig['Torrent']['clientAgent'] = 'transmission'
+            defaultconfig['Torrent']['TransmissionHost'] = 'localhost'
+            defaultconfig['Torrent']['TransmissionPort'] = '9091'
+            if transAuth:
+                defaultconfig['Torrent']['TransmissionUSR'] = transUser
+                defaultconfig['Torrent']['TransmissionPWD'] = transPwd
         if ntmfirstLaunch:
             defaultconfig['Torrent']['outputDirectory'] = sabnzbdComplete
             defaultconfig['Torrent']['default_downloadDirectory'] = sabnzbdComplete
             defaultconfig['Torrent']['useLink'] = 'move'
-        if transAuth:
-            defaultconfig['Torrent']['TransmissionUSR'] = transUser
-            defaultconfig['Torrent']['TransmissionPWD'] = transPwd
         
         SickBeard = {}
         SickBeard['tv'] = {}
@@ -736,16 +740,13 @@ sabNzbdQueue = ('http://' + sabnzbdHost + '/api?mode=queue&output=xml&apikey=')
 sabNzbdHistory = ('http://' + sabnzbdHost + '/api?mode=history&output=xml&apikey=')
 sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
 sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
-sabidletimer = 0
 
 
 def sabinhibitsleep():
-    global sabidletimer
-    sabidletimer += 1
-    # check SABnzbd every ~60s
-    if sabidletimer == 60:
+    #check activity if timer is less then 5 mins or has been idle for more then 5 mins and no timer running
+    if xbmc.getCondVisibility('System.AlarmLessOrEqual(shutdowntimer,300)') or (
+    xbmc.getCondVisibility('System.IdleTime(300)') and not xbmc.getCondVisibility('System.HasAlarm(shutdowntimer)')):
         sabisactive = False
-        sabidletimer = 0
         req = urllib2.Request(sabNzbdQueue + sabnzbdApiKey)
         try:
             handle = urllib2.urlopen(req)
@@ -778,15 +779,11 @@ def sabinhibitsleep():
             xbmc.executebuiltin('InhibitIdleShutdown(false)')
             xbmc.log('AUDO: SABnzbd not active - not preventing sleep', level=xbmc.LOGDEBUG)
 
-transidletimer = 0
-
 
 def transinhibitsleep():
-    global transidletimer
-    transidletimer += 1
-    # check Transmission every ~60s
-    if transidletimer == 60:
-        transidletimer = 0
+    #check activity if timer is less then 5 mins or has been idle for more then 5 mins and no timer running
+    if xbmc.getCondVisibility('System.AlarmLessOrEqual(shutdowntimer,300)') or (
+    xbmc.getCondVisibility('System.IdleTime(300)') and not xbmc.getCondVisibility('System.HasAlarm(shutdowntimer)')):
         try:
             if transAuth:
                 tc = transmissionrpc.Client('localhost', port=9091, user=transUser, password=transPwd)
@@ -876,86 +873,5 @@ def updatedependencies():
 
 
 def shutdown():
-    
-    if sabnzbdLaunch:
-        try:
-            sabnzbdconfig = ConfigObj(sabnzbdSettings, create_empty=False)
-            sabnzbdApiKey = sabnzbdconfig['misc']['api_key']
-            if not sabnzbdApiKey:
-                if os.path.isfile("/var/run/sabnzbd.pid"):
-                    os.system("kill `cat /var/run/sabnzbd.pid`")
-                else:
-                    os.system("kill `ps | grep -E 'python.*script.module.audo.*SABnzbd' | awk '{print $1}'`")
-            else:
-                urlopen_with_retry('http://localhost:8081/api?mode=shutdown&apikey=' + sabnzbdApiKey)
-            xbmc.log('AUDO: Shutting SABnzbd down...', level=xbmc.LOGDEBUG)
-        except Exception, e:
-            xbmc.log('AUDO: SABnzbd exception occurred', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-            os.system("kill `ps | grep -E 'python.*script.module.audo.*SABnzbd' | awk '{print $1}'`")
-            pass
-    
-    if nzbgetLaunch:
-        try:
-            os.system('.' + xbmc.translatePath(__programs__ + '/resources/nzbget/nzbget') + ' -Q -c ' + nzbgetSettings)
-            xbmc.log('AUDO: Shutting NZBGet down...', level=xbmc.LOGDEBUG)
-        except Exception, e:
-            xbmc.log('AUDO: NZBGet exception occurred', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-            os.system("kill `ps | grep -E '.*script.module.audo.*nzbget' | awk '{print $1}'`")
-            pass
-    
-    if sickbeardLaunch:
-        try:       
-            sickbeardconfig = ConfigObj(sickbeardSettings, create_empty=False)
-            sickbeardapikey = sickbeardconfig['General']['api_key']
-            if not sickbeardapikey:
-                if os.path.isfile("/var/run/sickbeard.pid"):
-                    os.system("kill `cat /var/run/sickbeard.pid`")
-                else:
-                    os.system("kill `ps | grep -E 'python.*script.module.audo.*SickBeard' | awk '{print $1}'`")
-            else:
-                urlopen_with_retry('http://localhost:8082/api/' + sickbeardapikey + '/?cmd=sb.shutdown')
-            xbmc.log('AUDO: Shutting SickBeard down...', level=xbmc.LOGDEBUG)
-        except Exception, e:
-            xbmc.log('AUDO: SickBeard exception occurred', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-            os.system("kill `ps | grep -E 'python.*script.module.audo.*SickBeard' | awk '{print $1}'`")
-            pass
-    
-    if couchpotatoLaunch:
-        try:
-            couchpotatoconfig = ConfigObj(couchpotatoSettings, create_empty=False, list_values=False)
-            couchpotatoapikey = couchpotatoconfig['core']['api_key']
-            if not couchpotatoapikey:
-                if os.path.isfile("/var/run/couchpotato.pid"):
-                    os.system("kill `cat /var/run/couchpotato.pid`")
-                else:
-                    os.system("kill `ps | grep -E 'python.*script.module.audo.*CouchPotato' | awk '{print $1}'`")
-            else:
-                urlopen_with_retry('http://localhost:8083/api/' + couchpotatoapikey + '/app.shutdown')
-            xbmc.log('AUDO: Shutting CouchPotato down...', level=xbmc.LOGDEBUG)
-        except Exception, e:
-            xbmc.log('AUDO: CouchPotato exception occurred', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-            os.system("kill `ps | grep -E 'python.*script.module.audo.*CouchPotato' | awk '{print $1}'`")
-            pass
-    
-    if headphonesLaunch:
-        try:
-            headphonesconfig = ConfigObj(headphonesSettings, create_empty=False)
-            headphonesapikey = headphonesconfig['General']['api_key']
-            if not headphonesapikey:
-                if os.path.isfile("/var/run/headphones.pid"):
-                    os.system("kill `cat /var/run/headphones.pid`")
-                else:
-                    os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")
-            else:
-                urlopen_with_retry('http://localhost:8084/api?apikey=' + headphonesapikey + '&cmd=shutdown')
-            xbmc.log('AUDO: Shutting HeadPhones down...', level=xbmc.LOGDEBUG)
-        except Exception, e:
-            xbmc.log('AUDO: HeadPhones exception occurred', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-            os.system("kill `ps | grep -E 'python.*script.module.audo.*Headphones' | awk '{print $1}'`")
-            pass
+    os.system("kill `ps | grep -E 'python.*script.module.audo-programs' | grep -v 'grep' | awk '{print $1}'`")
 

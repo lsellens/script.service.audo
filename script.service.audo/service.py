@@ -8,9 +8,14 @@ import xbmcvfs
 class MyMonitor(xbmc.Monitor):
     def __init__(self, *args, **kwargs):
         xbmc.Monitor.__init__(self)
-
+    
     def onSettingsChanged(self):
         audo.getaddonsettings()
+        if audo.audoShutdown:
+            audo.shutdown()
+            while audo.audoShutdown:
+                xbmc.sleep(1000)
+            audo.main()
 
 # addon
 __scriptname__   = "audo"
@@ -47,7 +52,7 @@ socket.setdefaulttimeout(timeOut)
 if not audo.pArch.startswith('arm'):
     if audo.sabnzbdKeepAwake:
         xbmc.log('AUDO: Will prevent idle sleep/shutdown while downloading from SABnzbd')
-    if audo.transmissionKeepAwake:
+    if audo.transmissionKeepAwake and audo.transPresent:
         xbmc.log('AUDO: Will prevent idle sleep/shutdown while downloading from Transmission')
     if audo.wakePeriodically:
         xbmc.log('AUDO: Will try to wake system daily at ' + wakeTimes[audo.wakeHourIdx])
@@ -71,7 +76,7 @@ while not monitor.abortRequested():
             audo.sabinhibitsleep()
         
         # check if transmission is downloading
-        if audo.transmissionKeepAwake:
+        if audo.transmissionKeepAwake and audo.transPresent:
             audo.transinhibitsleep()
         
         # calculate and set the time to wake up at (if any)
@@ -86,13 +91,7 @@ while not monitor.abortRequested():
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
                 pass
     
-    if audo.audoShutdown:
-        audo.shutdown()
-        while audo.audoShutdown:
-            xbmc.sleep(1000)
-        audo.main()
-    
-    if monitor.waitForAbort(1):
+    if monitor.waitForAbort(60):
         # Shutdown audo
         try:
             audo.shutdown()
