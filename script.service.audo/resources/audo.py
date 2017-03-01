@@ -14,18 +14,15 @@ import transmissionrpc
 
 sabnzbdHost = 'localhost:8081'
 ipAddress = xbmc.getIPAddress()
-
+pArch = os.uname()[4]
 
 # addon paths
-def getaddonpaths():
-    global __addon__, __addonpath__, __addonhome__, __programs__, __dependencies__, __icon__, pArch
-    __addon__ = xbmcaddon.Addon(id='script.service.audo')
-    __addonpath__ = xbmc.translatePath(__addon__.getAddonInfo('path'))
-    __addonhome__ = xbmc.translatePath(__addon__.getAddonInfo('profile'))
-    __programs__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
-    __dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
-    __icon__ = __addon__.getAddonInfo('icon')
-    pArch = os.uname()[4]
+__addon__ = xbmcaddon.Addon(id='script.service.audo')
+__addonpath__ = xbmc.translatePath(__addon__.getAddonInfo('path'))
+__addonhome__ = xbmc.translatePath(__addon__.getAddonInfo('profile'))
+__programs__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-programs').getAddonInfo('path'))
+__dependencies__ = xbmc.translatePath(xbmcaddon.Addon(id='script.module.audo-dependencies').getAddonInfo('path'))
+__icon__ = __addon__.getAddonInfo('icon')
 
 
 # read addon settings
@@ -100,7 +97,6 @@ def main():
     sabnzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts/')
     
     # settings
-    global sabnzbdSettings, sickbeardSettings, couchpotatoSettings, headphonesSettings, nzbgetSettings
     xbmcSettings = xbmc.translatePath('special://home/userdata/guisettings.xml')
     sabnzbdSettings = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
     sickbeardSettings = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
@@ -740,66 +736,79 @@ sabNzbdQueue = ('http://' + sabnzbdHost + '/api?mode=queue&output=xml&apikey=')
 sabNzbdHistory = ('http://' + sabnzbdHost + '/api?mode=history&output=xml&apikey=')
 sabNzbdQueueKeywords = ['<status>Downloading</status>', '<status>Fetching</status>', '<priority>Force</priority>']
 sabNzbdHistoryKeywords = ['<status>Repairing</status>', '<status>Verifying</status>', '<status>Extracting</status>']
+try:
+    sabinhibiting
+except NameError:
+    sabinhibiting = False
+    pass
 
 
 def sabinhibitsleep():
-    #check activity if timer is less then 5 mins or has been idle for more then 5 mins and no timer running
-    if xbmc.getCondVisibility('System.AlarmLessOrEqual(shutdowntimer,300)') or (
-    xbmc.getCondVisibility('System.IdleTime(300)') and not xbmc.getCondVisibility('System.HasAlarm(shutdowntimer)')):
-        sabisactive = False
-        req = urllib2.Request(sabNzbdQueue + sabnzbdApiKey)
-        try:
-            handle = urllib2.urlopen(req)
-        except IOError, e:
-            xbmc.log('AUDO: Could not determine SABnzbds queue status:', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-        else:
-            queue = handle.read()
-            handle.close()
-            if any(x in queue for x in sabNzbdQueueKeywords):
-                sabisactive = True
-        
-        req = urllib2.Request(sabNzbdHistory + sabnzbdApiKey)
-        try:
-            handle = urllib2.urlopen(req)
-        except IOError, e:
-            xbmc.log('AUDO: Could not determine SABnzbds history status:', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
-        else:
-            history = handle.read()
-            handle.close()
-            if any(x in history for x in sabNzbdHistoryKeywords):
-                sabisactive = True
-        
-        # reset idle timer if queue is downloading/reparing/verifying/extracting
-        if sabisactive:
-            xbmc.executebuiltin('InhibitIdleShutdown(true)')
-            xbmc.log('AUDO: SABnzbd active - preventing sleep', level=xbmc.LOGDEBUG)
-        else:
-            xbmc.executebuiltin('InhibitIdleShutdown(false)')
-            xbmc.log('AUDO: SABnzbd not active - not preventing sleep', level=xbmc.LOGDEBUG)
+    global sabinhibiting
+    sabisactive = False
+    req = urllib2.Request(sabNzbdQueue + sabnzbdApiKey)
+    try:
+        handle = urllib2.urlopen(req)
+    except IOError, e:
+        xbmc.log('AUDO: Could not determine SABnzbds queue status:', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+    else:
+        queue = handle.read()
+        handle.close()
+        if any(x in queue for x in sabNzbdQueueKeywords):
+            sabisactive = True
+    
+    req = urllib2.Request(sabNzbdHistory + sabnzbdApiKey)
+    try:
+        handle = urllib2.urlopen(req)
+    except IOError, e:
+        xbmc.log('AUDO: Could not determine SABnzbds history status:', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
+    else:
+        history = handle.read()
+        handle.close()
+        if any(x in history for x in sabNzbdHistoryKeywords):
+            sabisactive = True
+    
+    # reset idle timer if queue is downloading/reparing/verifying/extracting
+    if sabisactive:
+        xbmc.executebuiltin('InhibitIdleShutdown(true)')
+        sabinhibiting = True
+        xbmc.log('AUDO: SABnzbd active - preventing sleep', level=xbmc.LOGDEBUG)
+    elif sabinhibiting:
+        xbmc.executebuiltin('InhibitIdleShutdown(false)')
+        sabinhibiting = False
+        xbmc.log('AUDO: SABnzbd not active - not preventing sleep', level=xbmc.LOGDEBUG)
+
+
+try:
+    transinhibiting
+except NameError:
+    transinhibiting = False
+    pass
 
 
 def transinhibitsleep():
-    #check activity if timer is less then 5 mins or has been idle for more then 5 mins and no timer running
-    if xbmc.getCondVisibility('System.AlarmLessOrEqual(shutdowntimer,300)') or (
-    xbmc.getCondVisibility('System.IdleTime(300)') and not xbmc.getCondVisibility('System.HasAlarm(shutdowntimer)')):
-        try:
-            if transAuth:
-                tc = transmissionrpc.Client('localhost', port=9091, user=transUser, password=transPwd)
-            else:
-                tc = transmissionrpc.Client('localhost', port=9091)
-            for i in tc.get_torrents():
-                if i.status is 'downloading':
-                    xbmc.executebuiltin('InhibitIdleShutdown(true)')
-                    xbmc.log('AUDO: Transmission active - preventing sleep', level=xbmc.LOGDEBUG)
-                    break
-            else:
+    global transinhibiting
+    try:
+        if transAuth:
+            tc = transmissionrpc.Client('localhost', port=9091, user=transUser, password=transPwd)
+        else:
+            tc = transmissionrpc.Client('localhost', port=9091)
+        for i in tc.get_torrents():
+            if i.status is 'downloading':
+                xbmc.executebuiltin('InhibitIdleShutdown(true)')
+                transinhibiting = True
+                xbmc.log('AUDO: Transmission active - preventing sleep', level=xbmc.LOGDEBUG)
+                break
+        else:
+            if transinhibiting:
                 xbmc.executebuiltin('InhibitIdleShutdown(false)')
+                transinhibiting = False
                 xbmc.log('AUDO: Transmission not active - not preventing sleep', level=xbmc.LOGDEBUG)
-        except Exception, e:
-            xbmc.log('AUDO: Could not connect to transmission service:', level=xbmc.LOGERROR)
-            xbmc.log(str(e), level=xbmc.LOGERROR)
+    except Exception, e:
+        xbmc.log('AUDO: Could not connect to transmission service:', level=xbmc.LOGERROR)
+        xbmc.log(str(e), level=xbmc.LOGERROR)
 
 
 def writewakealarm():
@@ -829,6 +838,7 @@ def writewakealarm():
 
 def updateprograms():
     xbmc.log('AUDO: Update occurred. Attempting to restart audo services:', level=xbmc.LOGDEBUG)
+    xbmc.executebuiltin('InhibitIdleShutdown(true)')
     count1 = 1
     count2 = 2
     xbmc.executebuiltin("XBMC.Notification(audo, Update detected. Stopping services now., 10000, %s)" % __icon__)
@@ -849,10 +859,13 @@ def updateprograms():
     except Exception, e:
         xbmc.log('AUDO: Could not execute launch script:', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
+        xbmc.executebuiltin('InhibitIdleShutdown(false)')
+    xbmc.executebuiltin('InhibitIdleShutdown(false)')
 
 
 def updatedependencies():
     xbmc.log('AUDO: Update occurred. Attempting to setup binaries:', level=xbmc.LOGDEBUG)
+    xbmc.executebuiltin('InhibitIdleShutdown(true)')
     count1 = 1
     count2 = 2
     while count1 != count2:
@@ -868,8 +881,10 @@ def updatedependencies():
     except Exception, e:
         xbmc.log('AUDO: Error setting up binaries:', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
+        xbmc.executebuiltin('InhibitIdleShutdown(false)')
     while not xbmcvfs.exists(xbmc.translatePath(__dependencies__ + '/arch.' + pArch)):
         xbmc.sleep(5000)
+    xbmc.executebuiltin('InhibitIdleShutdown(false)')
 
 
 def shutdown():
