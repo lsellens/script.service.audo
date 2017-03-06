@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.service.audo"
        name="audo"
-       version="1.3.0~beta5"
+       version="1.3.0"
        provider-name="lsellens">
   <requires>
     <import addon="xbmc.addon" version="14.0.0"/>
@@ -9,7 +9,7 @@
     <import addon="script.module.six" version="1.9.0" />
     <import addon="script.module.distutils" version="0.0.0" />
     <import addon="script.module.audo-dependencies" version="0.1.2"/>
-    <import addon="script.module.audo-programs" version="0.3.8"/>
+    <import addon="script.module.audo-programs" version="0.3.9"/>
     <import addon="script.module.audo" version="0.0.5"/>
     <import addon="service.downloadmanager.transmission" version="0.0.0" optional="true"/>
   </requires>
