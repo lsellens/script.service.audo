@@ -382,6 +382,7 @@ def main():
         defaultconfig['General']['web_password'] = pwd
         defaultconfig['General']['cache_dir'] = __addonhome__ + 'sbcache'
         defaultconfig['General']['log_dir'] = __addonhome__ + 'logs'
+        defaultconfig['General']['encryption_version'] = '0'
         defaultconfig['SABnzbd'] = {}
         defaultconfig['KODI'] = {}
         defaultconfig['KODI']['use_kodi'] = '1'
