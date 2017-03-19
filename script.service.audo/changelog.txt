@@ -1,3 +1,6 @@
+1.3.1
+- disable sickrage password encryption in config file
+
 1.3.0
 - now checks for existing pid files before launching
 - better at catching kodi shutdown event
