@@ -20,7 +20,7 @@ class MyMonitor(xbmc.Monitor):
 # addon
 __scriptname__   = "audo"
 __author__       = "lsellens"
-__url__          = "http://lsellens.openelec.tv"
+__url__          = "https://github.com/lsellens/xbmc.addons"
 timeOut          = 20
 wakeTimes        = ['01:00', '03:00', '05:00', '07:00', '09:00', '11:00', '13:00', '15:00', '17:00', '19:00', '21:00',
                     '23:00']
