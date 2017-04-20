@@ -819,18 +819,16 @@ def writewakealarm():
     waketime = now.combine(now.date(), timeofday)
     if now.time() > timeofday:
         waketime += datetime.timedelta(days=1)
-    secondssinceepoch = time.mktime(waketime.timetuple())
+    secondssinceepoch = int(time.mktime(waketime.timetuple()))
     try:
-        if os.path.isfile("/sys/class/rtc/rtc0/wakealarm"):
-            f = open("/sys/class/rtc/rtc0/wakealarm", 'r')
-            data = f.read()
+        f = open("/sys/class/rtc/rtc0/wakealarm", 'r+')
+        data = f.read()
+        if int(data) != secondssinceepoch:
+            f.truncate()
+            f.write(str(secondssinceepoch))
             f.close()
-            if data != secondssinceepoch:
-                open("/sys/class/rtc/rtc0/wakealarm", "w").write("0")
-                open("/sys/class/rtc/rtc0/wakealarm", "w").write(str(secondssinceepoch))
         else:
-            open("/sys/class/rtc/rtc0/wakealarm", "w").write("0")
-            open("/sys/class/rtc/rtc0/wakealarm", "w").write(str(secondssinceepoch))
+            f.close()
     except IOError, e:
         xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)

@@ -83,8 +83,9 @@ while not monitor.abortRequested():
             audo.writewakealarm()
         else:
             try:
-                if not os.stat("/sys/class/rtc/rtc0/wakealarm").st_size == 0:
-                    open("/sys/class/rtc/rtc0/wakealarm", "w").close()
+                f = open("/sys/class/rtc/rtc0/wakealarm", "w")
+                f.write('0')
+                f.close()
             except IOError, e:
                 xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm ', level=xbmc.LOGDEBUG)
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
