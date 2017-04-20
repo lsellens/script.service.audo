@@ -1,3 +1,6 @@
+1.3.2
+fix wakealarm to work again on libreelec 8
+
 1.3.1
 - disable sickrage password encryption in config file
 
