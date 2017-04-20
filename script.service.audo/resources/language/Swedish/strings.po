@@ -80,10 +80,6 @@ msgctxt "#32015"
 msgid "Wake up at"
 msgstr "Vakna upp på"
 
-msgctxt "#32016"
-msgid "Restart on suspend / resume"
-msgstr "Starta på uppskjuta/återuppta "
-
 msgctxt "#32100"
 msgid "Changelogs"
 msgstr "Ändringsloggar"

@@ -79,10 +79,6 @@ msgctxt "#32015"
 msgid "Wake up at"
 msgstr "Aktywuj się przy"
 
-msgctxt "#32016"
-msgid "Restart on suspend / resume"
-msgstr "Uruchom ponownie przy wstrzymywaniu/wznawianiu"
-
 msgctxt "#32100"
 msgid "Changelogs"
 msgstr "Zmiany"

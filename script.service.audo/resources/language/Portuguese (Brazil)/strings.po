@@ -80,10 +80,6 @@ msgctxt "#32015"
 msgid "Wake up at"
 msgstr "Acordar às"
 
-msgctxt "#32016"
-msgid "Restart on suspend / resume"
-msgstr "Reiniciar ao suspender / resumir"
-
 msgctxt "#32100"
 msgid "Changelogs"
 msgstr "Atualizações"

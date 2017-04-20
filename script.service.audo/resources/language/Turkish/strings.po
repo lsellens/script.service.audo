@@ -78,10 +78,6 @@ msgctxt "#32015"
 msgid "Wake up at"
 msgstr "Uyandırma zamanı"
 
-msgctxt "#32016"
-msgid "Restart on suspend / resume"
-msgstr ""
-
 msgctxt "#32100"
 msgid "Changelogs"
 msgstr "Değişim Günlüğü"
