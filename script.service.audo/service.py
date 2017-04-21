@@ -83,12 +83,17 @@ while not monitor.abortRequested():
             audo.writewakealarm()
         else:
             try:
-                f = open("/sys/class/rtc/rtc0/wakealarm", "w")
-                f.write('0')
-                f.close()
+                f = open("/sys/class/rtc/rtc0/wakealarm", 'r+')
+                data = f.read()
+                if data:
+                    f.write('0')
+                    f.close()
+                else:
+                    f.close()
             except IOError, e:
                 xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm ', level=xbmc.LOGDEBUG)
                 xbmc.log(str(e), level=xbmc.LOGDEBUG)
+                f.close()
                 pass
     
     if monitor.waitForAbort(60):

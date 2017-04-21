@@ -823,15 +823,23 @@ def writewakealarm():
     try:
         f = open("/sys/class/rtc/rtc0/wakealarm", 'r+')
         data = f.read()
-        if int(data) != secondssinceepoch:
-            f.truncate()
-            f.write(str(secondssinceepoch))
-            f.close()
+        if data:
+            if int(data) != secondssinceepoch:
+                #writing a "0" seems to be the only way to clear the file in le8 truncate() or writing the epoch will not
+                f.write('0')
+                f.close()
+                f = open("/sys/class/rtc/rtc0/wakealarm", 'w')
+                f.write(str(secondssinceepoch))
+                f.close()
+            else:
+                f.close()
         else:
+            f.write(str(secondssinceepoch))
             f.close()
     except IOError, e:
         xbmc.log('AUDO: Could not write /sys/class/rtc/rtc0/wakealarm', level=xbmc.LOGERROR)
         xbmc.log(str(e), level=xbmc.LOGERROR)
+        f.close()
         pass
 
 
