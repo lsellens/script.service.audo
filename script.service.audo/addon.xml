@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <addon id="script.service.audo"
        name="audo"
-       version="1.3.2~beta2"
+       version="1.3.2~beta3"
        provider-name="lsellens">
   <requires>
     <import addon="xbmc.addon" version="14.0.0"/>
     <import addon="xbmc.python" version="2.19.0"/>
     <import addon="script.module.six" version="1.9.0" />
     <import addon="script.module.distutils" version="0.0.0" />
-    <import addon="script.module.audo-dependencies" version="0.1.3"/>
-    <import addon="script.module.audo-programs" version="0.4.2"/>
+    <import addon="script.module.audo-dependencies" version="0.1.4~beta2"/>
+    <import addon="script.module.audo-programs" version="0.4.3"/>
     <import addon="script.module.audo" version="0.0.5"/>
     <import addon="service.downloadmanager.transmission" version="0.0.0" optional="true"/>
   </requires>
@@ -28,6 +28,7 @@
     <summary lang="pl">Audo (Automatyczny Downloader) jest rozszerzeniem SABnzbd-Suite. SABnzbd-Suite Metapackage łączy SABnzbd, NZBget, SickBeard, Couchpotato i Headphones w jednym dodatku.</summary>
     <summary lang="sv">Audo (Automatic Loader) är en gren av SABnzbd-Suite. SABnzbd-Suite Metapackage som kombinerar SABnzbd, NZBGet, SickBeard, Couchpotato och Headphones i ett tillägg</summary>
     <description lang="en">Audo (Automatic Downloader) is a fork of SABnzbd-Suite. Updated frequently to newest versions of SAB, NZBGet, SB, CP, and HP.</description>
+    <description lang="en_us">Audo (Automatic Downloader) is a fork of SABnzbd-Suite. Updated frequently to newest versions of SAB, NZBGet, SB, CP, and HP.</description>
     <description lang="nl">Audo (Automatische Downloader) is een afsplitsing van SABnzbd-Suite. Wordt frequent geüpdatet naar de nieuwste versies van SAB, NZBGet, SB, CP, en HP.</description>
     <description lang="fr">Audo (pour Automatic Downloader) est un fork de SABnzbd-Suite. Mis à jour fréquemment vers les nouvelles versions de la branche SAB, NZBGet, SB, CP et HP.</description>
     <description lang="pt">O Audo (Automatic Downloader) é uma derivação da SABnzbd-Suite. É actualizado frequentemente para as mais recentes versões de SAB, NZBGet, SB, CP, e HP.</description>
@@ -39,6 +40,12 @@
     <description lang="sv">Audi (Automatic Loader) är en gren av SABnzbd-Suite. Uppdateras ofta till nyaste versionerna av SAB, NZBGet, SB, CP, och HP.</description>
     <language>en hy_AM ca_ES nl fr de fa pl pt pt_BR es sv tr</language>
     <platform>linux</platform>
+    <license>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</license>
     <source>https://github.com/lsellens/script.service.audo</source>
+    <news>1.3.2 - fix wakealarm to work again on libreelec 8</news>
+    <assets>
+      <icon>resources/icon.png</icon>
+      <fanart>resources/fanart.jpg</fanart>
+    </assets>
   </extension>
 </addon>
