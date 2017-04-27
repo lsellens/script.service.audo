@@ -25,11 +25,42 @@ done
 mkdir -p target/$PKG_VERSION.$PKG_REV/
 cd build
 zip -rq9y ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip $PKG_NAME
-if [ "$?" = "0" ]; then
-  echo "$PKG_NAME/target/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip"
+if [ "$?" -ne "0" ]; then
+  echo "Error building $PKG_NAME";exit 1
 fi
+
+md5sum ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip | awk '{print $1}' > ../target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip.md5
+if [ "$?" -ne "0" ]; then
+  echo "Error building $PKG_NAME";exit 1
+fi
+
+ICON=$(cat $PKG_NAME/addon.xml | grep -oPm1 "(?<=<icon>)[^<]+")
+if [ -f $PKG_NAME/$ICON ]; then
+  mkdir -p ../target/$PKG_VERSION.$PKG_REV/$(dirname $ICON) && cp $PKG_NAME/$ICON ../target/$PKG_VERSION.$PKG_REV/$ICON
+fi
+
+FANART=$(cat $PKG_NAME/addon.xml | grep -oPm1 "(?<=<fanart>)[^<]+")
+if [ -f $PKG_NAME/$FANART ]; then
+  mkdir -p ../target/$PKG_VERSION.$PKG_REV/$(dirname $FANART) && cp $PKG_NAME/$FANART ../target/$PKG_VERSION.$PKG_REV/$FANART
+fi
+
+SCREENSHOTS=$(cat $PKG_NAME/addon.xml | grep -oP "(?<=<screenshot>)[^<]+")
+for SCREENSHOT in $SCREENSHOTS; do
+  if [ -f $PKG_NAME/$SCREENSHOT ]; then
+    mkdir -p ../target/$PKG_VERSION.$PKG_REV/$(dirname $SCREENSHOT) && cp $PKG_NAME/$SCREENSHOT ../target/$PKG_VERSION.$PKG_REV/$SCREENSHOT
+  fi
+done
+
+
 cp $PKG_NAME/changelog.txt ../target/$PKG_VERSION.$PKG_REV/changelog-$PKG_VERSION.$PKG_REV.txt
 cp $PKG_NAME/addon.xml ../target/$PKG_VERSION.$PKG_REV/addon.xml
 cd ..
 rm -rf build
+echo "###FILENAME###"
+echo "$PKG_NAME/target/$PKG_VERSION.$PKG_REV/$PKG_NAME-$PKG_VERSION.$PKG_REV.zip"
+if NEWS=$(cat target/$PKG_VERSION.$PKG_REV/addon.xml | grep -oP "(?<=<news>)[^<]+");then
+  echo "###NEWS###"
+  echo $NEWS
+fi
+echo ""
 exit 0
