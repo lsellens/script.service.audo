@@ -44,7 +44,7 @@
     <platform>linux</platform>
     <license>GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007</license>
     <source>https://github.com/lsellens/script.service.audo</source>
-    <news>1.3.2 - fix wakealarm to work again on libreelec 8</news>
+    <news>1.3.3 - moved transmissionrpc to its own addon module</news>
     <assets>
       <icon>resources/icon.png</icon>
       <fanart>resources/fanart.jpg</fanart>
