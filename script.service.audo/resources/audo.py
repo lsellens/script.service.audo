@@ -1,6 +1,6 @@
-#from xml.dom.minidom import parseString
 from configobj import ConfigObj
 from functools import wraps
+import json
 import os
 import subprocess
 import urllib2
@@ -73,6 +73,16 @@ def addon_chk(addon_name):
     return xbmc.getCondVisibility('System.HasAddon(%s)' % addon_name) == 1
 
 
+def jsonrpc(method, *args):
+    values = {"jsonrpc": "2.0", "id": "1", "method": method}
+    if args:
+        values["params"] = args
+    json_cmd = json.dumps(values, sort_keys=True, separators=(',', ':'))
+    json_cmd = json_cmd.replace('[{', '{')
+    json_cmd = json_cmd.replace('}]', '}')
+    return json_cmd
+
+
 # Initializes and launches SABnzbd, NZBget, Couchpotato, Sickbeard and Headphones
 def main():
     def create_dir(dirname):
@@ -97,7 +107,6 @@ def main():
     sabnzbdScripts = xbmc.translatePath(__addonhome__ + 'scripts/')
 
     # settings
-    #xbmcSettings = xbmc.translatePath('special://home/userdata/guisettings.xml')
     sabnzbdSettings = xbmc.translatePath(__addonhome__ + 'sabnzbd.ini')
     sickbeardSettings = xbmc.translatePath(__addonhome__ + 'sickbeard.ini')
     couchpotatoSettings = xbmc.translatePath(__addonhome__ + 'couchpotatoserver.ini')
@@ -167,20 +176,15 @@ def main():
         xbmc.log('AUDO: Transmission addon is not present', level=xbmc.LOGDEBUG)
 
     # XBMC
-    #f = open(xbmcSettings, 'r')
-    #data = f.read()
-    #f.close()
-    #xbmcSettings = parseString(data)
-    #xbmcServices = xbmcSettings.getElementsByTagName('services')[0]
-    #xbmcPort = xbmcServices.getElementsByTagName('webserverport')[0].firstChild.data
-    #try:
-    #    xbmcUser = xbmcServices.getElementsByTagName('webserverusername')[0].firstChild.data
-    #except StandardError:
-    #    xbmcUser = ''
-    #try:
-    #    xbmcPwd = xbmcServices.getElementsByTagName('webserverpassword')[0].firstChild.data
-    #except StandardError:
-    #    xbmcPwd = ''
+    parameters = {'setting': 'services.webserverport'}
+    xbmcPort = json.loads(xbmc.executeJSONRPC(jsonrpc('Settings.GetSettingValue', parameters)))
+    xbmcPort = str(xbmcPort['result']['value'])
+    parameters = {'setting': 'services.webserverusername'}
+    xbmcUser = json.loads(xbmc.executeJSONRPC(jsonrpc('Settings.GetSettingValue', parameters)))
+    xbmcUser = xbmcUser['result']['value']
+    parameters = {'setting': 'services.webserverpassword'}
+    xbmcPwd = json.loads(xbmc.executeJSONRPC(jsonrpc('Settings.GetSettingValue', parameters)))
+    xbmcPwd = xbmcPwd['result']['value']
 
     # prepare execution environment
     os.environ['PYTHONPATH'] = str(os.environ.get('PYTHONPATH')) + ':' + __dependencies__ + '/lib'
@@ -386,8 +390,8 @@ def main():
         defaultconfig['SABnzbd'] = {}
         defaultconfig['KODI'] = {}
         defaultconfig['KODI']['use_kodi'] = '1'
-        #defaultconfig['KODI']['kodi_username'] = xbmcUser
-        #defaultconfig['KODI']['kodi_password'] = xbmcPwd
+        defaultconfig['KODI']['kodi_username'] = xbmcUser
+        defaultconfig['KODI']['kodi_password'] = xbmcPwd
         defaultconfig['TORRENT'] = {}
         defaultconfig['NZBget'] = {}
 
@@ -434,7 +438,7 @@ def main():
             defaultconfig['KODI']['kodi_notify_ondownload'] = '1'
             defaultconfig['KODI']['kodi_update_library'] = '1'
             defaultconfig['KODI']['kodi_update_full'] = '1'
-            #defaultconfig['KODI']['kodi_host'] = 'localhost:' + xbmcPort
+            defaultconfig['KODI']['kodi_host'] = 'localhost:' + xbmcPort
 
         sickbeardconfig.merge(defaultconfig)
         sickbeardconfig.write()
@@ -478,8 +482,8 @@ def main():
         defaultconfig['updater']['automatic'] = '0'
         defaultconfig['xbmc'] = {}
         defaultconfig['xbmc']['enabled'] = '1'
-        #defaultconfig['xbmc']['username'] = xbmcUser
-        #defaultconfig['xbmc']['password'] = xbmcPwd
+        defaultconfig['xbmc']['username'] = xbmcUser
+        defaultconfig['xbmc']['password'] = xbmcPwd
         defaultconfig['sabnzbd'] = {}
         defaultconfig['transmission'] = {}
         defaultconfig['nzbget'] = {}
@@ -503,7 +507,7 @@ def main():
 
         if cpfirstLaunch:
             defaultconfig['transmission']['directory'] = sabnzbdCompleteMov
-            #defaultconfig['xbmc']['host'] = 'localhost:' + xbmcPort
+            defaultconfig['xbmc']['host'] = 'localhost:' + xbmcPort
             defaultconfig['xbmc']['xbmc_update_library'] = '1'
             defaultconfig['xbmc']['xbmc_update_full'] = '1'
             defaultconfig['xbmc']['xbmc_notify_onsnatch'] = '1'
@@ -560,9 +564,9 @@ def main():
         defaultconfig['General']['log_dir'] = __addonhome__ + 'logs'
         defaultconfig['XBMC'] = {}
         defaultconfig['XBMC']['xbmc_enabled'] = '1'
-        #defaultconfig['XBMC']['xbmc_host'] = 'localhost:' + xbmcPort
-        #defaultconfig['XBMC']['xbmc_username'] = xbmcUser
-        #defaultconfig['XBMC']['xbmc_password'] = xbmcPwd
+        defaultconfig['XBMC']['xbmc_host'] = 'localhost:' + xbmcPort
+        defaultconfig['XBMC']['xbmc_username'] = xbmcUser
+        defaultconfig['XBMC']['xbmc_password'] = xbmcPwd
         defaultconfig['SABnzbd'] = {}
         defaultconfig['Transmission'] = {}
         defaultconfig['NZBget'] = {}
